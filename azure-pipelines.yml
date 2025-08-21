@@ -18,8 +18,5 @@ steps:
 - script: |
     npm install
     npm run build
+    workingDirectory: frontend
   displayName: 'npm install and build'
-
-- script: |
-    #npm test
-  displayName: 'npm test'
