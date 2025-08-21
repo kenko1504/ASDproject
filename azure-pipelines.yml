@@ -28,6 +28,5 @@ jobs:
     - script: |
         cd backend
         npm install
-        npm run build
       displayName: 'Build Node Backend'
 
