@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import AddIngredient from "./AddIngredient";
+import Header from "./Elements/Header";
 
 export default function App() {
   const [ingredients, setIngredients] = useState([]);
@@ -16,18 +17,26 @@ export default function App() {
   };
 
   return (
-    <div>
-      <h1>Ingredients</h1>
+    <>
+      <Header></Header>
 
-      <AddIngredient onAdd={handleAdd} />
+      <body>
+        <div>
+          <h1>Ingredients</h1>
 
-      <ul>
-        {ingredients.map(item => (
-          <li key={item._id}>
-            {item.name} - {item.quantity}
-          </li>
-        ))}
-      </ul>
-    </div>
+          <AddIngredient onAdd={handleAdd} />
+
+          <ul>
+            {ingredients.map(item => (
+              <li key={item._id}>
+                {item.name} - {item.quantity}
+              </li>
+            ))}
+          </ul>
+        </div>        
+      </body>
+      
+    </>
+    
   );
 }
