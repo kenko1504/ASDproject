@@ -20,21 +20,21 @@ export default function App() {
     <>
       <Header></Header>
 
-      <body>
-        <div>
-          <h1>Ingredients</h1>
+  
+      <div>
+        <h1>Ingredients</h1>
 
-          <AddIngredient onAdd={handleAdd} />
+        <AddIngredient onAdd={handleAdd} />
 
-          <ul>
-            {ingredients.map(item => (
-              <li key={item._id}>
-                {item.name} - {item.quantity}
-              </li>
-            ))}
-          </ul>
-        </div>        
-      </body>
+        <ul>
+          {ingredients.map(item => (
+            <li key={item._id}>
+              {item.name} - {item.quantity}
+            </li>
+          ))}
+        </ul>
+      </div>        
+
       
     </>
     

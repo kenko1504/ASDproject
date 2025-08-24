@@ -31,12 +31,7 @@ app.get("/ingredients", (req, res) => {
   res.json(items);
 });
 
-// GET single ingredient by id
-app.get("/ingredients/:id", (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ message: "Item not found" });
-  res.json(item);
-});
+
 
 // Start server
 const PORT = 5000;
