@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AddIngredient from "./components/AddIngredient";
+import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./components/Login";

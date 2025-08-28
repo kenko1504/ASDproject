@@ -1,4 +1,3 @@
-import AddIngredient from "./AddIngredient";
 import AddButton from "./DashboardComponent/AddButton";
 export default function Dashboard() {
   return (
