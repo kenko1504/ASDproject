@@ -13,7 +13,6 @@ function Header() {
                 <a href="#"><div className='header-button'>PAGE 3</div></a>
                 <a href="#"><div className='header-button'>PAGE 4</div></a>
             </nav>
-
         </header>
     );
 }

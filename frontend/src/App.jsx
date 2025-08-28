@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import AddIngredient from "./components/AddIngredient";
 import Header from "./components/Header";
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 // entry point
 export default function App() {
@@ -19,20 +20,17 @@ export default function App() {
 
   return (
     <>
-      <div className="container">
-        <div className="sidebar">
-          <h1>FridgeManager</h1>
-          <button>Your Fridge</button>
-          <button>Nutritions</button>
-          <button>Waste and Budget Control</button>
-          <button>Your Recipes</button>
-        </div>
-
-        <div className="dashboard">
-          <h2>Dashboard</h2>
-          {/* Your dashboard content here */}
-        </div>
-      </div>
+      <Header />
+      <NavBar />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
+        <Route path="/recipes" element={<Recipes />} />
+        <Route path="/itemManagement" element={<ItemManagement ingredients={ingredients} />} />
+        <Route path="/nutrition" element={<Nutrition />} />
+        <Route path="/wasteManagement" element={<WasteManagement />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
     </>
   );
 }
