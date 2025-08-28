@@ -1,0 +1,20 @@
+.container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 220px;
+  background-color: #77b255;
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 0;
+}
+
+.dashboard {
+  flex-grow: 1;
+  background-color: #ffffff;
+  padding: 20px;
+}
