@@ -1,39 +1,12 @@
 import { useState } from "react";
 
-export default function AddIngredient({ onAdd }) {
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch("http://localhost:5000/ingredients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, quantity })
-      });
-      const data = await res.json();
-      onAdd(data); // notify parent
-      setName("");
-      setQuantity("");
-    } catch (err) {
-      console.error(err);
-    }
-  };
+export default function AddIngredient() {
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        placeholder="Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <input
-        placeholder="Quantity"
-        value={quantity}
-        onChange={(e) => setQuantity(e.target.value)}
-      />
-      <button type="submit">Add</button>
-    </form>
+    <>
+      <button className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold shadow hover:bg-blue-700 active:bg-blue-800 transition-colors">
+      Click Me
+      </button>
+    </>
   );
 }
