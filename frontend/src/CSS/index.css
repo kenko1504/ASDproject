@@ -5,7 +5,6 @@
 */
 
 /* Use colour variables from css for consistency */
-@import url(./theme.css);
 @import "tailwindcss";
 
 * {
