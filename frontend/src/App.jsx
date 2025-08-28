@@ -28,7 +28,7 @@ export default function App() {
   return (
     <>
       <BrowserRouter>
-        <Header />
+        {/* <Header /> */}
         {/* <NavBar /> */} {/* Uncomment when NavBar is ready */}
         <Routes>
           <Route path="/" element={<Login />} />
