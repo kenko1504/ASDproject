@@ -31,13 +31,10 @@ app.get("/ingredients", (req, res) => {
   res.json(items);
 });
 
-// GET single ingredient by id
-app.get("/ingredients/:id", (req, res) => {
-  const item = items.find(i => i.id === parseInt(req.params.id));
-  if (!item) return res.status(404).json({ message: "Item not found" });
-  res.json(item);
-});
+
 
 // Start server
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+
+//mongodb+srv://admin:1q2w3e4r!@cluster0.exeo5q3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0

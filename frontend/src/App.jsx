@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import AddIngredient from "./AddIngredient";
-import Header from "./Elements/Header";
+import AddIngredient from "./components/AddIngredient";
+import Header from "./components/Header";
 
+// entry point
 export default function App() {
   const [ingredients, setIngredients] = useState([]);
 
@@ -18,25 +19,20 @@ export default function App() {
 
   return (
     <>
-      <Header></Header>
+      <div className="container">
+        <div className="sidebar">
+          <h1>FridgeManager</h1>
+          <button>Your Fridge</button>
+          <button>Nutritions</button>
+          <button>Waste and Budget Control</button>
+          <button>Your Recipes</button>
+        </div>
 
-      <body>
-        <div>
-          <h1>Ingredients</h1>
-
-          <AddIngredient onAdd={handleAdd} />
-
-          <ul>
-            {ingredients.map(item => (
-              <li key={item._id}>
-                {item.name} - {item.quantity}
-              </li>
-            ))}
-          </ul>
-        </div>        
-      </body>
-      
+        <div className="dashboard">
+          <h2>Dashboard</h2>
+          {/* Your dashboard content here */}
+        </div>
+      </div>
     </>
-    
   );
 }
