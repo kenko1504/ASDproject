@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import AddIngredient from "./AddIngredient";
-import Header from "./Elements/Header";
+import AddIngredient from "./components/AddIngredient";
+import Header from "./components/Header";
 import "./CSS/Dashboard.css";
 
 // entry point
