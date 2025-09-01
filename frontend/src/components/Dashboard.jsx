@@ -1,4 +1,3 @@
-import AddIngredient from "./AddIngredient";
 import AddButton from "./DashboardComponent/AddButton";
 import {Link} from "react-router-dom";
 export default function Dashboard() {
