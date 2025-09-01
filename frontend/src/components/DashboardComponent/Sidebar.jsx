@@ -19,7 +19,7 @@
                 <div className={"sidebar-footer mt-auto"}>
                     <button><svg></svg>{/*Notifications*/}</button><br/>
                     <button><svg></svg>Settings</button><br/>
-                    <button><img src={"#"} alt={"Name"}/><span>{/*User Name*/}</span></button><br/>
+                    <button><img src={"#"} alt={"ProfilePic"}/><span>{/*User Name*/}</span></button><br/>
                     <button><svg></svg>{/*Sign Out*/}</button>
                     </div>
             </div>

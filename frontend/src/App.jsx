@@ -7,15 +7,17 @@ import Dashboard from "./components/Dashboard";
 import Recipes from "./components/Recipes";
 import ItemManagement from "./components/ItemManagement";
 import Nutrition from "./components/Nutritions";
-import WasteManagement from "./components/WasteManagement";
+import WasteBudget from "./components/WasteManagement";
 import Settings from "./components/Settings";
+import Sidebar from "./components/DashboardComponent/Sidebar";
+import FridgeList from "./components/ItemManagement";
 
 // entry point
 export default function App() {
     return (
         <div className="layout flex min-h-screen">
             <Sidebar />
-            <main className="content flex flex-grow p-20 bg-[#f9fff9]">
+            <main className="content flex flex-grow p-[20px] bg-[#f9fff9]">
                 <Routes>
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
