@@ -1,13 +1,3 @@
-import { useState, useEffect } from "react";
-import Settings from "./components/Settings";
-import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp"; 
-import ItemManagement from "./components/ItemManagement";
-import WasteManagement from "./components/WasteManagement";
-import Recipes from "./components/Recipes";
-import Nutrition from "./components/Nutritions";
-import Dashboard from "./components/Dashboard";
-import Header from "./components/Header";
-import NavBar from "./components/NavBar";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
