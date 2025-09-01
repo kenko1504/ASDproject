@@ -1,32 +1,25 @@
 import { useState, useEffect } from "react";
-import AddIngredient from "./components/AddIngredient";
+import Settings from "./components/Settings";
+import AddIngredient from "./components/AddIngredient"; 
+import ItemManagement from "./components/ItemManagement";
+import WasteManagement from "./components/WasteManagement";
+import Recipes from "./components/Recipes";
+import Nutrition from "./components/Nutritions";
+import Dashboard from "./components/Dashboard";
 import Header from "./components/Header";
+import NavBar from "./components/NavBar";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 
 // entry point
 export default function App() {
-  const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/ingredients")
-      .then(res => res.json())
-      .then(data => setIngredients(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const handleAdd = (newItem) => {
-    setIngredients([...ingredients, newItem]);
-  };
-
   return (
     <>
       <Header />
       <NavBar />
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
+        <Route path="/" element={<Dashboard />} />
         <Route path="/recipes" element={<Recipes />} />
-        <Route path="/itemManagement" element={<ItemManagement ingredients={ingredients} />} />
+        <Route path="/itemManagement" element={<ItemManagement/>} />
         <Route path="/nutrition" element={<Nutrition />} />
         <Route path="/wasteManagement" element={<WasteManagement />} />
         <Route path="/settings" element={<Settings />} />
