@@ -1,9 +1,8 @@
-function Nutritions(){
-    return  (
-        <div>
-            <h2>Nutrition</h2>
-            <p>Nutrition information and tips will be displayed here.</p>
-        </div>
-    )
+export default function Nutritions() {
+  return (
+    <div>
+      <h2>Nutritions</h2>
+      {/* Your nutrition content here */}
+    </div>
+  );
 }
-export default Nutritions;
