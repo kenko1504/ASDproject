@@ -30,35 +30,4 @@ export default function App() {
             </main>
         </div>
     );
-  const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/ingredients")
-      .then(res => res.json())
-      .then(data => setIngredients(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const handleAdd = (newItem) => {
-    setIngredients([...ingredients, newItem]);
-  };
-
-  return (
-    <>
-      <BrowserRouter>
-        {/* <Header /> */}
-        {/* <NavBar /> */} {}
-        {/*append /dashboard at the web url to access that page*/}
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
-          <Route path="/recipes" element={<Recipes />} />
-          <Route path="/itemManagement" element={<ItemManagement ingredients={ingredients} />} />
-          <Route path="/nutrition" element={<Nutrition />} />
-          <Route path="/wasteManagement" element={<WasteManagement />} />
-          <Route path="/settings" element={<Settings />} />
-        </Routes>
-      </BrowserRouter>
-    </>
-  );
 }
