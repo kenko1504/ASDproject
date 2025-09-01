@@ -1,9 +1,25 @@
 import express from "express";
 import cors from "cors";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import itemRoutes from "./routes/itemRoutes.js";
 
+dotenv.config(); // read .env
 const app = express();
 app.use(cors());
 app.use(express.json());
+//routes
+app.use("/items", itemRoutes)
+
+//connect with MongoDB Atlas
+mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+}).then(() => console.log("MongoDB Atlas connected"))
+    .catch(err => console.error("MongoDB connection error: ", err));
+
+
+
 
 app.post("/ingredients", (req, res) => {
   const id = parseInt(req.params.id);

@@ -1,0 +1,60 @@
+.layout {
+    display: flex;
+}
+.sidebar {
+    width: 200px;
+    background: #6abf69;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+.sidebar nav {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+.sidebar nav a {
+    margin: 10px 0;
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+.sidebar-footer {
+    margin-top: auto;
+}
+.content {
+    flex: 1;
+    padding: 20px;
+    background: #f9fff9;
+}
+
+.card {
+    background: #d9f7d9;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 10px;
+}
+.recipe-list {
+    display: flex;
+    gap: 10px;
+}
+.recipe-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 120px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fridge-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.item-card.expired {
+    background: #f6c6c6;
+}
