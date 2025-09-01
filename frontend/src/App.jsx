@@ -29,7 +29,8 @@ export default function App() {
     <>
       <BrowserRouter>
         {/* <Header /> */}
-        {/* <NavBar /> */} {/* Uncomment when NavBar is ready */}
+        {/* <NavBar /> */} {}
+        {/*append /dashboard at the web url to access that page*/}
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
