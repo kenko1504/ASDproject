@@ -1,0 +1,23 @@
+.recipe-list {
+    display: flex;
+    gap: 10px;
+}
+.recipe-card {
+    background: #fff;
+    border: 1px solid #ccc;
+    width: 120px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.fridge-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.item-card.expired {
+    background: #f6c6c6;
+}
