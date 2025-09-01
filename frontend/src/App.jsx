@@ -9,7 +9,8 @@ import ItemManagement from "./components/ItemManagement";
 import Nutrition from "./components/Nutritions";
 import WasteBudget from "./components/WasteBudget";
 import Settings from "./components/Settings";
-import Sidebar from "./Sidebar";
+import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
+import FridgeList from "./components/FridgeList.jsx";
 
 export default function App() {
     return (
@@ -17,10 +18,10 @@ export default function App() {
             <Sidebar />
             <main className="content">
                 <Routes>
-                    <Route path="/" element={<Login />} />
-                    <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
+                    {/*<Route path="/" element={<Login />} />*/}
+                    <Route path="/" element={<Dashboard/>} />
                     <Route path="/fridge" element={<FridgeList />} />
-                    <Route path="/item-management" element={<ItemManagement ingredients={ingredients}/>} />
+                    <Route path="/item-management" element={<ItemManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />

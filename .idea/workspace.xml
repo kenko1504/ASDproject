@@ -4,13 +4,34 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="35735dff-c77d-4e0f-90d3-efccea477ff8" name="Changes" comment="Designed a simple UI;&#10;Structured the project files;&#10;Initially completed Item Management (CRUD) feature and Waste and Budget Control;" />
+    <list default="true" id="35735dff-c77d-4e0f-90d3-efccea477ff8" name="Changes" comment="Designed a simple UI;&#10;Structured the project files;&#10;Initially completed Item Management (CRUD) feature and Waste and Budget Control;">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/AddItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/AddItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/CSS/index.css" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/CSS/index.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Dashboard.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/FridgeList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/FridgeList.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/ItemManagement.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/DashboardComponent/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/UpdateItem.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/UpdateItem.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/WasteBudget.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/WasteBudget.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/ItemManagement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/frontend/src/components/ItemManagement.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontend/src/components/WasteManagement.jsx" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$" value="Item-Management" />
+      </map>
+    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="GitHubPullRequestSearchHistory">{
@@ -37,23 +58,29 @@
     <option name="showLibraryContents" value="true" />
     <option name="sortKey" value="BY_TIME_DESCENDING" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "npm.devBackend.executor": "Run",
-    "npm.devFrontend.executor": "Run",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "ts.external.directory.path": "D:\\Uni_software\\IDEA\\IntelliJ IDEA 2024.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;npm.devBackend.executor&quot;: &quot;Run&quot;,
+    &quot;npm.devFrontend.executor&quot;: &quot;Run&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\Uni_software\\IDEA\\IntelliJ IDEA 2024.2.1\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
-  <component name="RunManager" selected="npm.devBackend">
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\24544\Documents\GitHub\ASDproject\frontend\src\components" />
+      <recent name="C:\Users\24544\Documents\GitHub\ASDproject\frontend\src\components\DashboardComponent" />
+    </key>
+  </component>
+  <component name="RunManager" selected="npm.devFrontend">
     <configuration name="devBackend" type="js.build_tools.npm">
       <package-json value="$PROJECT_DIR$/backend/package.json" />
       <command value="run" />
@@ -101,6 +128,8 @@
       <workItem from="1756711094899" duration="106000" />
       <workItem from="1756711549683" duration="4407000" />
       <workItem from="1756716159996" duration="95000" />
+      <workItem from="1756719478965" duration="1618000" />
+      <workItem from="1756721140796" duration="234000" />
     </task>
     <task id="LOCAL-00001" summary="Designed a simple UI;&#10;Structured the project files;&#10;Initially completed Item Management (CRUD) feature and Waste and Budget Control;">
       <option name="closed" value="true" />
