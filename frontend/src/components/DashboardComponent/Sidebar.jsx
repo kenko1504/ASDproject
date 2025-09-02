@@ -3,8 +3,8 @@
 
     export default function Sidebar(){
         return (
-            <div className={"sidebar w-[200px] flex flex-col bg-[#6abf69] p-5 min-h-screen"}>
-                <div className="logo text-center text-xl mb-6">
+            <div className={"sidebar w-[200px] flex flex-col bg-[#85BC59] p-5 min-h-screen"}>
+                <div className="logo cinzel-decorative-regular text-center text-xl mb-6">
                     <svg>{/* Logo Icon Here*/}</svg>
                     <span className={"title text-white weight-bold text-center"}><Link to="/">FridgeManager</Link></span>
                 </div>
@@ -13,7 +13,7 @@
                         <li className="h-12 flex items-center justify-center"><Link to={"/fridge"}>Your Fridge</Link></li>
                         <li className="h-12 flex items-center justify-center"><Link to={"/item-management"}>Item Management</Link></li>
                         <li className="h-12 flex items-center justify-center"><Link to={"/nutrition"}>Nutrition</Link></li>
-                        <li className="h-12 flex items-center justify-center"><Link to={"/wasteBudget"}>Waste and Budget Control</Link></li>
+                        <li className="h-12 flex items-center justify-center"><Link to={"/wasteBudget"}>Waste and <br></br>Budget Control</Link></li>
                     </ul>
                 </nav>
                 <div className={"sidebar-footer mt-auto"}>

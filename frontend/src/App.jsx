@@ -15,9 +15,9 @@ import FridgeList from "./components/ItemManagement";
 // entry point
 export default function App() {
     return (
-        <div className="layout flex min-h-screen">
+        <div className="layout flex">
             <Sidebar />
-            <main className="content flex flex-grow p-[20px] bg-[#f9fff9]">
+            <main className="content flex flex-grow !p-4 !m-4 !mt-0 bg-[#f9fff9]">
                 <Routes>
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
