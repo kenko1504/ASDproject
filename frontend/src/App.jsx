@@ -11,6 +11,7 @@ import WasteBudget from "./components/WasteBudget";
 import Settings from "./components/Settings";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
+import GroceryList from "./components/GroceryList.jsx";
 
 export default function App() {
     return (
@@ -23,6 +24,7 @@ export default function App() {
                     <Route path="/fridge" element={<FridgeList />} />
                     <Route path="/item-management" element={<ItemManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
+                    <Route path="/grocery-list" element={<GroceryList />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
                     <Route path="/settings" element={<Settings />} />

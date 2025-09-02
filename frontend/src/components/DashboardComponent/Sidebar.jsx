@@ -9,6 +9,7 @@ export default function Sidebar(){
             <nav>
                 <Link to={""}>Your Fridge</Link><br/>
                 <Link to={""}>Nutrition</Link><br/>
+                <Link to={"/grocery-list"}>Grocery List</Link><br/>
                 <Link to={"/waste-budget"}>Waste and Budget Control</Link><br/>
                 <Link to={""}>Your Recipes</Link><br/>
             </nav>
