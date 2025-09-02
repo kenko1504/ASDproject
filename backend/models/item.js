@@ -30,6 +30,10 @@ const itemSchema = new mongoose.Schema({
     description:{ // description of item
         type: String,
         default: ''
+    },
+    nutritionValue:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Nutrition'
     }
 }, {
     timestamps: true
