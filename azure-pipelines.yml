@@ -11,7 +11,7 @@ stages:
     displayName: 'Testing Backend & Frontend'
     jobs:
       - job: Backend
-        displayName: 'Backend Test & Build'
+        displayName: 'Backend Testing'
         steps:
           - task: NodeTool@0
             inputs:
@@ -33,7 +33,7 @@ stages:
             displayName: 'Run Backend Integration Tests'
 
       - job: Frontend
-        displayName: 'Backend Test & Build'
+        displayName: 'Frontend Testing'
         steps:
           - task: NodeTool@0
             inputs:
