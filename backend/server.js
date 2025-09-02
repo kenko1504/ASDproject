@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 
+
 dotenv.config(); // read .env
 const app = express();
 app.use(cors());
@@ -19,35 +20,20 @@ mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find
     .catch(err => console.error("MongoDB connection error: ", err));
 
 
+const Ingredient = mongoose.model("Ingredient", new mongoose.Schema({
+  name: String,
+  quantity: Number,
+  expiryDate: String,
+  description: String,
+  image: String
+}));
 
-
-app.post("/ingredients", (req, res) => {
-  const id = parseInt(req.params.id);
-  const item = items.find(i => i.id === id);
-
-  if (!item) {
-    return res.status(404).json({ message: "Item not found" });
-  }
-
-  const { name, price } = req.body; // Get new values from request body
-  if (name) item.name = name;
-  if (price) item.price = price;
-
-  res.json({ message: "Item updated", item });
+app.post("/ingredients", async (req, res) => {
+  const { name, quantity, expiryDate, description, image } = req.body;
+  const ingredient = new Ingredient({ name, quantity, expiryDate, description, image });
+  await ingredient.save();
+  res.json(ingredient);
 });
-
-// Example data
-let items = [
-  { id: 1, name: "Banana", price: 10 },
-  { id: 2, name: "Apple", price: 20 },
-];
-
-// GET all ingredients
-app.get("/ingredients", (req, res) => {
-  res.json(items);
-});
-
-
 
 // Start server
 const PORT = 5000;

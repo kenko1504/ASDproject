@@ -1,11 +1,34 @@
 import { useState, useRef } from "react";
 
 export default function AddIngredientPopUp({ onClose }) {
+
+  // use state for form
+  const [name, setName] = useState("");
+  const [quantity, setQuantity] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
+  const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
     fileInputRef.current.click(); // trigger file input
+  };
+  
+  const handleSubmit = async () => { // handle form submission to backend
+    const data = { name, quantity, expiryDate, description };
+
+    try {
+      const res = await fetch("http://localhost:5000/ingredients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+      });
+      const result = await res.json();
+      console.log("Saved ingredient:", result);
+      onClose();
+    } catch (err) {
+      console.error("Error:", err);
+    }
   };
 
   const handleChange = (e) => {
@@ -58,17 +81,17 @@ export default function AddIngredientPopUp({ onClose }) {
                   </div>
                   {/*input fields */}
                   <div className="w-[100px] h-[90px] flex flex-col justify-around">
-                    <input type="text" placeholder="Name" className="w-[100px] text-white bg-[#36874D] rounded-[7px]"/>
+                    <input type="text" placeholder="Name" onChange={(e) => setName(e.target.value)} className="w-[100px] text-white bg-[#36874D] rounded-[7px]"/>
                     <div className="flex flex-row">
-                      <input type="text"className="w-[60px] text-white bg-[#36874D] rounded-[7px]"/>
+                      <input type="text" onChange={(e) => setQuantity(e.target.value)} className="w-[60px] text-white bg-[#36874D] rounded-[7px]"/>
                       <input type="text" placeholder="Unit" className="w-[40px] text-white bg-[#36874D] rounded-[7px]"/>
                     </div>
 
-                    <input type="text" placeholder="Name" className="w-[100px] text-white bg-[#36874D] rounded-[7px]"/>
+                    <input type="text" placeholder="date" onChange={(e) => setExpiryDate(e.target.value)} className="w-[100px] text-white bg-[#36874D] rounded-[7px]"/>
                   </div>
                 </div>
                 <div className=" w-[100px] flex flex-col justify-around items-center">
-                  <button onClick={onClose}className="text-white h-[30px] w-[70px] bg-[#36874D] rounded-[7px]">Done</button>
+                  <button onClick={handleSubmit}className="text-white h-[30px] w-[70px] bg-[#36874D] rounded-[7px]">Submit</button>
                 </div>
               </div>
               <div className="flex-1 rounded-[10px] bg-[#A1CF7B] flex justify-center">
