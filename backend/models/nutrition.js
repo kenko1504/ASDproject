@@ -7,6 +7,7 @@ const nutritionSchema = new mongoose.Schema({
     calories: { type: Number, required: false },
     protein: { type: Number, required: false },
     fat: { type: Number, required: false },
+    transFat: { type: Number, required: false },
     carbohydrates: { type: Number, required: false },
     sugar: { type: Number, required: false },
     dietaryFiber: { type: Number, required: false },
@@ -14,6 +15,7 @@ const nutritionSchema = new mongoose.Schema({
     sodium: { type: Number, required: false },
     calcium: { type: Number, required: false },
     iron: { type: Number, required: false },
+    vitaminC: { type: Number, required: false }
   },
 });
 
