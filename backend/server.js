@@ -3,7 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
-import GroceryListModel from "./models/GroceryList.js";
+import GroceryListModel from "./models/groceryList.js";
 
 
 dotenv.config(); // read .env
