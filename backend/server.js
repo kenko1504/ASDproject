@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
+import GroceryListModel from "./models/GroceryList.js";
 
 dotenv.config(); // read .env
 const app = express();
@@ -46,6 +47,20 @@ let items = [
 app.get("/ingredients", (req, res) => {
   res.json(items);
 });
+
+app.post("/GroceryLists", async (req, res) => {
+  const { name, date, note, status } = req.body;
+  const groceryList = new GroceryListModel({ name, date, note, status });
+  await  groceryList.save();
+  res.json( groceryList);
+  console.log("Grocery List saved:",  groceryList);
+});
+
+app.get("/GroceryLists", (req, res) => {
+  GroceryListModel.find()
+    .then(lists => res.json(lists))
+    .catch(err => res.json(err));  
+})
 
 
 
