@@ -1,22 +1,78 @@
+import { useState, useEffect } from "react";
+
 export default function Nutritions() {
+  const [foodList, setFoodList] = useState([]);
+  const [selectedFood, setSelectedFood] = useState(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch("http://localhost:5000/Food");
+      const data = await response.json();
+      setFoodList(data);
+    };
+    fetchData();
+  }, []);
+
   return (
     <div>
-      <span className="title font-bold text-2xl">Nutritions</span>
-      <span className="search !ml-5">
-        <input type="text" placeholder="Type Food Name Here..." className="bg-gray-100 w-200" />
-      </span>
-      <div className="nutrition-info !mt-5">
+      <div className="header flex">
+        <span className="title font-bold text-2xl">Nutritions</span>
+        <input type="text" placeholder="Search Food..." />
+        <button className="ml-2 px-3 py-1 bg-blue-500 text-white rounded">Search</button>
+      </div>
+      
+      <div className="nutrition-info !mt-5 h-200 overflow-auto">
         <table>
-          <tr>
-            <th>Food Name</th>
-          </tr>
-          {
+          <thead>
             <tr>
-              <td><a href="/nutritions/apple">Apple</a></td>
+              <th>Food Name</th>
             </tr>
-          }
+          </thead>
+          <tbody>
+            {foodList.map((food) => (
+              <tr key={food._id}>
+                <td>
+                  <a
+                    href="#"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setSelectedFood(food);
+                    }}
+                    className="text-blue-600 !underline"
+                  >
+                    {food.foodName}
+                  </a>
+                </td>
+              </tr>
+            ))}
+          </tbody>
         </table>
       </div>
+
+      {selectedFood && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black/[var(--bg-opacity)] [--bg-opacity:50%]">
+          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
+            <h2 className="font-bold text-xl mb-2">{selectedFood.foodName}</h2>
+            <p>Calories: {selectedFood.calories}</p>
+            <p>Protein: {selectedFood.protein}</p>
+            <p>Fat: {selectedFood.fat}</p>
+            <p>Carbohydrates: {selectedFood.carbohydrates}</p>
+            <p>Sugar: {selectedFood.sugar}</p>
+            <p>Fiber: {selectedFood.fiber}</p>
+            <p>Cholesterol: {selectedFood.cholesterol}</p>
+            <p>Sodium: {selectedFood.sodium}</p>
+            <p>Calcium: {selectedFood.calcium}</p>
+            <p>Iron: {selectedFood.iron}</p>
+            <p>Vitamin C: {selectedFood.vitaminC}</p>
+            <button
+              onClick={() => setSelectedFood(null)}
+              className="mt-4 px-3 py-1 bg-red-500 text-white rounded"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

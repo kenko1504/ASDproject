@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import GroceryListModel from "./models/groceryList.js";
+import Food from "./models/food.js";
 
 
 dotenv.config(); // read .env
