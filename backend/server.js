@@ -62,7 +62,8 @@ app.get("/GroceryLists", (req, res) => {
   console.log("Grocery List Get");
 })
 
-
-
+// Start server
+const PORT = 5000;
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 
 //mongodb+srv://admin:1q2w3e4r!@cluster0.exeo5q3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
