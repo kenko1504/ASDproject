@@ -6,14 +6,16 @@
 
 /* Use colour variables from css for consistency */
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
 
 * {
     margin: 0;
     padding: 0;
     list-style-type: none;
     text-decoration: none;
-    font-family: "Roboto", sans-serif;
 }
+
 
 html {
     background-color: var(--background-colour);
@@ -24,4 +26,25 @@ a {
     color: inherit;
     cursor: pointer;
 }
-    
+
+.roboto{
+    font-family: "Roboto", sans-serif;
+}
+
+.cinzel-decorative-regular {
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.cinzel-decorative-bold {
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.cinzel-decorative-black {
+  font-family: "Cinzel Decorative", serif;
+  font-weight: 900;
+  font-style: normal;
+}

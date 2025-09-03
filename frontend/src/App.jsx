@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -12,20 +11,22 @@ import Settings from "./components/Settings";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
 import GroceryList from "./components/GroceryList.jsx";
+import "./index.css";
 
 export default function App() {
     return (
-        <div className="layout">
+        <div className="layout flex">
             <Sidebar />
-            <main className="content">
+            <main className="content flex flex-grow !p-4 !m-4 !mt-0 bg-[#f9fff9]">
                 <Routes>
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
                     <Route path="/fridge" element={<FridgeList />} />
-                    <Route path="/item-management" element={<ItemManagement/>} />
+                    <Route path="/item-management/*" element={<ItemManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/grocery-list" element={<GroceryList />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
+                    <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
                     <Route path="/settings" element={<Settings />} />
                 </Routes>

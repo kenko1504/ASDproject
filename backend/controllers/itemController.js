@@ -1,5 +1,4 @@
 import Item from "../models/item.js";
-import item from "../models/item.js";
 
 
 //Create item

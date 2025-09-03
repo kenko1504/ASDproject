@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
+import {useState, useEffect} from "react";
+import {Routes, Route, useNavigate} from "react-router-dom";
 import AddItem from "./AddItem.jsx";
 import UpdateItem from "./UpdateItem.jsx";
-import {Route, Routes} from "react-router-dom";
-import WasteBudget from "./WasteBudget.jsx";
+import "../index.css";
 
-export default function ItemManagement(){
+
+
+export default function ItemManagement() {
     const [items, setItems] = useState([]);
     const [editingItem, setEditingItem] = useState(null); // on editing item
     const [searchItem, setSearchItem] = useState(""); // search item by name
+    const navigate = useNavigate();
 
     useEffect(() => {
         fetch("http://localhost:5000/items")
@@ -19,6 +22,7 @@ export default function ItemManagement(){
     //add item
     const handleAddItem = (newItem) => {
         setItems([...items, newItem]);
+        navigate("/item-management"); // return to item list page after adding successfully
     }
 
     //click update button to open form
@@ -28,9 +32,9 @@ export default function ItemManagement(){
 
     //delete item
     const handleDeleteItem = async (id) => {
-        try{
+        try {
             const confirmDelete = window.confirm("Are you sure you want to delete this item?");
-            if(!confirmDelete){
+            if (!confirmDelete) {
                 return;
             }
 
@@ -38,11 +42,11 @@ export default function ItemManagement(){
                 method: "DELETE"
             });
 
-            if(!res.ok){
+            if (!res.ok) {
                 throw new Error("Failed to delete the item");
             }
             setItems(items.filter(item => item._id !== id)); // update state
-        }catch (err){
+        } catch (err) {
             console.error("Failed in deleting the item: ", err);
         }
     }
@@ -60,80 +64,84 @@ export default function ItemManagement(){
     );
 
     return (
-        <div>
-            <h1>Fridge Application</h1>
-            {/*<h2>Ingredients</h2>*/}
+        <Routes>
+            {/* Item List */}
+            <Route path="/" element={
+                <div className={"content"}>
+                    <h1>Fridge Application</h1><br/>
+                    <h2>Item Management</h2>
 
-            {/*<AddIngredient onAdd={handleAdd}/>*/}
+                    {/* searching box */}
+                    <input
+                        type="text"
+                        placeholder="Search by name..."
+                        value={searchItem}
+                        onChange={(e) => setSearchItem(e.target.value)}
+                        style={{ marginBottom: "10px", padding: "5px" }}
+                    />
 
-            {/*<ul>*/}
-            {/*    {ingredients.map(item => (*/}
-            {/*        <li key={item._id}>*/}
-            {/*            {item.name} - {item.quantity}*/}
-            {/*        </li>*/}
-            {/*    ))}*/}
-            {/*</ul>*/}
+                    <table border="1" align="center">
+                        <thead>
+                        <tr>
+                            <th>Category</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Quantity</th>
+                            <th>Price($)</th>
+                            <th>Expiry Date</th>
+                            <th>Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {filteredItems.map(item => (
+                            <tr key={item._id}>
+                                <td>{item.category}</td>
+                                <td>
+                                    {/*{item.imgUrl ? (<img src={item.imgUrl} alt={""} width="50" />) : (" - ")}*/}
+                                    {item.imgUrl ? (
+                                        <img
+                                            src={new URL(`../images/${item.imgUrl}`, import.meta.url)}
+                                            alt={""}
+                                            style={{width: "80px", height:"80px"}}
+                                        />
+                                    ) : (" - ")}
+                                </td>
+                                <td>{item.name}</td>
+                                <td>{item.quantity}</td>
+                                <td>{item.price}</td>
+                                <td>{new Date(item.expiryDate).toLocaleDateString()}</td>
+                                <td>
+                                    <button onClick={() => handleEditClick(item)}>Update</button>
+                                    <button onClick={() => handleDeleteItem(item._id)}>Delete</button>
+                                </td>
+                            </tr>
+                        ))}
+                        </tbody>
+                        {/* Add Item button*/}
+                        <tfoot>
+                        <tr>
+                            <td colSpan={7} align="center">
+                                <button onClick={() => navigate("addItem")}>Add Item</button>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
 
+                    {/* Update form */}
+                    {editingItem &&
+                        (<UpdateItem item={editingItem} onUpdate={handleUpdateItem} onCancel={() => setEditingItem(null)} />)
+                    }
+                </div>
+            } />
 
-            {/*Item Management frontend*/}
-            <AddItem onAdd={handleAddItem}/>
-            <h2>Item Management</h2>
-
-            {/*search box*/}
-            <input
-                type={"text"}
-                placeholder={"Search by name..."}
-                value={searchItem}
-                onChange={(e) => setSearchItem(e.target.value)}
-                style={{marginBottom: "10px", padding: "5px"}}
-            />
-
-            {/*<ul>*/}
-            {/*    {*/}
-            {/*        items.map(item => (*/}
-            {/*            <li key={item._id}>*/}
-            {/*                {item.category}: {item.name} - {item.quantity} - {item.price} - Expiry: {new Date(item.expiryDate).toLocaleString()} <br/>*/}
-            {/*            </li>*/}
-            {/*        ))*/}
-            {/*    }*/}
-            {/*</ul>*/}
-            <table border={"1"} align={"center"}>
-                <thead>
-                <tr>
-                    <th>Category</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    <th>Quantity</th>
-                    <th>Price($)</th>
-                    <th>Expiry Date</th>
-                    <th>Action</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredItems.map(item => (
-                    <tr key={item._id}>
-                        <td>{item.category}</td>
-                        <td>
-                            {item.imgUrl ? (<img src={item.imgUrl} alt={item.name} width="50"/>) : (" - ")}
-                        </td>
-                        <td>{item.name}</td>
-                        <td>{item.quantity}</td>
-                        <td>{item.price}</td>
-                        <td>{new Date(item.expiryDate).toLocaleDateString()}</td>
-                        <td>
-                            <button onClick={() => handleEditClick(item)}>Update</button>
-                            <button onClick={() => handleDeleteItem(item._id)}>Delete</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-            {/*if it's on editing, shows UpdateItem form*/}
-            {editingItem &&
-                (<UpdateItem item={editingItem} onUpdate={handleUpdateItem} onCancel={() => setEditingItem(null)}/>)
-            }
-        </div>
+            {/* Add Item page */}
+            <Route path="addItem" element={
+                <div>
+                    <AddItem onAdd={handleAddItem} />
+                    <button onClick={() => navigate("/item-management")}>Back</button>
+                </div>
+            } />
+        </Routes>
     );
 
 }
