@@ -36,7 +36,7 @@ export default function Login() {
         throw new Error(data.error || "Login failed");
       }
 
-      login(data);
+      login(data.user);
       navigate("/");
     } catch (err) {
       setError(err.message);
