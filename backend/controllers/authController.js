@@ -1,13 +1,12 @@
-
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 
 // LOGIN controller
 export const loginUser = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { username, password } = req.body;
 
   try {
-    const user = await User.findOne({ username, email });
+    const user = await User.findOne({ username });
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });

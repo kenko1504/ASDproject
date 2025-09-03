@@ -1,16 +1,18 @@
-
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../contexts/AuthContext.jsx";
 
 export default function Login() {
   const [formData, setFormData] = useState({
     username: "",
-    email: "",
     password: "",
   });
 
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -34,7 +36,8 @@ export default function Login() {
         throw new Error(data.error || "Login failed");
       }
 
-      setSuccess("Login successful!");
+      login(data);
+      navigate("/");
     } catch (err) {
       setError(err.message);
     }
@@ -48,15 +51,6 @@ export default function Login() {
           name="username"
           placeholder="Username"
           value={formData.username}
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          name="email"
-          placeholder="Email"
-          type="email"
-          value={formData.email}
           onChange={handleChange}
           required
         />
@@ -76,7 +70,6 @@ export default function Login() {
       <Link to={"/Register"}>Register</Link>
 
       {error && <p>{error}</p>}
-      {success && <p>{success}</p>}
     </div>
   );
 }
