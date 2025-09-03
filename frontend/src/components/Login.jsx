@@ -45,8 +45,8 @@ export default function Login() {
 
   return (
     <div>
-      <h2>Login</h2>
-      <form onSubmit={handleSubmit}>
+      <h2 className="title text-bold text-4xl">Login</h2><br/>
+      <form onSubmit={handleSubmit}  className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
         <input
           name="username"
           placeholder="Username"
@@ -54,7 +54,7 @@ export default function Login() {
           onChange={handleChange}
           required
         />
-        <br />
+        <br/>
         <input
           name="password"
           placeholder="Password"
@@ -63,11 +63,9 @@ export default function Login() {
           onChange={handleChange}
           required
         />
-        <br />
-        <button type="submit">Login</button>
+        <br/> <br/>
+        <button type="submit" className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-3 py-2 rounded">Login</button>
       </form>
-
-      <Link to={"/Register"}>Register</Link>
 
       {error && <p>{error}</p>}
     </div>

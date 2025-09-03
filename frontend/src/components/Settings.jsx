@@ -107,10 +107,10 @@ export default function Settings() {
 
   return (
     <div className="p-4">
-      <h2 className="text-2xl font-bold mb-4">Settings</h2>
+      <h2 className="title text-bold text-4xl">Settings</h2> <br/>
       
       {/* Username Form */}
-      <div className="space-y-2">
+      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
         <p className="font-semibold">Current Username: {user.username}</p>
         <div className="flex gap-2">
           <input
@@ -134,10 +134,10 @@ export default function Settings() {
             Update
           </button>
         </div>
-      </div><br/>
+      </div>
 
       {/* Email Form */}
-      <div className="space-y-2">
+      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
         <p className="font-semibold">Current Email: {user.email}</p>
         <div className="flex gap-2">
           <input
@@ -161,10 +161,10 @@ export default function Settings() {
             Update
           </button>
         </div>
-      </div><br/>
+      </div>
 
       {/* Password Form */}
-      <div className="space-y-2">
+      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
         <p className="font-semibold">Change Password</p>
         <div className="flex gap-2">
           <input
@@ -197,7 +197,7 @@ export default function Settings() {
 
       <br/>
       
-      <button onClick={handleDeleteAccount} className="bg-red-400 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+      <button onClick={handleDeleteAccount} className="bg-red-400 text-white !p-4 !m-4 !mt-0 rounded-lg hover:bg-red-700 transition">
         Delete Account
       </button>
     </div>

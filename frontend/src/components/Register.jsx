@@ -38,7 +38,7 @@ export default function Register() {
 
   return (
     <div>
-      <h2>Register</h2>
+      <h2 className="title text-bold text-4xl">Register</h2><br/>
 
       {/* Show this only if registration is successful */}
       {success ? (
@@ -48,7 +48,7 @@ export default function Register() {
         </div>
       ) : (
         // Show form only if not registered yet
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
           <input
             name="username"
             placeholder="Username"
@@ -56,7 +56,7 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-          <br />
+          <br/>
 
           <input
             name="email"
@@ -66,7 +66,7 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-          <br />
+          <br/>
 
           <input
             name="password"
@@ -76,9 +76,9 @@ export default function Register() {
             onChange={handleChange}
             required
           />
-          <br />
+          <br/><br/>
 
-          <button type="submit">Register</button>
+          <button type="submit" className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-3 py-2 rounded">Register</button>
         </form>
       )}
 
