@@ -7,7 +7,7 @@ import Dashboard from "./components/Dashboard";
 import Recipes from "./components/Recipes";
 import ItemManagement from "./components/ItemManagement";
 import Nutrition from "./components/Nutritions";
-import WasteBudget from "./components/WasteManagement";
+import WasteBudget from "./components/WasteBudget";
 import Settings from "./components/Settings";
 import Sidebar from "./components/DashboardComponent/Sidebar";
 import FridgeList from "./components/ItemManagement";
