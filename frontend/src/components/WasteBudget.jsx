@@ -19,14 +19,14 @@ export default function WasteBudget({ items }) {
 
     return (
         <div>
-            <h1>Waste and Budget Controller</h1>
+            <h1>Waste and Budget Controller</h1><br/>
 
             {/* Budget Section */}
-            <h2>Budget Control</h2>
+            <h2>--Budget Control--</h2>
             <p>Total Value: ${budgetStats.totalValue}</p>
             <p>Total Items: {budgetStats.count}</p>
             <label>
-                Budget:
+                Budget ($):
                 <input
                     type="number"
                     value={budget}
@@ -38,7 +38,7 @@ export default function WasteBudget({ items }) {
                 : <p>Within Budget</p>}
 
             {/* Waste Section */}
-            <h2>Waste Control</h2>
+            <br/><h2>--Waste Control--</h2>
             <h3>Expired Items</h3>
             {wasteStats.expired.length > 0 ? (
                 <ul>
@@ -50,7 +50,7 @@ export default function WasteBudget({ items }) {
                 </ul>
             ) : <p>No expired items</p>}
 
-            <h3>Expiring Soon (within 3 days)</h3>
+            <br/><h3>Expiring Soon (within 3 days)</h3>
             {wasteStats.expiringSoon.length > 0 ? (
                 <ul>
                     {wasteStats.expiringSoon.map(i => (
@@ -61,7 +61,7 @@ export default function WasteBudget({ items }) {
                 </ul>
             ) : <p>No items expiring soon</p>}
 
-            <p>Total Waste Value: ${wasteStats.wastedValue}</p>
+            <br/><p>Total Waste Value: ${wasteStats.wastedValue}</p>
         </div>
     );
 }
