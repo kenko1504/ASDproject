@@ -3,6 +3,9 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
+
 
 dotenv.config(); // read .env
 const app = express();
@@ -10,6 +13,8 @@ app.use(cors());
 app.use(express.json());
 //routes
 app.use("/items", itemRoutes)
+app.use("/auth", authRoutes);
+app.use("/users", userRoutes);
 
 //connect with MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas

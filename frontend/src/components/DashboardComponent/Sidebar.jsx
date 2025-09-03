@@ -28,7 +28,8 @@
                    </div>
                     <div className="lower flex">
                         <button className="flex w-3/12 items-center"><img className="w-12 h-12" src={signOut} alt={"Sign Out"}/></button>
-                        <button className="flex w-9/12 items-center"><img className="w-12 h-12 rounded-[50%]" src={sampleProfileImg} alt={"ProfilePic"}/><span className="font-bold text-white">UserName</span></button><br/>
+                        {/*<button className="flex w-9/12 items-center"><img className="w-12 h-12 rounded-[50%]" src={sampleProfileImg} alt={"ProfilePic"}/><span className="font-bold text-white">Login</span></button><br/>*/}
+                        <Link className="flex w-9/12 items-center align-middle hover:bg-[#6FAF4B]" to={"/Login"}><p className="font-bold text-white text-center">Login</p></Link>
                     </div>
                 </div>
             </div>
