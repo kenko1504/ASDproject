@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -11,6 +10,7 @@ import WasteBudget from "./components/WasteBudget";
 import Settings from "./components/Settings";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
+import "./index.css";
 
 export default function App() {
     return (
@@ -21,7 +21,7 @@ export default function App() {
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
                     <Route path="/fridge" element={<FridgeList />} />
-                    <Route path="/item-management" element={<ItemManagement/>} />
+                    <Route path="/item-management/*" element={<ItemManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
