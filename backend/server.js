@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import GroceryListModel from "./models/groceryList.js";
+import Food from "./models/food.js";
 
 
 dotenv.config(); // read .env
@@ -61,6 +62,13 @@ app.get("/GroceryLists", (req, res) => {
     .catch(err => res.json(err));
   console.log("Grocery List Get");
 })
+
+app.get("/Food", (req, res) => {
+  Food.find()
+    .then(items => res.json(items))
+    .catch(err => res.json(err));
+  console.log("Food Get");
+});
 
 // Start server
 const PORT = 5000;
