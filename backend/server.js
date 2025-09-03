@@ -62,6 +62,13 @@ app.get("/GroceryLists", (req, res) => {
   console.log("Grocery List Get");
 })
 
+app.get("/Food", (req, res) => {
+  Food.find()
+    .then(items => res.json(items))
+    .catch(err => res.json(err));
+  console.log("Food Get");
+});
+
 // Start server
 const PORT = 5000;
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
