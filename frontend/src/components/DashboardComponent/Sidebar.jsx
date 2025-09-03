@@ -17,6 +17,7 @@
                     <ul className="!mt-15 text-white font-bold text-center">
                         <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/fridge"}>Your Fridge</Link></li>
                         <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/item-management"}>Item Management</Link></li>
+                          <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/grocery-list"}>Grocery List</Link></li>
                         <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/nutrition"}>Nutrition</Link></li>
                         <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/wasteBudget"}>Waste and <br></br>Budget Control</Link></li>
                     </ul>

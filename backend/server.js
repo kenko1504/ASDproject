@@ -3,6 +3,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
+import GroceryListModel from "./models/GroceryList.js";
 
 
 dotenv.config(); // read .env
@@ -35,8 +36,33 @@ app.post("/ingredients", async (req, res) => {
   res.json(ingredient);
 });
 
-// Start server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+// Example data
+let items = [
+  { id: 1, name: "Banana", price: 10 },
+  { id: 2, name: "Apple", price: 20 },
+];
+
+// GET all ingredients
+app.get("/ingredients", (req, res) => {
+  res.json(items);
+});
+
+app.post("/GroceryLists", async (req, res) => {
+  const { name, date, note, status } = req.body;
+  const groceryList = new GroceryListModel({ name, date, note, status });
+  await  groceryList.save();
+  res.json( groceryList);
+  console.log("Grocery List saved:",  groceryList);
+});
+
+app.get("/GroceryLists", (req, res) => {
+  GroceryListModel.find()
+    .then(lists => res.json(lists))
+    .catch(err => res.json(err));
+  console.log("Grocery List Get");
+})
+
+
+
 
 //mongodb+srv://admin:1q2w3e4r!@cluster0.exeo5q3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
