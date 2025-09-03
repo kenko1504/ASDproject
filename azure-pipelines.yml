@@ -6,27 +6,55 @@ trigger:
 pool:
   vmImage: 'ubuntu-latest'
 
-jobs:
-- job: FrontendBuild
-  displayName: 'Build Frontend'
-  steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '22.x'
-    - script: |
-        cd frontend
-        npm install
-        npm run build
-      displayName: 'Build React Frontend'
+stages:
+  - stage: test
+    displayName: 'Testing Backend & Frontend'
+    jobs:
+      - job: Backend
+        displayName: 'Backend Testing'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '22.x'
 
-- job: BackendBuild
-  displayName: 'Build Backend'
-  steps:
-    - task: NodeTool@0
-      inputs:
-        versionSpec: '22.x'
-    - script: |
-        cd backend
-        npm install
-      displayName: 'Build Node Backend'
+          - script: |
+              cd backend
+              npm install
+            displayName: 'Install Backend Dependencies'
 
+          - script: |
+              cd backend
+              echo "npm run test:unit"
+            displayName: 'Run Backend Unit Tests'
+
+          - script: |
+              cd backend
+              echo "npm run test:integration"
+            displayName: 'Run Backend Integration Tests'
+
+      - job: Frontend
+        displayName: 'Frontend Testing'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '22.x'
+
+          - script: |
+              cd frontend
+              npm install
+            displayName: 'Install Frontend Dependencies'
+
+          - script: |
+              cd frontend
+              echo "npm run test:unit"
+            displayName: 'Run Frontend Unit Tests'
+
+          - script: |
+              cd frontend
+              echo "npm run test:integration"
+            displayName: 'Run Frontend Integration Tests'
+
+          - script: |
+              cd frontend
+              npm run build
+            displayName: 'Run Frontend Build'

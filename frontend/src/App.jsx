@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import AddIngredient from "./components/AddIngredient";
+import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./components/Login";
@@ -12,7 +12,7 @@ import Settings from "./components/Settings";
 import Sidebar from "./components/DashboardComponent/Sidebar";
 import FridgeList from "./components/ItemManagement";
 
-// entry point
+
 export default function App() {
     return (
         <div className="layout flex">
