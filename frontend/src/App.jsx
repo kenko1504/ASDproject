@@ -1,36 +1,34 @@
-import { useState, useEffect } from "react";
-import AddIngredient from "./components/AddIngredient";
+import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import Recipes from "./components/Recipes";
+import ItemManagement from "./components/ItemManagement";
+import Nutrition from "./components/Nutritions";
+import WasteBudget from "./components/WasteBudget";
+import Settings from "./components/Settings";
+import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
+import FridgeList from "./components/FridgeList.jsx";
+import "./index.css";
 
-// entry point
+
 export default function App() {
-  const [ingredients, setIngredients] = useState([]);
-
-  useEffect(() => {
-    fetch("http://localhost:5000/ingredients")
-      .then(res => res.json())
-      .then(data => setIngredients(data))
-      .catch(err => console.error(err));
-  }, []);
-
-  const handleAdd = (newItem) => {
-    setIngredients([...ingredients, newItem]);
-  };
-
-  return (
-    <>
-      <Header />
-      <NavBar />
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard ingredients={ingredients} />} />
-        <Route path="/recipes" element={<Recipes />} />
-        <Route path="/itemManagement" element={<ItemManagement ingredients={ingredients} />} />
-        <Route path="/nutrition" element={<Nutrition />} />
-        <Route path="/wasteManagement" element={<WasteManagement />} />
-        <Route path="/settings" element={<Settings />} />
-      </Routes>
-    </>
-  );
+    return (
+        <div className="layout flex">
+            <Sidebar />
+            <main className="content flex flex-grow !p-4 !m-4 !mt-0 bg-[#f9fff9]">
+                <Routes>
+                    {/*<Route path="/" element={<Login />} />*/}
+                    <Route path="/" element={<Dashboard/>} />
+                    <Route path="/fridge" element={<FridgeList />} />
+                    <Route path="/item-management/*" element={<ItemManagement/>} />
+                    <Route path="/nutrition" element={<Nutrition />} />
+                    <Route path="/wasteBudget" element={<WasteBudget />} />
+                    <Route path="/recipes" element={<Recipes />} />
+                    <Route path="/settings" element={<Settings />} />
+                </Routes>
+            </main>
+        </div>
+    );
 }
