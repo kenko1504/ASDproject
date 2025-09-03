@@ -81,21 +81,30 @@ export default function AddIngredientPopUp({ onClose }) {
                   </div>
                   {/*input fields */}
                   <div className=" w-[120px] h-[90px] flex flex-col justify-around">
-                    <input type="text" placeholder="Name" onChange={(e) => setName(e.target.value)} className=" placeholder:pl-2 w-[120px] text-white bg-[#36874D] rounded-[12px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)]"/>
+                    <input type="text" placeholder="" onChange={(e) => setName(e.target.value)} className="placeholder:pl-2 w-[120px] text-white bg-[#36874D] rounded-[12px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-0 box-border text-center"/>
                     <div className="flex flex-row justify-between">
-                      <input type="text" onChange={(e) => setQuantity(e.target.value)} className="w-[70px] text-white bg-[#36874D] rounded-[11px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)]"/>
-                      <input type="text" placeholder="" className="w-[40px] text-white bg-[#36874D] rounded-[6px] shadow-[0_2px_5px_rgba(0,0,0,0.6)]"/>
-                    </div>
-
-                    <input type="text" placeholder="date" onChange={(e) => setExpiryDate(e.target.value)} className="placeholder:pl-2 w-[120px] text-white bg-[#36874D] rounded-[12px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)]"/>
+                      <input type="text" onChange={(e) => setQuantity(e.target.value)} className="w-[70px] text-white bg-[#36874D] rounded-[11px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-0"/>
+                     
+                      <select
+                      className="text-center w-[40px] text-white bg-[#36874D] rounded-[6px] shadow-[0_2px_5px_rgba(0,0,0,0.6)] focus:outline-none focus:ring-0 appearance-none"
+                      name="unit"
+                      >
+                      <option value="grams">g</option>
+                      <option value="none">n/a</option>
+                    </select>
+                  </div>
+                    <input type="text" placeholder="" onChange={(e) => setExpiryDate(e.target.value)} className="placeholder:pl-2 w-[120px] text-white text-center bg-[#36874D] rounded-[12px] shadow-[inset_0_3px_3px_rgba(0,0,0,0.5)] focus:outline-none focus:ring-0"/>
                   </div>
                 </div>
-                <div className=" w-[100px] flex flex-col justify-around items-center">
+                <div className="w-[100px] flex flex-col justify-around items-center">
                   <button onClick={handleSubmit}className="text-white h-[45px] w-[90px] bg-[#36874D] rounded-[15px] shadow-[0_4px_5px_rgba(0,0,0,0.5)]">Submit</button>
                 </div>
               </div>
-              <div className="flex-1 rounded-[10px] bg-[#A1CF7B] flex justify-center">
-                <input type="text" placeholder="Notes:" className="w-[350px] text-white"/>
+              <div className=" flex-1 rounded-[10px] bg-[#A1CF7B] flex justify-center items-center">
+                <textarea 
+                  placeholder="Notes:" 
+                  className="w-[350px] h-[100px] text-white placeholder:text-left placeholder:align-top p-2 bg-transparent resize-none focus:outline-none focus:ring-0"
+                />
               </div>
             </div>
           </div>
