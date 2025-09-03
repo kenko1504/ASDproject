@@ -9,11 +9,11 @@ export default function GroceryList() {
         GL_Note: "", 
         GL_Status: "On-Going"
     });
-
     const [lists, setLists] = useState([])
-        useEffect(() => {
-        axios.get('http://localhost:5001/GroceryLists')
-            .then(lists => setUsers(lists.data))
+
+    useEffect(() => {
+        axios.get('http://localhost:5000/GroceryLists')
+            .then(lists => setLists(lists.data))
             .catch(err => console.log(err))
     }, [])
 
@@ -26,7 +26,7 @@ export default function GroceryList() {
         GL_Name: "", 
         GL_Date: "", 
         GL_Note: "", 
-        GL_status: "On-Going"
+        GL_Status: "On-Going"
     });
 };
 
@@ -41,6 +41,7 @@ export default function GroceryList() {
             .then(res => {
                 console.log(res.data.message);
                 resetForm();
+                setLists(prevLists => [...prevLists, res.data]); // Append the new list to the existing lists
             })
             .catch(err => console.error(err));
     };
@@ -48,21 +49,6 @@ export default function GroceryList() {
     return (
         <div className="w-full h-screen flex items-center flex-col bg-red-50 !px-3 !py-3 rounded-2xl shadow-md">
             <h1 className="justify-self-center text-3xl font-bold text-gray-800">Grocery List</h1>
-            {/* <div className="grid grid-cols-3 w-full !mb-3">
-                <label for="GroceryListName">
-                    name:
-                    <input type="text"
-                    className="ml-2 p-1 border border-gray-300 rounded" 
-                    placeholder="Item name..." />
-                </label>
-                <label>date:
-                    <input type="date" className="ml-2 p-1 border border-gray-300 rounded" placeholder="Date..." />
-                </label>
-                <button className="justify-self-start !px-3 !py-1 bg-blue-500 text-white font-bold rounded hover:bg-blue-600">Add</button> 
-                
-            </div> */}
-
-
             <form onSubmit={handleSubmit} className="flex flex-row !mb-3 !gap-2">
                 <label for="GL_Name">Name:</label>
                 <input  name="GL_Name" type="text" placeholder="list name..." value={form.GL_Name} onChange={handleChange} required />
@@ -96,7 +82,7 @@ export default function GroceryList() {
                 <tbody>
                     {
                         lists.map((list) => {
-                            <tr>
+                            return <tr>
                                 <td className="px-4 py-2 border-b">{list.name}</td>
                                 <td className="px-4 py-2 border-b">{list.date}</td>
                                 <td className="px-4 py-2 border-b">{list.status}</td>

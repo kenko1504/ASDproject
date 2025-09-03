@@ -59,7 +59,8 @@ app.post("/GroceryLists", async (req, res) => {
 app.get("/GroceryLists", (req, res) => {
   GroceryListModel.find()
     .then(lists => res.json(lists))
-    .catch(err => res.json(err));  
+    .catch(err => res.json(err));
+  console.log("Grocery List Get");
 })
 
 
