@@ -2,25 +2,31 @@ import { useState, useEffect } from "react";
 
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedFood, setSelectedFood] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("http://localhost:5000/Food");
       const data = await response.json();
-      setFoodList(data);
+      const filteredData = data.filter(item => item.foodName.toLowerCase().includes(searchTerm.toLowerCase()));
+      setFoodList(filteredData);
     };
     fetchData();
-  }, []);
+  }, [searchTerm]);
 
   return (
     <div>
       <div className="header flex">
         <span className="title font-bold text-2xl">Nutritions</span>
-        <input type="text" placeholder="Search Food..." />
-        <button className="ml-2 px-3 py-1 bg-blue-500 text-white rounded">Search</button>
+        <input
+          type="text"
+          placeholder="Search Food..."
+          className="!ml-5 bg-gray-100 w-150 rounded"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
       </div>
-      
       <div className="nutrition-info !mt-5 h-200 overflow-auto">
         <table>
           <thead>
