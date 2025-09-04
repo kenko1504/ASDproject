@@ -2,6 +2,7 @@ import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp";
 import Header from "./components/Header";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Login from "./components/Login";
+import Register from "./components/Register.jsx";
 import Dashboard from "./components/Dashboard";
 import Recipes from "./components/Recipes";
 import ItemManagement from "./components/ItemManagement";
@@ -29,6 +30,8 @@ export default function App() {
                     <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/Login" element={<Login />} />
+                    <Route path="/Register" element={<Register />} />
                 </Routes>
             </main>
         </div>
