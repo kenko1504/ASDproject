@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import GroceryListModel from "./models/groceryList.js";
+import Food from "./models/food.js";
 
 
 dotenv.config(); // read .env
@@ -24,21 +26,19 @@ mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find
     .catch(err => console.error("MongoDB connection error: ", err));
 
 
+const Ingredient = mongoose.model("Ingredient", new mongoose.Schema({
+  name: String,
+  quantity: Number,
+  expiryDate: String,
+  description: String,
+  image: String
+}));
 
-
-app.post("/ingredients", (req, res) => {
-  const id = parseInt(req.params.id);
-  const item = items.find(i => i.id === id);
-
-  if (!item) {
-    return res.status(404).json({ message: "Item not found" });
-  }
-
-  const { name, price } = req.body; // Get new values from request body
-  if (name) item.name = name;
-  if (price) item.price = price;
-
-  res.json({ message: "Item updated", item });
+app.post("/ingredients", async (req, res) => {
+  const { name, quantity, expiryDate, description, image } = req.body;
+  const ingredient = new Ingredient({ name, quantity, expiryDate, description, image });
+  await ingredient.save();
+  res.json(ingredient);
 });
 
 // Example data
@@ -52,7 +52,27 @@ app.get("/ingredients", (req, res) => {
   res.json(items);
 });
 
+app.post("/GroceryLists", async (req, res) => {
+  const { name, date, note, status } = req.body;
+  const groceryList = new GroceryListModel({ name, date, note, status });
+  await  groceryList.save();
+  res.json( groceryList);
+  console.log("Grocery List saved:",  groceryList);
+});
 
+app.get("/GroceryLists", (req, res) => {
+  GroceryListModel.find()
+    .then(lists => res.json(lists))
+    .catch(err => res.json(err));
+  console.log("Grocery List Get");
+})
+
+app.get("/Food", (req, res) => {
+  Food.find()
+    .then(items => res.json(items))
+    .catch(err => res.json(err));
+  console.log("Food Get");
+});
 
 // Start server
 const PORT = 5000;
