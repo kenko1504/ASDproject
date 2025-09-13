@@ -21,32 +21,68 @@
         }
 
         return (
-            <div className={"sidebar w-[200px] flex flex-col bg-[#85BC59] p-5 min-h-screen"}>
-                <div className="logo flex cinzel-decorative-regular text-center text-xl !mt-5 content-center">
-                    <img className="w-2/12 h-8 mx-auto" src={logoImg} alt="logo" />
-                    <span className={"title w-8/12 text-white weight-bold text-center"}><Link to="/">FridgeManager</Link></span>
-                </div>
-                <nav className="flex flex-grow flex-col">
-                    <ul className="!mt-15 text-white font-bold text-center">
-                        <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/fridge"}>Your Fridge</Link></li>
-                        <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/item-management"}>Item Management</Link></li>
-                          <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/grocery-list"}>Grocery List</Link></li>
-                        <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/nutrition"}>Nutrition</Link></li>
-                        <li className="h-15 flex items-center justify-center transition hover:bg-[#6FAF4B]"><Link to={"/wasteBudget"}>Waste and <br></br>Budget Control</Link></li>
+            <div className={"sidebar w-[250px] flex flex-col bg-[#85BC59] p-5 min-h-screen border-6 rounded-2xl !pt-5 border-white"}>
+                <Link to="/"><div className="logo flex cinzel-decorative-regular text-center text-xl !ml-1 !pt-5 !pb-5 content-center items-center">
+                    <img className="w-10 h-10 mx-auto" src={logoImg} alt="logo" />
+                    <span className={"title w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
+                </div></Link>
+                <nav className="flex flex-col items-center !mt-5">
+                    <ul className=" text-white text-center w-6/7 font-medium">
+
+                        <Link to={"/fridge"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] rounded-t-xl"
+                        >Your Fridge</li></Link>
+
+                        <Link to={"/item-management"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Item Management</li></Link>
+
+                        <Link to={"/grocery-list"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Grocery List</li></Link>
+
+                        <Link to={"/nutrition"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Nutrition</li></Link>
+
+                        <Link to={"/wasteBudget"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6 rounded-b-xl"
+                        >Waste and <br></br>Budget Control</li></Link>
                     </ul>
                 </nav>
 
+
+                <div className="flex flex-col items-center !mt-20"> {/* Notifications */}
+                    <ul className=" text-white text-center w-6/7 font-medium border-4 border-[#A1CF7B] rounded-xl">
+                        <li 
+                            className="!p-2 flex items-center justify-center"
+                        ><img className="w-8 h-8" src={notificationImg} alt={"Notifications"}/></li> 
+                    </ul>
+                </div>
+
                 {user ? (
                     <>
-                    <div className={"sidebar-footer !mt-auto"}>
-                        <div className="upper flex">
-                            <button className="flex w-3/12 items-center"><img className="w-12 h-12" src={notificationImg} alt={"Notifications"}/></button><br/>
-                            <Link className="flex w-9/12 items-center" to={"/settings"}><img className="w-10 h-10" src={settingImg} alt={"Settings"}/><span className="font-bold text-white">Settings</span></Link><br/>
+                    <div className={"sidebar-footer !mt-auto flex !p-1"}>
+
+                        <div className="flex items-center bg-[#A1CF7B] w-4/6 rounded-xl !pr-2">
+                            <img className="w-8 h-8 rounded-[50%] !ml-2" src={sampleProfileImg} alt={"ProfilePic"}/>
+                            <span className="font-medium text-white w-full max-w-full text-center overflow-scroll">{user.username}</span>
                         </div>
-                        <div className="lower flex">
-                            <button className="flex w-3/12 items-center" onClick={handleLogout}><img className="w-12 h-12" src={signOut} alt={"Sign Out"}/></button>
-                            <button className="flex w-9/12 items-center"><img className="w-10 h-10 rounded-[50%]" src={sampleProfileImg} alt={"ProfilePic"}/><span className="font-bold text-white">{user.username}</span></button><br/>
+                        <Link className="flex items-center bg-[#A1CF7B] !pl-1 !pr-1 rounded-xl !ml-1 !mr-1 hover:bg-[#6FAF4B]" to={"/settings"}><img className="w-8 h-8" src={settingImg} alt={"Settings"}/></Link>
+                        <button className="flex items-center bg-[#A1CF7B] !p-2  rounded-xl hover:bg-[#6FAF4B]" onClick={handleLogout}><img className="w-6 h-6" src={signOut} alt={"Sign Out"}/></button>
+                        
+
+                        {/* <div className="upper flex justify-end !pr-3">
+                            <button className="flex items-center bg-[#A1CF7B] !p-2 rounded-xl !mr-2 hover:bg-[#6FAF4B]" onClick={handleLogout}><img className="w-6 h-6" src={signOut} alt={"Sign Out"}/></button>
+                            <Link className="flex items-center bg-[#A1CF7B] !pl-1 !pr-1 rounded-xl hover:bg-[#6FAF4B]" to={"/settings"}><img className="w-8 h-8" src={settingImg} alt={"Settings"}/></Link><br/>
                         </div>
+                        <div className="lower flex justify-center !mt-2 !mb-2">
+                            <button className="flex items-center !p-1 rounded-xl !mr-2 bg-[#A1CF7B] hover:bg-[#6FAF4B]"><img className="w-10 h-10" src={notificationImg} alt={"Notifications"}/></button><br/>                            
+                            <div className="flex items-center bg-[#A1CF7B] w-4/6 rounded-xl">
+                                <img className="w-10 h-10 rounded-[50%] !ml-2" src={sampleProfileImg} alt={"ProfilePic"}/>
+                                <span className="font-medium text-white w-3/5 text-center">{user.username}</span>
+                            </div><br/>
+                        </div> */}
                     </div>
                     </>
                 ) : (
