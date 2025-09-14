@@ -21,10 +21,10 @@
         }
 
         return (
-            <div className={"sidebar w-[250px] flex flex-col bg-[#85BC59] p-5 min-h-screen border-6 rounded-2xl !pt-5 border-white"}>
-                <Link to="/"><div className="logo flex cinzel-decorative-regular text-center text-xl !ml-1 !pt-5 !pb-5 content-center items-center">
+            <div className={"sidebar w-[250px] flex flex-col bg-[#85BC59] p-5 min-h-screen border-6 rounded-2xl !pt-5 border-white "}>
+                <Link to="/"><div className="logo flex font-semibold text-center text-xl !ml-2 !pt-5 !pb-5 content-center items-center group">
                     <img className="w-10 h-10 mx-auto" src={logoImg} alt="logo" />
-                    <span className={"title w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
+                    <span className={"title group-hover:text-[#A1CF7B] transition w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
                 </div></Link>
                 <nav className="flex flex-col items-center !mt-5">
                     <ul className=" text-white text-center w-6/7 font-medium">
@@ -52,11 +52,11 @@
                 </nav>
 
 
-                <div className="flex flex-col items-center !mt-20"> {/* Notifications */}
+                <div className="flex flex-col items-center !mt-20 group"> {/* Notifications */}
                     <ul className=" text-white text-center w-6/7 font-medium border-4 border-[#A1CF7B] rounded-xl">
-                        <li 
-                            className="!p-2 flex items-center justify-center"
-                        ><img className="w-8 h-8" src={notificationImg} alt={"Notifications"}/></li> 
+                        <li className="!p-2 flex items-center justify-center">
+                                <img className="w-8 h-8" src={notificationImg} alt={"Notifications"}/>
+                        </li> 
                     </ul>
                 </div>
 
