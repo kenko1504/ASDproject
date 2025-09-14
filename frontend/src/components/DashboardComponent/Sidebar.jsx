@@ -17,7 +17,7 @@
 
         const handleLogout = () => {
             logout();
-            navigate("/login");
+            navigate("/LandingPage");
         }
 
         return (
