@@ -40,7 +40,6 @@ export default function LandingPage() {
             <div className="justify-center text-center items-center">
                 <h1 className="text-8xl !mb-10">FridgeManager</h1>
                 
-                {/* Main CTA button */}
                 <button 
                     onClick={openLoginModal}
                     className="text-4xl bg-[#36874D] hover:bg-[#2d6d3e] transition text-white !p-2 !pl-12 !pr-12 rounded-full drop-shadow-lg drop-shadow-gray-400 mb-6"

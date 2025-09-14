@@ -34,8 +34,16 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
 
   const handleOverlayClick = (e) => {
     if (e.target === e.currentTarget) {
-      onClose();
+      handleClose();
     }
+  };
+
+  const handleSwitchToLogin = () => {
+    // Reset form state when switching to login
+    setFormData({ username: "", email: "", password: "" });
+    setError("");
+    setSuccess(false);
+    onSwitchToLogin();
   };
 
   const handleClose = () => {
@@ -53,27 +61,26 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
       className="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
       onClick={handleOverlayClick}
     >
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full mx-4 relative">
+      <div className="bg-white !p-8 rounded-xl shadow-lg max-w-md w-full !mx-4 relative">
         {/* Close button */}
         <button
           onClick={handleClose}
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+          className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
         >
           ×
         </button>
         
-        <h2 className="title text-bold text-4xl mb-6">Register</h2>
+        <h2 className="title text-bold text-4xl !mb-6">Register</h2>
         
         {/* Show success message if registration is successful */}
         {success ? (
           <div className="text-center">
-            <div className="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
+            <div className="!mb-4 !p-4 bg-green-100 border-2 border-green-400 text-green-700 rounded border-dashed">
               <p className="font-medium">Registration successful!</p>
-              <p className="text-sm mt-1">You can now log in with your credentials.</p>
             </div>
             <button
-              onClick={onSwitchToLogin}
-              className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-4 py-3 rounded-lg font-medium"
+              onClick={handleSwitchToLogin}
+              className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-lg font-medium"
             >
               Go to Login
             </button>
@@ -88,7 +95,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                 value={formData.username}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
+                className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
               />
               
               <input
@@ -98,7 +105,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
+                className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
               />
               
               <input
@@ -108,27 +115,27 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
+                className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
               />
               
               <button 
                 type="submit" 
-                className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-4 py-3 rounded-lg font-medium"
+                className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
               >
                 Register
               </button>
             </form>
             
             {error && (
-              <p className="text-red-500 text-sm mt-4 text-center">{error}</p>
+              <p className="text-red-500 text-sm !mt-4 text-center">{error}</p>
             )}
             
-            <div className="mt-6 text-center">
+            <div className="!mt-6 text-center">
               <p className="text-gray-600">
                 Already have an account?{" "}
                 <button
-                  onClick={onSwitchToLogin}
-                  className="text-[#85BC59] hover:underline font-medium"
+                  onClick={handleSwitchToLogin}
+                  className="text-[#85BC59] hover:text-[#6FAF4B] transition hover:underline font-medium"
                 >
                   Sign in
                 </button>
