@@ -22,9 +22,9 @@
 
         return (
             <div className={"sidebar w-[250px] flex flex-col bg-[#85BC59] p-5 min-h-screen border-6 rounded-2xl !pt-5 border-white "}>
-                <Link to="/"><div className="logo flex font-semibold text-center text-xl !ml-2 !pt-5 !pb-5 content-center items-center group">
+                <Link to="/"><div className="logo flex font-semibold text-center text-xl !ml-2 !pt-5 !pb-5 content-center items-center">
                     <img className="w-10 h-10 mx-auto" src={logoImg} alt="logo" />
-                    <span className={"title group-hover:text-[#A1CF7B] transition w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
+                    <span className={"title transition w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
                 </div></Link>
                 <nav className="flex flex-col items-center !mt-5">
                     <ul className=" text-white text-center w-6/7 font-medium">
