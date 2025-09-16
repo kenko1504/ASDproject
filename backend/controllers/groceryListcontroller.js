@@ -10,6 +10,9 @@ export const createList = async (req, res) => {
     console.log("Grocery List created:", list);
     
     const user = await User.findById(UID);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" }); // User error handling
+    }
     user.groceryList.push(list._id); // Add the list ID to the user's groceryLists array
     await user.save();
     res.status(201).json(list);
@@ -46,6 +49,21 @@ export const deleteList = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const updateList = async (req, res) => {
+  try {
+    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const { name, date, note, status } = req.body;
+    const updatedList = await GroceryList.findByIdAndUpdate(
+      GL_ID,
+      { name, date, note, status },
+      { new: true } // Return the updated document
+    );
+    res.status(200).json(updatedList);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
 
 // // Update User
 // export const updateUser = async (req, res) => {
