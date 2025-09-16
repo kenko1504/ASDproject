@@ -12,7 +12,7 @@ export default function GroceryList() {
         note: "", 
         status: "active"
     });
-    const [lists, setLists] = useState([])
+    const [lists, setLists] = useState([]) // Used to view grocery lists
 
     useEffect(() => { // Populates list when webpage loads
         console.debug("Fetching grocery lists for user:", user._id);
@@ -20,6 +20,19 @@ export default function GroceryList() {
             .then(lists => setLists(lists.data))
             .catch(err => console.log(err))
     }, [])
+
+    // useEffect(() => {
+    //     const fetchLists = async () => {
+    //         try {
+    //             console.debug("Fetching grocery lists for user:", user._id);
+    //             const res = await axios.get(`http://localhost:5000/GroceryLists/${user._id}`);
+    //             setLists(res.data);
+    //         } catch (err) {
+    //             console.log(err);
+    //         }
+    //     };
+    //     fetchLists();
+    // }, []);
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
@@ -42,6 +55,16 @@ export default function GroceryList() {
             resetForm();
             setLists(prevLists => [...prevLists, res.data]); // Append the new list to the existing lists
         } catch (err) {
+            console.error(err.response?.data || err);
+        }
+    }
+
+    const handleDelete = async (id) => {
+        try {
+            const res = await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
+            setLists(prevLists => prevLists.filter(list => list._id !== id)); // Remove the deleted list from state
+        }
+        catch (err) {
             console.error(err);
         }
     }
@@ -83,7 +106,7 @@ export default function GroceryList() {
                 <tbody>
                     {
                         lists.map((list) => (
-                            <tr key={list._id}>
+                            <tr>
                                 <td className="!px-2 !py-1 border-b">{list.name}</td>
                                 <td className="!px-2 !py-1 border-b">{list.date}</td>
                                 <td className="!px-2!py-1 border-b">{list.status}</td>
