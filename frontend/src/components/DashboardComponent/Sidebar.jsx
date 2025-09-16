@@ -44,6 +44,10 @@
                         <Link to={"/nutrition"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
                         >Nutrition</li></Link>
+                        
+                        <Link to={"/Recipes"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Recipes</li></Link>
 
                         <Link to={"/wasteBudget"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6 rounded-b-xl"
