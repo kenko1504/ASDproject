@@ -1,18 +1,37 @@
 # ASDproject
-A project to demonstrate devops practices
+**Project:** Fridge Inventory Management System
 
-Our project is a fridge inventory system.
-- Front end: react
-- Back end: node js
-- Database: mongo
+**Project consists of three components:**
+- Frontend using REACT
+- Backend using Node.js
+- Database using MongoDB
 
-Instruction for running the application
-- cd frontend and run 'npm run dev' in the terminal to run front end locally
-- cd backend and run 'npm start' in a 2nd new terminal to communicate with front end.
+**Instruction for running the application:**
+1. `cd frontend` and run `npm run dev` in a **new terminal** to run frontend locally
+2. `cd backend` and run `npm start` in **another terminal** to communicate with the frontend.
 
-Members:
-- Kenji
-- Matthew
-- Anthony
-- Jianan
-- Martin
+
+## Team Member Contributtions:
+### Frontend
+- **Kenji**
+- **Matthew**
+- **Anthony**
+    - `/frontend/src/components/GroceryList.jsx`
+- **Jianan**
+- **Martin**
+
+### Backend
+- **Kenji**
+- **Matthew**
+- **Anthony**
+    -  
+- **Jianan**
+- **Martin**
+
+### Database
+- **Kenji**
+- **Matthew**
+- **Anthony**
+ - `./backend/models/groceryList.js`
+- **Jianan**
+- **Martin**
