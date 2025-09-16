@@ -4,14 +4,14 @@ import axios from "axios";
 
 export default function GroceryList() {
     const [form, setForm] = useState({
-        GL_Name: "", 
-        GL_Date: "", 
-        GL_Note: "", 
-        GL_Status: "On-Going"
+        name: "", 
+        date: "", 
+        note: "", 
+        status: "active"
     });
     const [lists, setLists] = useState([])
 
-    useEffect(() => {
+    useEffect(() => { // Populates list when webpage loads
         axios.get('http://localhost:5000/GroceryLists')
             .then(lists => setLists(lists.data))
             .catch(err => console.log(err))
@@ -22,40 +22,37 @@ export default function GroceryList() {
     };
 
     const resetForm = () => {
-    setForm({
-        GL_Name: "", 
-        GL_Date: "", 
-        GL_Note: "", 
-        GL_Status: "On-Going"
-    });
-};
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        axios.post("http://localhost:5000/GroceryLists", {
-            name: form.GL_Name,
-            date: form.GL_Date,
-            note: form.GL_Note,
-            status: form.GL_Status
-        })
-            .then(res => {
-                console.log(res.data.message);
-                resetForm();
-                setLists(prevLists => [...prevLists, res.data]); // Append the new list to the existing lists
-            })
-            .catch(err => console.error(err));
+    setForm({ name: "", date: "", note: "", status: "active" });    
     };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const res = await axios.post("http://localhost:5000/GroceryLists", {
+                name: form.name,
+                date: form.date,
+                note: form.note,
+                status: form.status
+            });
+            console.log(res.data.message);
+            resetForm();
+            setLists(prevLists => [...prevLists, res.data]); // Append the new list to the existing lists
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     
     return (
         <div className="w-full h-screen flex items-center flex-col bg-red-50 !px-3 !py-3 rounded-2xl shadow-md">
             <h1 className="justify-self-center text-3xl font-bold text-gray-800">Grocery List</h1>
             <form onSubmit={handleSubmit} className="flex flex-row !mb-3 !gap-2">
-                <label for="GL_Name">Name:</label>
-                <input  name="GL_Name" type="text" placeholder="list name..." value={form.GL_Name} onChange={handleChange} required />
-                <label for="GL_Date">Date:</label>
-                <input name="GL_Date" type="date" placeholder="" value={form.GL_Date} onChange={handleChange} required />
-                <label for="GL_Note">Note:</label>
-                <input  name="GL_Note" type="text" placeholder="list name..." value={form.GL_Note} onChange={handleChange} required />
+                <label for="name">Name:</label>
+                <input  name="name" type="text" placeholder="list name..." value={form.name} onChange={handleChange} required />
+                <label for="date">Date:</label>
+                <input name="date" type="date" placeholder="" value={form.date} onChange={handleChange} required />
+                <label for="note">Note:</label>
+                <input  name="note" type="text" placeholder="list name..." value={form.note} onChange={handleChange} required />
                 <button type="submit">Add Item</button>
             </form>
             <div className="grid grid-cols-[5fr_1fr_1fr] w-full !mb-3">
@@ -81,14 +78,25 @@ export default function GroceryList() {
                 </thead>
                 <tbody>
                     {
-                        lists.map((list) => {
-                            return <tr>
-                                <td className="px-4 py-2 border-b">{list.name}</td>
-                                <td className="px-4 py-2 border-b">{list.date}</td>
-                                <td className="px-4 py-2 border-b">{list.status}</td>
-                                <td className="px-4 py-2 border-b">Edit/Delete</td>
+                        lists.map((list) => (
+                            <tr>
+                                <td className="!px-2 !py-1 border-b">{list.name}</td>
+                                <td className="!px-2 !py-1 border-b">{list.date}</td>
+                                <td className="!px-2!py-1 border-b">{list.status}</td>
+                                <td className="!px-2 !py-1 border-b">
+                                    <button
+                                        onClick={() => handleEdit(list._id)}
+                                        className="!px-4 !mr-5 bg-blue-500 text-white rounded"
+                                    > Edit
+                                    </button>                                    
+                                    <button
+                                        onClick={() => handleDelete(list._id)}
+                                        className="bg-red-500 text-white !px-4 rounded"
+                                    > Delete
+                                    </button>                                  
+                                </td>
                             </tr>
-                        })
+                        ))
                     }
                 {/* Add more rows as needed */}
                 </tbody>

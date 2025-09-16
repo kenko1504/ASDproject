@@ -6,7 +6,7 @@ const userSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     password: { type: String, required: true },
     fridgeList: { type: mongoose.Schema.Types.ObjectId, ref: 'Fridge' },
-    groceryList: { type: mongoose.Schema.Types.ObjectId, ref: 'Grocery' },
+    groceryList: [ { type: mongoose.Schema.Types.ObjectId, ref: 'GroceryList' } ],
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
