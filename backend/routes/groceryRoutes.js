@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.post("/:UID", createList);    
 router.get("/:UID", getLists);
-router.get("/:GL_ID", deleteList);
+router.delete("/:GL_ID", deleteList);
 // router.get("/:id", getList);       
 // router.put("/:id", updateList);   
 // router.delete("/:id", deleteList);
