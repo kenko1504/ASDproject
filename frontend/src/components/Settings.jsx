@@ -107,99 +107,109 @@ export default function Settings() {
 
   return (
     <div className="p-4">
-      <h2 className="title text-bold text-4xl">Settings</h2> <br/>
       
-      {/* Username Form */}
-      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
-        <p className="font-semibold">Current Username: {user.username}</p>
-        <div className="flex gap-2">
-          <input
-            name="username"
-            placeholder="New Username"
-            className="border p-2 flex-1"
-            value={formData.username}
-            onChange={handleChange}
-          />
-          <input
-            name="confirmUsername"
-            placeholder="Confirm Username"
-            className="border p-2 flex-1"
-            value={formData.confirmUsername}
-            onChange={handleChange}
-          />
-          <button
-            onClick={() => handleUpdate("username")}
-            className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-3 py-2 rounded"
-          >
-            Update
-          </button>
-        </div>
+      <div className="!pt-5 flex w-full relative">
+        <span className="title font-semibold text-4xl">Settings</span> <br/>
+        <button onClick={handleDeleteAccount} className="bg-red-400 text-white !p-4 !m-4 !mt-0 rounded-lg hover:bg-red-700 transition absolute top-4 right-0">
+          Delete Account
+        </button>
       </div>
 
-      {/* Email Form */}
-      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
-        <p className="font-semibold">Current Email: {user.email}</p>
-        <div className="flex gap-2">
-          <input
-            name="email"
-            placeholder="New Email"
-            className="border p-2 flex-1"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          <input
-            name="confirmEmail"
-            placeholder="Confirm Email"
-            className="border p-2 flex-1"
-            value={formData.confirmEmail}
-            onChange={handleChange}
-          />
-          <button
-            onClick={() => handleUpdate("email")}
-            className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-3 py-2 rounded"
-          >
-            Update
-          </button>
+      <div className="flex !pt-10">
+        {/* Username Form */}
+        <div className="card w-1/3 bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
+          <div className="flex font-semibold !mb-4">
+            <p className="min-w-1/3">Current Username:</p>
+            <p className="overflow-x-auto">{user.username}</p>
+          </div>
+          <div className="gap-2">
+            <input
+              name="username"
+              placeholder="New Username"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.username}
+              onChange={handleChange}
+            />
+            <input
+              name="confirmUsername"
+              placeholder="Confirm Username"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.confirmUsername}
+              onChange={handleChange}
+            /> <br/>
+            <button
+              onClick={() => handleUpdate("username")}
+              className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-3 !py-2 rounded-full w-full"
+            >
+              Update
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Password Form */}
-      <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
-        <p className="font-semibold">Change Password</p>
-        <div className="flex gap-2">
-          <input
-            type="password"
-            name="password"
-            placeholder="New Password"
-            className="border p-2 flex-1"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          <input
-            type="password"
-            name="confirmPassword"
-            placeholder="Confirm Password"
-            className="border p-2 flex-1"
-            value={formData.confirmPassword}
-            onChange={handleChange}
-          />
-          <button
-            onClick={() => handleUpdate("password")}
-            className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white px-3 py-2 rounded"
-          >
-            Update
-          </button>
+        {/* Email Form */}
+        <div className="card w-1/3 bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
+          <div className="flex font-semibold !mb-4">
+            <p className="min-w-1/4">Current email:</p>
+            <p className="overflow-x-auto">{user.email}</p>
+          </div> 
+          <div className="gap-2">
+            <input
+              name="email"
+              placeholder="New Email"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.email}
+              onChange={handleChange}
+            />
+            <input
+              name="confirmEmail"
+              placeholder="Confirm Email"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.confirmEmail}
+              onChange={handleChange}
+            />
+            <button
+              onClick={() => handleUpdate("email")}
+              className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-3 !py-2 rounded-full w-full"
+            >
+              Update
+            </button>
+          </div>
         </div>
-      </div>
 
+        {/* Password Form */}
+        <div className="card bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg w-1/3">
+          <p className="font-semibold !mb-4">Change Password</p>
+          <div className="gap-2">
+            <input
+              type="password"
+              name="password"
+              placeholder="New Password"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.password}
+              onChange={handleChange}
+            />
+            <input
+              type="password"
+              name="confirmPassword"
+              placeholder="Confirm Password"
+              className="border border-[#85BC59] rounded-lg !mb-4 !p-2 flex-1 w-full focus:outline-1 outline-[#6FAF4B]"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+            /> <br/>
+            <button
+              onClick={() => handleUpdate("password")}
+              className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-3 !py-2 rounded-full w-full"
+            >
+              Update
+            </button>
+          </div>
+        </div>
+
+        
+      </div> 
       {/* Feedback */}
-      {message && <p className="font-medium">{message}</p>}
-
+      {message && <p className="!ml-4 !p-2 border-dashed border-2 w-fit border-green-600 bg-green-200 rounded font-medium">{message}</p>} 
       <br/>
-      
-      <button onClick={handleDeleteAccount} className="bg-red-400 text-white !p-4 !m-4 !mt-0 rounded-lg hover:bg-red-700 transition">
-        Delete Account
-      </button>
     </div>
   );
 }
