@@ -1,8 +1,11 @@
 import "../CSS/index.css";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { useContext } from "react";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function GroceryList() {
+    const { user } = useContext(AuthContext);
     const [form, setForm] = useState({
         name: "", 
         date: "", 
@@ -12,7 +15,8 @@ export default function GroceryList() {
     const [lists, setLists] = useState([])
 
     useEffect(() => { // Populates list when webpage loads
-        axios.get('http://localhost:5000/GroceryLists')
+        console.debug("Fetching grocery lists for user:", user._id);
+        axios.get(`http://localhost:5000/GroceryLists/${user._id}`)
             .then(lists => setLists(lists.data))
             .catch(err => console.log(err))
     }, [])
@@ -28,7 +32,7 @@ export default function GroceryList() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post("http://localhost:5000/GroceryLists", {
+            const res = await axios.post(`http://localhost:5000/GroceryLists/${user._id}`, {
                 name: form.name,
                 date: form.date,
                 note: form.note,
@@ -47,11 +51,11 @@ export default function GroceryList() {
         <div className="w-full h-screen flex items-center flex-col bg-red-50 !px-3 !py-3 rounded-2xl shadow-md">
             <h1 className="justify-self-center text-3xl font-bold text-gray-800">Grocery List</h1>
             <form onSubmit={handleSubmit} className="flex flex-row !mb-3 !gap-2">
-                <label for="name">Name:</label>
+                <label htmlFor="name">Name:</label>
                 <input  name="name" type="text" placeholder="list name..." value={form.name} onChange={handleChange} required />
-                <label for="date">Date:</label>
+                <label htmlFor="date">Date:</label>
                 <input name="date" type="date" placeholder="" value={form.date} onChange={handleChange} required />
-                <label for="note">Note:</label>
+                <label htmlFor="note">Note:</label>
                 <input  name="note" type="text" placeholder="list name..." value={form.note} onChange={handleChange} required />
                 <button type="submit">Add Item</button>
             </form>
@@ -79,7 +83,7 @@ export default function GroceryList() {
                 <tbody>
                     {
                         lists.map((list) => (
-                            <tr>
+                            <tr key={list._id}>
                                 <td className="!px-2 !py-1 border-b">{list.name}</td>
                                 <td className="!px-2 !py-1 border-b">{list.date}</td>
                                 <td className="!px-2!py-1 border-b">{list.status}</td>

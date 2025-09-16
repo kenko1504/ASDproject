@@ -7,4 +7,5 @@ router.post("/register", createUser);
 router.delete("/:id", deleteUser);
 router.put("/:id", updateUser);
 
+
 export default router;

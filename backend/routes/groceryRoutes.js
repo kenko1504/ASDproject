@@ -6,8 +6,8 @@ import {
 
 const router = express.Router();
 
-router.post("/", createList);    
-router.get("/", getLists);
+router.post("/:UID", createList);    
+router.get("/:UID", getLists);
 // router.get("/:id", getList);       
 // router.put("/:id", updateList);   
 // router.delete("/:id", deleteList);
