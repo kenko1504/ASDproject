@@ -50,7 +50,7 @@ export default function Recipes() {
       {/* Your recipes content here */}
 
       {/* Top search options */}
-      <div className="flex h-10 w-full !mb-4">
+      <div className="flex h-1/24 w-full !mb-4 text-1">
         <div className="w-1/6 h-full rounded-lg bg-[#D5FAB8] !p-1 flex">
           <button  
           onClick={() => handleTab(false)}
@@ -80,10 +80,10 @@ export default function Recipes() {
       </div>
 
       {/* filter and sort options */}
-      <div className="!mb-4 !pl-4 !pr-4 flex w-full">
+      <div className="!mb-4 !pl-4 !pr-4 h-1/18 flex w-full">
         { isFilterOpen ? (
           <>
-            <div className="flex bg-[#D5FAB8] rounded-lg !p-4 items-center w-1/3 !mr-8">
+            <div className="flex bg-[#D5FAB8] rounded-lg justify-center items-center w-1/3 !mr-8">
               <label className="!mr-4">Max Cook Time</label>
               <input
                 type="range"
@@ -93,36 +93,36 @@ export default function Recipes() {
                 onChange={handleCookTimeChange}
                 className="!mr-4 w-1/2"
               />
-             <label>{formatTime(cookTime)}</label>
+             <label className="max-w-1/12 min-w-1/12">{formatTime(cookTime)}</label>
            </div>
 
-            <div className="flex bg-[#D5FAB8] rounded-lg !p-4 items-center w-1/4 !mr-8">
+            <div className="flex bg-[#D5FAB8] rounded-lg justify-center !pr-4 !pl-4 items-center w-1/4 !mr-8">
               <label className="!mr-4">Difficulty</label>
               <button 
                 onClick={() => toggleDifficulty('easy')}
-                className={`w-1/4 border-2 border-r-0 rounded-l-lg border-[#A6C78A] transition
+                className={`w-1/4 border-2 border-r-0 rounded-l-lg border-[#A6C78A] transition h-2/3
                   ${selectedDifficulties.includes('easy') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Easy
               </button>
               <button 
                 onClick={() => toggleDifficulty('medium')}
-                className={`w-1/4 border-2 border-r-0 border-l-0 border-[#A6C78A] transition
+                className={`w-1/4 border-2 border-r-0 border-l-0 border-[#A6C78A] transition h-2/3
                   ${selectedDifficulties.includes('medium') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Medium
               </button>
               <button 
                 onClick={() => toggleDifficulty('hard')}
-                className={`w-1/4 border-2 border-l-0 rounded-r-lg border-[#A6C78A] transition
+                className={`w-1/4 border-2 border-l-0 rounded-r-lg border-[#A6C78A] transition h-2/3
                   ${selectedDifficulties.includes('hard') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Hard
               </button>
             </div>
             
-            <div className="flex bg-[#D5FAB8] rounded-lg !p-4 items-center w-1/4 relative">
+            <div className="flex bg-[#D5FAB8] rounded-lg items-center w-1/4 relative !mr-8 !pl-4 !pr-4">
               <label className="!mr-4">Cuisine</label>
               <select 
               onChange={handleCuisineSelect} value={selectedCuisine}
-              className="w-full !pl-2 border-2 border-[#A6C78A] rounded-lg focus:outline-none !p-1">
+              className="w-full !pl-2 border-2 border-[#A6C78A] rounded-lg focus:outline-none h-2/3">
                   <option value="">All Cuisines</option>
                   <option value="italian">Italian</option>
                   <option value="mexican">Mexican</option>
@@ -135,12 +135,12 @@ export default function Recipes() {
                 </select>
             </div>
 
-            <button className="flex border-4 border-[#A6C78A] hover:bg-[#A6C78A] rounded-full !pr-8 !pl-8 items-center absolute right-12 !p-4 transition">Apply</button>
+            <button className="flex border-4 border-[#A6C78A] hover:bg-[#A6C78A] rounded-full !pr-8 !pl-8 items-center !p-4 transition">Apply</button>
           </>
         ) : null}
       </div>
 
-      <hr className="!ml-8 !mr-8 border-[#A6C78A] border-1"></hr>
+      {/* <hr className="!ml-8 !mr-8 border-[#A6C78A] border-1"></hr> */}
 
     </div>
   );
