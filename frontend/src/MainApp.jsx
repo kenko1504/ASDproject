@@ -16,7 +16,7 @@ export default function App() {
     return (
         <div className="layout flex">
             <Sidebar />
-            <main className="content flex flex-grow !p-4 !m-4 !mt-0 bg-[#f9fff9] text-[#3A4331]">
+            <main className="content flex flex-grow !p-4 !m-4 !pt-0 !pb-0 !mb-0 !mt-0 bg-[#f9fff9] text-[#3A4331]">
                 <Routes>
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
