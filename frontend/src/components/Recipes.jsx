@@ -3,6 +3,7 @@ import { AuthContext } from "../contexts/AuthContext.jsx";
 import RecipeCard from "./RecipeCard.jsx";
 import searchImg from "../assets/search-svgrepo-com.svg";
 import filterImg from "../assets/filter-svgrepo-com.svg";
+import { useNavigate } from "react-router-dom";
 
 
 export default function Recipes() {
@@ -14,6 +15,8 @@ export default function Recipes() {
   const [selectedDifficulties, setSelectedDifficulties] = useState([]);
   const [selectedCuisine, setSelectedCuisine] = useState('');
   const [selectedSort, setSelectedSort] = useState('');
+
+  const navigate = useNavigate();
 
   const handleTab = (tab) => {
     setTab(tab);
@@ -59,7 +62,7 @@ export default function Recipes() {
       <div className="w-full relative flex !pt-5">
         <h2 className="title font-semibold text-4xl">Recipes</h2> 
         { user.role == "admin" ? (
-          <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform">Add Recipe</button>
+          <button onClick={() => navigate("/addRecipe")} className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform">Add Recipe</button>
         ) : null}
       </div>
       <br/>
@@ -108,7 +111,7 @@ export default function Recipes() {
               <input
                 type="range"
                 min="10"
-                max="1440"
+                max="1439"
                 value={cookTime}
                 onChange={handleCookTimeChange}
                 className="!mr-4 w-5/12"

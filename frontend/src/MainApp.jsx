@@ -10,6 +10,7 @@ import Settings from "./components/Settings.jsx";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
 import GroceryList from "./components/GroceryList.jsx";
+import AddRecipe from "./components/AddRecipe.jsx";
 import "./index.css";
 
 export default function App() {
@@ -28,6 +29,7 @@ export default function App() {
                     <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/addRecipe" element={<AddRecipe />} />
                 </Routes>
             </main>
         </div>
