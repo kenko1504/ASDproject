@@ -159,7 +159,18 @@ export default function AddRecipe() {
             <br/>
 
             {/* Main form container */}
-            <div className="w-full min-h-21/24 max-h-21/24 overflow-scroll !pr-4">
+
+            {/* Submit Buttons */}
+            <div className="flex w-full space-x-4 relative !mb-4">
+                        
+                <button className="!px-6 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors font-medium"
+                    type="button" onClick={handleSubmit}>Save Recipe</button>
+
+                <button className="!px-6 !py-2 border-2 border-[#A6C78A] rounded-lg hover:bg-[#A6C78A] transition-colors font-medium absolute right-0"
+                    type="button" onClick={() => navigate("/recipes")}>Cancel</button>                            
+            </div>
+
+            <div className="w-full min-h-10/12 max-h-10/12 overflow-scroll">
                     <div className="w-full flex !mb-8">
                         {/* Image Upload */}
                         <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/4 !mr-8">
@@ -399,23 +410,7 @@ export default function AddRecipe() {
 
                     
 
-                    {/* Submit Buttons */}
-                    <div className="flex justify-end space-x-4 !mt-6">
-                        <button
-                            type="button"
-                            onClick={() => navigate("/recipes")}
-                            className="!px-6 !py-2 border-2 border-[#A6C78A] rounded-lg hover:bg-[#A6C78A] transition-colors font-medium"
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSubmit}
-                            className="!px-6 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors font-medium"
-                        >
-                            Save Recipe
-                        </button>
-                    </div>
+                    
             </div>
         </div>
     );
