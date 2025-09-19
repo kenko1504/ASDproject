@@ -165,8 +165,8 @@ export default function ViewRecipe() {
             {/* Header */}
             <div className="w-full h-16 relative flex !pt-5 items-center">
 
-                <button onClick={handleSaving} className="w-8 h-8 !mr-4 flex-shrink-0">
-                    <svg className={`${isSaved ? 'fill-[#EEDA45]' : 'fill-transparent'} w-8 h-8 transform transition active:scale-90 hover:scale-110`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <button onClick={handleSaving} className="w-10 h-10 !mr-4 flex-shrink-0">
+                    <svg className={`${isSaved ? 'fill-[#EEDA45]' : 'fill-transparent'} w-10 h-10 transform transition active:scale-90 hover:scale-110`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
                         <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
                         <g id="SVGRepo_iconCarrier">

@@ -2,7 +2,7 @@ import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp.js
 import Header from "./components/Header.jsx";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from "./components/Dashboard.jsx";
-import Recipes from "./components/RecipePages/Recipes.jsx";
+import Recipes from "./components/Recipes.jsx";
 import ItemManagement from "./components/ItemManagement.jsx";
 import Nutrition from "./components/Nutritions.jsx";
 import WasteBudget from "./components/WasteBudget.jsx";
