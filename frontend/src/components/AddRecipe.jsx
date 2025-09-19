@@ -172,7 +172,6 @@ export default function AddRecipe() {
 
     return (
         <div className="w-full h-full min-h-screen max-h-screen">
-            {/* Header matching the recipes page style */}
             <div className="w-full h-16 relative flex !pt-5">
                 <h2 className="title font-semibold text-4xl">Add Recipe</h2>
             </div>
@@ -344,8 +343,6 @@ export default function AddRecipe() {
                                             onClick={() => removeInstruction(index)}
                                             className="flex-shrink-0 text-white bg-[#A6C78A] hover:text-[#CF7171] h-17 w-8 rounded-r-lg font-bold"
                                         >
-                                            {/* Replace with your custom X/close icon component */}
-                                            {/* <XIcon className="h-5 w-5" /> */}
                                             <span className="text-xl">×</span>
                                         </button>
                                     )}
@@ -414,8 +411,6 @@ export default function AddRecipe() {
                                         onClick={() => removeIngredient(ingredient.id)}
                                         className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 h-full"
                                     >
-                                        {/* Replace with your custom X/close icon component */}
-                                        {/* <XIcon className="h-5 w-5" /> */}
                                         <span className="text-xl">×</span>
                                     </button>
                                 </div>
@@ -423,10 +418,6 @@ export default function AddRecipe() {
                         </div>
                     </div>
                     </div>
-
-                    
-
-                    
             </div>
         </div>
     );

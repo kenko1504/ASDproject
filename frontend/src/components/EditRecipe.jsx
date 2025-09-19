@@ -102,7 +102,7 @@ export default function EditRecipe() {
                 food.foodName.toLowerCase().includes(term.toLowerCase())
             );
             
-            // Transform the food data to match your ingredient structure
+            // Transform the food data to match ingredient structure
             const transformedResults = filteredData.map(food => ({
                 _id: food._id,
                 name: food.foodName,
@@ -423,8 +423,6 @@ export default function EditRecipe() {
                                             onClick={() => removeInstruction(index)}
                                             className="flex-shrink-0 text-white bg-[#A6C78A] hover:text-[#CF7171] h-17 w-8 rounded-r-lg font-bold"
                                         >
-                                            {/* Replace with your custom X/close icon component */}
-                                            {/* <XIcon className="h-5 w-5" /> */}
                                             <span className="text-xl">×</span>
                                         </button>
                                     )}
@@ -493,19 +491,13 @@ export default function EditRecipe() {
                                         onClick={() => removeIngredient(ingredient.id)}
                                         className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 h-full"
                                     >
-                                        {/* Replace with your custom X/close icon component */}
-                                        {/* <XIcon className="h-5 w-5" /> */}
                                         <span className="text-xl">×</span>
                                     </button>
                                 </div>
                             ))}
                         </div>
                     </div>
-                    </div>
-
-                    
-
-                    
+                </div>
             </div>
         </div>
     );
