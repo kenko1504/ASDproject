@@ -12,7 +12,7 @@ const recipeSchema = new mongoose.Schema({
         {
             ingredient: {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: "Item",
+                ref: "Food",
                 required: true
             },
             quantity: {

@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext.jsx";;
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
@@ -6,27 +6,136 @@ import clockImg from "../assets/clock-svgrepo-com.svg";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 
 
-export default function RecipeCard() {
+export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange }) {
     const { user } = useContext(AuthContext);
     const [isSaved, setSaved] = useState(false);
     const [missingIng, setMissingIng] = useState(0);
 
-    const handleSaving = () => {
-        setSaved(!isSaved);
-    }
+    // Format cook time from minutes to HH:MM
+    const formatCookTime = (minutes) => {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+    };
 
-    const handleDeleteRecipe = () => {
+    // Check if recipe is saved by current user
+    const checkIfRecipeSaved = async () => {
+        if (!user?._id || !recipe?._id) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`);
+            const savedRecipes = await response.json();
+
+            const isRecipeSaved = savedRecipes.some(savedRecipe => savedRecipe._id === recipe._id);
+            setSaved(isRecipeSaved);
+        } catch (error) {
+            console.error('Error checking saved recipes:', error);
+        }
+    };
+
+    // Handle save/unsave recipe
+    const handleSaving = async () => {
+        if (!user?._id || !recipe?._id) {
+            console.error('Missing user ID or recipe ID:', { userId: user?._id, recipeId: recipe?._id });
+            return;
+        }
+
+        console.log('Attempting to save/unsave recipe:', { userId: user._id, recipeId: recipe._id, isSaved });
+
+        try {
+            if (isSaved) {
+                // Remove from saved recipes
+                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ recipeId: recipe._id })
+                });
+
+                if (response.ok) {
+                    setSaved(false);
+                    console.log('Recipe removed from saved recipes');
+                    if (onRecipeSaveChange) {
+                        onRecipeSaveChange();
+                    }
+                } else {
+                    const errorData = await response.text();
+                    console.error('Failed to remove recipe from saved recipes:', response.status, errorData);
+                }
+            } else {
+                // Add to saved recipes
+                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ recipeId: recipe._id })
+                });
+
+                if (response.ok) {
+                    setSaved(true);
+                    console.log('Recipe added to saved recipes');
+                    if (onRecipeSaveChange) {
+                        onRecipeSaveChange();
+                    }
+                } else {
+                    const errorData = await response.text();
+                    console.error('Failed to add recipe to saved recipes:', response.status, errorData);
+                }
+            }
+        } catch (error) {
+            console.error('Error saving/unsaving recipe:', error);
+        }
+    };
+
+    // Handle delete recipe
+    const handleDeleteRecipe = async (e) => {
+        e.stopPropagation();
+
         const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
-    }
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/recipes/${recipe._id}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                console.log('Recipe deleted successfully');
+                // Call the callback to refresh the recipe list
+                if (onRecipeDeleted) {
+                    onRecipeDeleted(recipe._id);
+                }
+            } else {
+                console.error('Failed to delete recipe');
+                alert('Failed to delete recipe. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting recipe:', error);
+            alert('Error deleting recipe. Please try again.');
+        }
+    };
+
+    // Check if recipe is saved when component mounts or recipe/user changes
+    useEffect(() => {
+        checkIfRecipeSaved();
+    }, [user?._id, recipe?._id]);
 
     return (
-        <div role="button" onClick={() => console.log("Card")} className="!m-8 aspect-square w-1/5 bg-[#E5F3DA] rounded-lg hover:shadow-xl transition relative cursor-pointer transform hover:scale-105">
+        <div
+            role="button"
+            onClick={() => console.log("Card", recipe)}
+            className="!m-8 aspect-square w-1/5 rounded-lg hover:shadow-xl transition relative cursor-pointer transform hover:scale-105 bg-cover bg-center"
+            style={{
+                backgroundImage: recipe?.image ? `url(${recipe.image})` : 'none',
+                backgroundColor: recipe?.image ? 'transparent' : '#E5F3DA'
+            }}
+        >
             { user.role == "admin" ? (
-                <div className="bg-[#A6C78A]/50 !py-1 !px-2 w-20 h-10 rounded-full left-4 top-4 absolute">
-                    <button onClick={handleDeleteRecipe}><img className="w-8 h-8 transform transition active:scale-80" src={trashImg}/></button>
-                    <button><img className="w-8 h-8 transform transition active:scale-80" src={trashImg}/></button>
-                </div>
-                
+                <button onClick={handleDeleteRecipe}>
+                    <img className="w-8 h-8 absolute left-4 top-4 transform transition active:scale-80" src={trashImg}/>
+                </button>
             ) : null}
             <button 
                 onClick={(e) => {
@@ -43,8 +152,13 @@ export default function RecipeCard() {
                 </svg>
 
             </button>
-            <span className="absolute bottom-12 left-4 w-2/3 h-1/12 overflow-auto font-bold">Name</span>
-            <span className="absolute bottom-12 right-4 w-1/4 text-right h-1/12 overflow-auto font-semibold">Medium</span>
+            <div className="absolute right-2 h-18 backdrop-blur-sm blur-sm bg-white/20 bottom-2 left-2 rounded-lg"></div>
+            <span className="absolute bottom-12 left-4 w-2/3 h-1/12 overflow-auto font-bold drop-shadow-lg">
+                {recipe?.name || 'Recipe Name'}
+            </span>
+            <span className="absolute bottom-12 right-4 w-1/4 text-right h-1/12 overflow-auto font-semibold drop-shadow-lg">
+                {recipe?.difficulty || 'Easy'}
+            </span>
             <div className="absolute bottom-4 left-4 flex">
                 { missingIng == 0 ? (
                     <img className="w-6 h-6" src={checkImg}/>
@@ -58,8 +172,8 @@ export default function RecipeCard() {
             </div>
             <div className="absolute bottom-4 right-4 flex">
                 <img className="w-6 h-6 !mr-1" src={clockImg}/>
-                <span className="font-semibold">
-                    01:12
+                <span className="font-semibold drop-shadow-lg">
+                    {recipe?.cookTime ? formatCookTime(recipe.cookTime) : '00:00'}
                 </span>
             </div>
         </div>

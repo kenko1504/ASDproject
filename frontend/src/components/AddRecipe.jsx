@@ -1,12 +1,12 @@
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
+import sampleProfilePic from "../assets/SampleProfilePic.jpg";
 
 export default function AddRecipe() {
     const navigate = useNavigate();
-    const fileInputRef = useRef(null);
     
     // Form state
     const [formData, setFormData] = useState({
@@ -15,7 +15,7 @@ export default function AddRecipe() {
         minutes: 0,
         difficulty: 'Easy',
         description: '',
-        image: null
+        image: ''
     });
     
     const [ingredients, setIngredients] = useState([]);
@@ -23,9 +23,14 @@ export default function AddRecipe() {
     const [searchTerm, setSearchTerm] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
-    const [imagePreview, setImagePreview] = useState(null);
 
-    // Mock function to simulate ingredient search - replace with actual API call
+    
+    // Default recipe images
+    const defaultImages = [
+        { path: sampleProfilePic, name: 'MAN' },
+    ];
+
+    // Search ingredient function
     const searchIngredients = async (term) => {
         if (!term.trim()) {
             setSearchResults([]);
@@ -33,20 +38,29 @@ export default function AddRecipe() {
             return;
         }
         
-        // Mock data - replace with actual API call
-        const mockIngredients = [
-            { _id: '1', name: 'Chicken Breast', category: 'Meat' },
-            { _id: '2', name: 'Tomatoes', category: 'Vegetable' },
-            { _id: '3', name: 'Onions', category: 'Vegetable' },
-            { _id: '4', name: 'Garlic', category: 'Vegetable' },
-            { _id: '5', name: 'Olive Oil', category: 'Other' }
-        ];
-        
-        const filtered = mockIngredients.filter(ingredient => 
-            ingredient.name.toLowerCase().includes(term.toLowerCase())
-        );
-        setSearchResults(filtered);
-        setShowSearchResults(true);
+        try {
+            const response = await fetch("http://localhost:5000/Food");
+            const data = await response.json();
+            
+            // Filter results based on search term
+            const filteredData = data.filter(food => 
+                food.foodName.toLowerCase().includes(term.toLowerCase())
+            );
+            
+            // Transform the food data to match your ingredient structure
+            const transformedResults = filteredData.map(food => ({
+                _id: food._id,
+                name: food.foodName,
+                publicFoodKey: food.publicFoodKey
+            }));
+            
+            setSearchResults(transformedResults);
+            setShowSearchResults(transformedResults.length > 0);
+        } catch (error) {
+            console.error('Error searching ingredients:', error);
+            setSearchResults([]);
+            setShowSearchResults(false);
+        }
     };
 
     const handleInputChange = (e) => {
@@ -55,20 +69,6 @@ export default function AddRecipe() {
             ...prev,
             [name]: value
         }));
-    };
-
-    const handleImageUpload = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFormData(prev => ({ ...prev, image: file }));
-            
-            // Create preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                setImagePreview(e.target.result);
-            };
-            reader.readAsDataURL(file);
-        }
     };
 
     const addIngredient = (ingredient) => {
@@ -123,25 +123,51 @@ export default function AddRecipe() {
         return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
     };
 
-    const handleSubmit = () => {
-        // Prepare data for submission
-        const recipeData = {
-            name: formData.name,
-            cookTime: parseInt(formData.hours) * 60 + parseInt(formData.minutes), // Convert to minutes
-            difficulty: formData.difficulty,
-            ingredientNo: ingredients.length,
-            description: formData.description,
-            ingredients: ingredients.map(ing => ({
-                ingredient: ing.ingredient._id,
-                quantity: parseFloat(ing.quantity),
-                measurementType: ing.measurementType
-            })),
-            instructions: instructions.filter(instruction => instruction.trim() !== '')
-        };
-        
-        console.log('Recipe data to submit:', recipeData);
-        // Here you would make the API call to save the recipe
-        // navigate("/recipes");
+    const handleSubmit = async () => {
+        // Basic validation
+        if (!formData.name || !formData.description || !formData.image || ingredients.length === 0 || instructions.some(inst => !inst.trim())) {
+            alert('Please fill in all required fields and add at least one ingredient with instructions.');
+            return;
+        }
+
+        try {
+            // Prepare data for submission
+            const recipeData = {
+                name: formData.name,
+                cookTime: parseInt(formData.hours) * 60 + parseInt(formData.minutes), // Convert to minutes
+                difficulty: formData.difficulty,
+                description: formData.description,
+                image: formData.image, 
+                ingredients: ingredients.map(ing => ({
+                    ingredient: ing.ingredient._id,
+                    quantity: parseFloat(ing.quantity),
+                    measurementType: ing.measurementType
+                })),
+                instructions: instructions.filter(instruction => instruction.trim() !== '')
+            };
+
+            const response = await fetch('http://localhost:5000/recipes', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(recipeData)
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                console.log('Recipe created successfully:', result);
+                alert('Recipe saved successfully!');
+                navigate("/recipes");
+            } else {
+                const error = await response.json();
+                console.error('Error creating recipe:', error);
+                alert('Error saving recipe: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error. Please try again.');
+        }
     };
 
     return (
@@ -175,32 +201,33 @@ export default function AddRecipe() {
                         {/* Image Upload */}
                         <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/4 !mr-8">
                             <h3 className="font-semibold text-lg !mb-4">Recipe Image</h3>
-                            <div 
-                                onClick={() => fileInputRef.current?.click()}
-                                className="w-full aspect-square border-2 border-dashed border-[#A6C78A] rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-[#E5F3DA] transition-colors"
-                            >
-                                {imagePreview ? (
-                                    <img 
-                                        src={imagePreview} 
-                                        alt="Preview" 
+                            <div className="w-full aspect-square border-3 border-dashed border-[#A6C78A] rounded-lg !mb-4">
+                                {formData.image ? (
+                                    <img
+                                        src={formData.image}
+                                        alt="Preview"
                                         className="w-full h-full object-cover rounded-lg"
                                     />
                                 ) : (
-                                    <>
-                                        {/* Replace with your custom upload icon component */}
-                                        <img src={uploadImg} className="w-6 h-6 !mb-4"/> 
-                                        <p className="font-medium">Click to upload an image</p>
-                                    </>
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#E5F3DA]">
+                                        <img src={uploadImg} className="w-6 h-6 !mb-4"/>
+                                        <p className="font-medium">Select an image below</p>
+                                    </div>
                                 )}
                             </div>
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                accept="image/*"
-                                onChange={handleImageUpload}
-                                className="hidden"
+                            <select
+                                value={formData.image}
+                                onChange={(e) => setFormData(prev => ({ ...prev, image: e.target.value }))}
+                                className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-lg focus:outline-none bg-white"
                                 required
-                            />
+                            >
+                                <option value="">Select an image...</option>
+                                {defaultImages.map((img, index) => (
+                                    <option key={index} value={img.path}>
+                                        {img.name}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
 
                         {/* Basic Recipe Information */}
@@ -216,7 +243,7 @@ export default function AddRecipe() {
                                     value={formData.name}
                                     onChange={handleInputChange}
                                     required
-                                    className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-full focus:outline-none"
+                                    className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-full focus:outline-none bg-white"
                                     placeholder="Enter recipe name"
                                 />
                             </div>
@@ -282,7 +309,7 @@ export default function AddRecipe() {
                                     onChange={handleInputChange}
                                     required
                                     rows="3"
-                                    className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-lg focus:outline-none resize-none"
+                                    className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-lg focus:outline-none resize-none bg-white"
                                     placeholder="Describe your recipe..."
                                 />
                             </div>
@@ -315,7 +342,7 @@ export default function AddRecipe() {
                                     <textarea
                                         value={instruction}
                                         onChange={(e) => updateInstruction(index, e.target.value)}
-                                        className={`flex-1 !px-3 !py-2 border-2 border-[#A6C78A] focus:outline-none resize-none ${instructions.length == 1 ? 'rounded-r-lg' : ''}`}
+                                        className={`flex-1 !px-3 !py-2 border-2 border-[#A6C78A] bg-white focus:outline-none resize-none ${instructions.length == 1 ? 'rounded-r-lg' : ''}`}
                                         placeholder={`Step ${index + 1} instructions...`}
                                         rows="2"
                                     />
@@ -356,7 +383,7 @@ export default function AddRecipe() {
                             
                             {/* Search Results */}
                             {showSearchResults && searchResults.length > 0 && (
-                                <div className="absolute z-10 w-full mt-1 bg-white border-2 border-[#A6C78A] rounded-lg shadow-lg max-h-48 overflow-y-auto">
+                                <div className="absolute z-10 w-full !mt-1 bg-white border-2 border-[#A6C78A] rounded-lg shadow-lg max-h-48 overflow-y-auto">
                                     {searchResults.map((ingredient) => (
                                         <div
                                             key={ingredient._id}
@@ -364,9 +391,6 @@ export default function AddRecipe() {
                                             className="!px-4 !py-2 hover:bg-[#E5F3DA] cursor-pointer flex justify-between items-center border-b-2 border-[#A6C78A] last:border-b-0"
                                         >
                                             <span className="font-medium">{ingredient.name}</span>
-                                            <span className="text-sm bg-[#A6C78A] !px-2 !py-1 rounded">
-                                                {ingredient.category}
-                                            </span>
                                         </div>
                                     ))}
                                 </div>
@@ -376,19 +400,19 @@ export default function AddRecipe() {
                         {/* Added Ingredients */}
                         <div className="space-y-2">
                             {ingredients.map((ingredient) => (
-                                <div key={ingredient.id} className="flex items-center space-x-3 !py-1 !px-4 bg-white !mb-1 rounded-lg">
+                                <div key={ingredient.id} className="flex items-center h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
                                     <span className="flex-1 font-medium">{ingredient.ingredient.name}</span>
                                     <input
                                         type="number"
                                         value={ingredient.quantity}
                                         onChange={(e) => updateIngredientQuantity(ingredient.id, e.target.value)}
-                                        placeholder="Qty"
-                                        className="w-20 !px-2 !py-1 border-2 border-[#A6C78A] rounded focus:outline-none"
+                                        placeholder="Amt"
+                                        className="w-1/6 border-x-2 !px-2 border-[#A6C78A] h-full focus:outline-none"
                                     />
                                     <select
                                         value={ingredient.measurementType}
                                         onChange={(e) => updateIngredientMeasurement(ingredient.id, e.target.value)}
-                                        className="!px-2 !py-1 border-2 border-[#A6C78A] rounded focus:outline-none"
+                                        className="w-1/6 !px-2 h-full focus:outline-none"
                                     >
                                         <option value="grams">grams</option>
                                         <option value="ml">ml</option>
@@ -396,7 +420,7 @@ export default function AddRecipe() {
                                     <button
                                         type="button"
                                         onClick={() => removeIngredient(ingredient.id)}
-                                        className="text-red-600 hover:text-red-800 font-bold"
+                                        className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 h-full"
                                     >
                                         {/* Replace with your custom X/close icon component */}
                                         {/* <XIcon className="h-5 w-5" /> */}

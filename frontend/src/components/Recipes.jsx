@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import RecipeCard from "./RecipeCard.jsx";
 import searchImg from "../assets/search-svgrepo-com.svg";
@@ -11,9 +11,15 @@ export default function Recipes() {
 
   const [isSavedTab, setTab] = useState(false);
   const [isFilterOpen, setFilter] = useState(false);
-  const [cookTime, setCookTime] = useState(120);
+  const [cookTime, setCookTime] = useState(1439);
   const [selectedDifficulties, setSelectedDifficulties] = useState([]);
   const [selectedSort, setSelectedSort] = useState('');
+
+  // Recipe search state
+  const [recipes, setRecipes] = useState([]);
+  const [filteredRecipes, setFilteredRecipes] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [savedRecipes, setSavedRecipes] = useState([]);
 
   const navigate = useNavigate();
 
@@ -51,6 +57,108 @@ export default function Recipes() {
     setSelectedSort(event.target.value);
   }
 
+  // Fetch all recipes from backend
+  const fetchRecipes = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/recipes");
+      const data = await response.json();
+      setRecipes(data);
+      setFilteredRecipes(data);
+    } catch (error) {
+      console.error('Error fetching recipes:', error);
+      setRecipes([]);
+      setFilteredRecipes([]);
+    }
+  };
+
+  // Fetch saved recipes for current user
+  const fetchSavedRecipes = async () => {
+    if (!user?._id) {
+      setSavedRecipes([]);
+      return;
+    }
+
+    try {
+      const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`);
+      if (response.ok) {
+        const data = await response.json();
+        setSavedRecipes(data);
+      } else {
+        console.error('Error fetching saved recipes:', response.status);
+        setSavedRecipes([]);
+      }
+    } catch (error) {
+      console.error('Error fetching saved recipes:', error);
+      setSavedRecipes([]);
+    }
+  };
+
+  // Filter recipes based on search term and filters
+  const filterRecipes = () => {
+    // Start with either all recipes or saved recipes based on tab
+    let filtered = isSavedTab ? savedRecipes : recipes;
+
+    // Filter by search term
+    if (searchTerm.trim()) {
+      filtered = filtered.filter(recipe =>
+        recipe.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipe.description.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // Filter by difficulty
+    if (selectedDifficulties.length > 0) {
+      filtered = filtered.filter(recipe =>
+        selectedDifficulties.includes(recipe.difficulty)
+      );
+    }
+
+    // Filter by cook time
+    filtered = filtered.filter(recipe => recipe.cookTime <= cookTime);
+
+    // Sort the filtered results
+    if (selectedSort === 'TD') {
+      // Time Decreasing (highest cook time first)
+      filtered.sort((a, b) => b.cookTime - a.cookTime);
+    } else if (selectedSort === 'TI') {
+      // Time Increasing (lowest cook time first)
+      filtered.sort((a, b) => a.cookTime - b.cookTime);
+    }
+    // For "Recent" (empty value) or "M" (Missing Ingredients), keep original order
+
+    setFilteredRecipes(filtered);
+  };
+
+  // Fetch recipes on component mount
+  useEffect(() => {
+    fetchRecipes();
+  }, []);
+
+  // Fetch saved recipes when saved tab is selected or user changes
+  useEffect(() => {
+    if (isSavedTab) {
+      fetchSavedRecipes();
+    }
+  }, [isSavedTab, user?._id]);
+
+  // Filter recipes when search term or filters change
+  useEffect(() => {
+    filterRecipes();
+  }, [searchTerm, selectedDifficulties, cookTime, selectedSort, recipes, savedRecipes, isSavedTab]);
+
+  // Handle recipe deletion callback
+  const handleRecipeDeleted = (deletedRecipeId) => {
+    setRecipes(prev => prev.filter(recipe => recipe._id !== deletedRecipeId));
+    setSavedRecipes(prev => prev.filter(recipe => recipe._id !== deletedRecipeId));
+  };
+
+  // Handle recipe save/unsave callback
+  const handleRecipeSaveChange = () => {
+    if (isSavedTab) {
+      fetchSavedRecipes();
+    }
+  };
+
 
   return (
     <div className="w-full h-full min-h-screen max-h-screen">
@@ -80,7 +188,13 @@ export default function Recipes() {
 
         <div className="border-2 border-[#A6C78A] rounded-full w-4/6 !pl-4 !pr-4 !ml-4 !mr-4 focus:outline-1 outline-[#A6C78A] flex items-center">
           <img src={searchImg} className=" w-6 h-6 !mr-2"/>
-          <input className="h-full w-full outline-0"  type="search"  placeholder="Search"></input>
+          <input
+            className="h-full w-full outline-0"
+            type="search"
+            placeholder="Search recipes..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
 
         <div className="w-1/6 h-full flex items-center justify-center">
@@ -115,22 +229,22 @@ export default function Recipes() {
       
             <div className="flex bg-[#D5FAB8] rounded-lg justify-center !pr-4 !pl-4 items-center w-1/3 !mr-8">
               <label className="!mr-4">Difficulty</label>
-              <button 
-               onClick={() => toggleDifficulty('easy')}
+              <button
+               onClick={() => toggleDifficulty('Easy')}
                 className={`w-1/4 border-2 border-r-0 rounded-l-lg border-[#A6C78A] transition h-2/3
-                  ${selectedDifficulties.includes('easy') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
+                  ${selectedDifficulties.includes('Easy') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Easy
               </button>
-              <button 
-                onClick={() => toggleDifficulty('medium')}
+              <button
+                onClick={() => toggleDifficulty('Medium')}
                 className={`w-1/4 border-2 border-r-0 border-l-0 border-[#A6C78A] transition h-2/3
-                  ${selectedDifficulties.includes('medium') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
+                  ${selectedDifficulties.includes('Medium') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Medium
               </button>
-              <button 
-                onClick={() => toggleDifficulty('hard')}
+              <button
+                onClick={() => toggleDifficulty('Hard')}
                 className={`w-1/4 border-2 border-l-0 rounded-r-lg border-[#A6C78A] transition h-2/3
-                  ${selectedDifficulties.includes('hard') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
+                  ${selectedDifficulties.includes('Hard') ? 'bg-[#A6C78A]' : 'hover:bg-[#A6C78A]'}`}>
                 Hard
               </button>
             </div>
@@ -144,7 +258,7 @@ export default function Recipes() {
                 <option value="">Recent</option>
                 <option value="M">Missing Ingredients</option>
                 <option value="TD">Time Decreasing</option>
-                <option value="TD">Time Increasing</option>
+                <option value="TI">Time Increasing</option>
               </select>
             </div>
           </div>
@@ -154,11 +268,22 @@ export default function Recipes() {
       {/* Recipe List */}
 
       <div className="w-full max-h-9/12 flex flex-wrap overflow-scroll justify-center">
-        <RecipeCard/>
-        <RecipeCard/>
-        <RecipeCard/>
-        <RecipeCard/>
-        <RecipeCard/>
+        {filteredRecipes.length === 0 ? (
+          <div className="w-full text-center !mt-8">
+            <p className="text-lg text-gray-600">
+              {recipes.length === 0 ? 'No recipes found. Add your first recipe!' : 'No recipes match your search criteria.'}
+            </p>
+          </div>
+        ) : (
+          filteredRecipes.map((recipe) => (
+            <RecipeCard
+              key={recipe._id}
+              recipe={recipe}
+              onRecipeDeleted={handleRecipeDeleted}
+              onRecipeSaveChange={handleRecipeSaveChange}
+            />
+          ))
+        )}
       </div>
 
     </div>
