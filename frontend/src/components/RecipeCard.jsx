@@ -1,4 +1,5 @@
 import { useState, useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";;
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
@@ -8,6 +9,7 @@ import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 
 export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange }) {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
     const [isSaved, setSaved] = useState(false);
     const [missingIng, setMissingIng] = useState(0);
 
@@ -125,7 +127,11 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
     return (
         <div
             role="button"
-            onClick={() => console.log("Card", recipe)}
+            onClick={() => {
+                if (recipe?._id) {
+                    navigate(`/recipe/${recipe._id}`);
+                }
+            }}
             className="!m-8 aspect-square w-1/5 rounded-lg hover:shadow-xl transition relative cursor-pointer transform hover:scale-105 bg-cover bg-center"
             style={{
                 backgroundImage: recipe?.image ? `url(${recipe.image})` : 'none',

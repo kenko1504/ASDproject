@@ -175,12 +175,6 @@ export default function AddRecipe() {
             {/* Header matching the recipes page style */}
             <div className="w-full h-16 relative flex !pt-5">
                 <h2 className="title font-semibold text-4xl">Add Recipe</h2>
-                <button 
-                    onClick={() => navigate("/recipes")} 
-                    className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform"
-                >
-                    Back
-                </button>
             </div>
             <br/>
 
@@ -189,10 +183,10 @@ export default function AddRecipe() {
             {/* Submit Buttons */}
             <div className="flex w-full space-x-4 relative !mb-4">
                         
-                <button className="!px-6 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors font-medium"
+                <button className="!px-6 !py-2 bg-[#A6C78A] rounded-full hover:bg-[#95B574] transition-colors font-medium"
                     type="button" onClick={handleSubmit}>Save Recipe</button>
 
-                <button className="!px-6 !py-2 border-2 border-[#A6C78A] rounded-lg hover:bg-[#A6C78A] transition-colors font-medium absolute right-0"
+                <button className="!px-6 !py-2 border-2 border-[#A6C78A] rounded-full hover:bg-[#A6C78A] transition-colors font-medium absolute right-0"
                     type="button" onClick={() => navigate("/recipes")}>Cancel</button>                            
             </div>
 
@@ -326,10 +320,8 @@ export default function AddRecipe() {
                                 onClick={addInstruction}
                                 className="flex items-center space-x-2 !px-4 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors"
                             >
-                                {/* Replace with your custom plus icon component */}
-                                {/* <PlusIcon className="h-4 w-4" /> */}
-                                <span className="text-lg font-bold">+</span>
-                                <span className="font-medium">Add Step</span>
+                                <span className="text-lg !mr-1">+</span>
+                                <span className="">Add Step</span>
                             </button>
                         </div>
                         
