@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
+import trashImg from "../assets/trash-alt-svgrepo-com.svg";
+import editImg from "../assets/edit-svgrepo-com.svg";
 
 export default function ViewRecipe() {
     const navigate = useNavigate();
@@ -83,6 +85,30 @@ export default function ViewRecipe() {
         }
     };
 
+    // Handle delete recipe
+    const handleDeleteRecipe = async () => {
+        const confirmDelete = window.confirm("Are you sure you want to delete this recipe?");
+        if (!confirmDelete) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`, {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                console.log('Recipe deleted successfully');
+                alert('Recipe deleted successfully!');
+                navigate("/recipes");
+            } else {
+                console.error('Failed to delete recipe');
+                alert('Failed to delete recipe. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error deleting recipe:', error);
+            alert('Error deleting recipe. Please try again.');
+        }
+    };
+
     // Fetch recipe details
     const fetchRecipe = async () => {
         try {
@@ -138,11 +164,9 @@ export default function ViewRecipe() {
         <div className="w-full h-full min-h-screen max-h-screen">
             {/* Header */}
             <div className="w-full h-16 relative flex !pt-5 items-center">
-                <button
-                    onClick={handleSaving}
-                    className="w-8 h-8 !mr-4 flex-shrink-0"
-                >
-                    <svg className={`${isSaved ? 'fill-[#EEDA45]' : 'fill-transparent'} w-8 h-8 transform transition active:scale-80`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+
+                <button onClick={handleSaving} className="w-8 h-8 !mr-4 flex-shrink-0">
+                    <svg className={`${isSaved ? 'fill-[#EEDA45]' : 'fill-transparent'} w-8 h-8 transform transition active:scale-90 hover:scale-110`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
                         <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
                         <g id="SVGRepo_iconCarrier">
@@ -151,13 +175,28 @@ export default function ViewRecipe() {
                         </g>
                     </svg>
                 </button>
+                
                 <h2 className="title font-semibold text-4xl">{recipe.name}</h2>
-                <button
-                    onClick={() => navigate("/recipes")}
-                    className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform"
-                >
-                    Back
-                </button>
+
+                {user?.role === "admin" && (
+                    <>
+                        <button
+                            onClick={handleDeleteRecipe}
+                            className="absolute right-36 h-3/4 w-12 rounded-full transform !mr-4 flex items-center justify-center hover:scale-110 transition active:scale-90"
+                        >
+                            <img className="w-10 h-10" src={trashImg} alt="Delete"/>
+                        </button>
+                        <button
+                            onClick={() => navigate(`/editRecipe/${recipeId}`)}
+                            className="absolute right-20 h-3/4 !pr-4 !pl-4 rounded-full transform !mr-4 hover:scale-110 transition active:scale-90"
+                        >
+                            <img className="w-10 h-10" src={editImg} alt="Delete"/>
+                        </button>
+                    </>
+                )}
+
+                <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform"
+                    onClick={() => navigate("/recipes")}>Back</button>
             </div>
             <br/>
 
@@ -167,11 +206,8 @@ export default function ViewRecipe() {
                     <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/4 !mr-8">
                         <div className="w-full aspect-square border-2 border-[#A6C78A] rounded-lg">
                             {recipe.image ? (
-                                <img
-                                    src={recipe.image}
-                                    alt={recipe.name}
-                                    className="w-full h-full object-cover rounded-lg"
-                                />
+                                <img src={recipe.image} alt={recipe.name}
+                                    className="w-full h-full object-cover rounded-lg"/>
                             ) : (
                                 <div className="w-full h-full flex flex-col items-center justify-center bg-[#E5F3DA]">
                                     <p className="font-medium text-gray-600">No image available</p>

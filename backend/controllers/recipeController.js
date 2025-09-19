@@ -55,6 +55,41 @@ export const getRecipeById = async (req, res) => {
   }
 };
 
+// Update recipe
+export const updateRecipe = async (req, res) => {
+  try {
+    const { name, cookTime, difficulty, description, ingredients, instructions, image } = req.body;
+
+    // Validate required fields
+    if (!name || !cookTime || !difficulty || !description || !ingredients || !instructions || !image) {
+      return res.status(400).json({ error: "All required fields must be provided" });
+    }
+
+    const updatedRecipe = await Recipe.findByIdAndUpdate(
+      req.params.id,
+      {
+        name,
+        cookTime: parseInt(cookTime),
+        difficulty,
+        description,
+        ingredientNo: ingredients.length,
+        image,
+        ingredients,
+        instructions
+      },
+      { new: true }
+    ).populate('ingredients.ingredient');
+
+    if (!updatedRecipe) {
+      return res.status(404).json({ error: "Recipe not found" });
+    }
+
+    res.status(200).json(updatedRecipe);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // Delete recipe
 export const deleteRecipe = async (req, res) => {
   try {
