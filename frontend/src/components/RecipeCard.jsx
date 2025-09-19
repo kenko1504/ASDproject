@@ -158,27 +158,27 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
                 </svg>
 
             </button>
-            <div className="absolute right-2 h-18 backdrop-blur-sm blur-sm bg-white/20 bottom-2 left-2 rounded-lg"></div>
-            <span className="absolute bottom-12 left-4 w-2/3 h-1/12 overflow-auto font-bold drop-shadow-lg">
+            {/* <div className="absolute right-2 h-18 backdrop-blur-sm blur-sm bg-white/20 bottom-2 left-2 rounded-lg"></div> */}
+            <span className="absolute bottom-12 left-2 !px-2 w-fit max-w-2/3 overflow-auto break-all max-h-16 font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
                 {recipe?.name || 'Recipe Name'}
             </span>
-            <span className="absolute bottom-12 right-4 w-1/4 text-right h-1/12 overflow-auto font-semibold drop-shadow-lg">
+            <span className="absolute bottom-12 right-2 !px-2 w-fit max-w-2/3 overflow-auto font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
                 {recipe?.difficulty || 'Easy'}
             </span>
-            <div className="absolute bottom-4 left-4 flex">
+            <div className="absolute bottom-4 left-2 drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full flex">
                 { missingIng == 0 ? (
                     <img className="w-6 h-6" src={checkImg}/>
                 ) : (
                     <>
                         <img className="w-6 h-6 !mr-1" src={crossImg}/>
-                        <span className="font-semibold">{missingIng}</span>                        
+                        <span className="font-semibold !mr-2">{missingIng}</span>                        
                     </>
                 )}
                 
             </div>
-            <div className="absolute bottom-4 right-4 flex">
+            <div className="absolute bottom-4 right-2 drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full flex">
                 <img className="w-6 h-6 !mr-1" src={clockImg}/>
-                <span className="font-semibold drop-shadow-lg">
+                <span className="font-semibold drop-shadow-lg !mr-2">
                     {recipe?.cookTime ? formatCookTime(recipe.cookTime) : '00:00'}
                 </span>
             </div>

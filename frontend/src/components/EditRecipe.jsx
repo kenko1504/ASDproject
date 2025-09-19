@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
 import sampleProfilePic from "../assets/SampleProfilePic.jpg";
+import NutritionPopupModal from './NutritionPopupModal.jsx';
 
 export default function EditRecipe() {
     const navigate = useNavigate();
@@ -26,6 +27,7 @@ export default function EditRecipe() {
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showNutritionModal, setShowNutritionModal] = useState(false);
 
     
     // Default recipe images
@@ -102,11 +104,24 @@ export default function EditRecipe() {
                 food.foodName.toLowerCase().includes(term.toLowerCase())
             );
             
-            // Transform the food data to match ingredient structure
+            // Transform the food data to include all nutritional information
             const transformedResults = filteredData.map(food => ({
                 _id: food._id,
                 name: food.foodName,
-                publicFoodKey: food.publicFoodKey
+                foodName: food.foodName,
+                publicFoodKey: food.publicFoodKey,
+                calories: food.calories,
+                protein: food.protein,
+                fat: food.fat,
+                transFat: food.transFat,
+                carbohydrates: food.carbohydrates,
+                sugar: food.sugar,
+                dietaryFiber: food.dietaryFiber,
+                cholesterol: food.cholesterol,
+                sodium: food.sodium,
+                calcium: food.calcium,
+                iron: food.iron,
+                vitaminC: food.vitaminC
             }));
             
             setSearchResults(transformedResults);
@@ -432,7 +447,15 @@ export default function EditRecipe() {
                     </div>
                     {/* Ingredients */}
                     <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/2 h-fit">
-                        <h3 className="font-semibold text-lg !mb-4">Ingredients</h3>
+                        <div className="flex justify-between items-center !mb-4">
+                            <h3 className="font-semibold text-lg">Ingredients</h3>
+                            <button
+                                onClick={() => setShowNutritionModal(true)}
+                                className="flex items-center space-x-2 !px-4 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors"
+                            >
+                                Nutrition
+                            </button>
+                        </div>
                         
                         {/* Ingredient Search */}
                         <div className="relative !mb-4">
@@ -499,6 +522,13 @@ export default function EditRecipe() {
                     </div>
                 </div>
             </div>
+
+            {/* Nutrition Modal */}
+            <NutritionPopupModal
+                isOpen={showNutritionModal}
+                onClose={() => setShowNutritionModal(false)}
+                ingredients={ingredients}
+            />
         </div>
     );
 }

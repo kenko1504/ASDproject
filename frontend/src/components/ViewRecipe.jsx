@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 import editImg from "../assets/edit-svgrepo-com.svg";
+import NutritionPopupModal from './NutritionPopupModal.jsx';
 
 export default function ViewRecipe() {
     const navigate = useNavigate();
@@ -14,6 +15,7 @@ export default function ViewRecipe() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isSaved, setSaved] = useState(false);
+    const [showNutritionModal, setShowNutritionModal] = useState(false);
 
     // Format cook time from minutes to HH:MM
     const formatTime = (minutes) => {
@@ -21,6 +23,18 @@ export default function ViewRecipe() {
         const mins = minutes % 60;
         return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
     };
+
+    // Calculate dynamic font size based on name length
+    const getDynamicFontSize = (name) => {
+        if (!name) return 'text-4xl';
+        const length = name.length;
+        if (length <= 20) return 'text-4xl';
+        if (length <= 30) return 'text-3xl';
+        if (length <= 40) return 'text-2xl';
+        if (length <= 60) return 'text-xl';
+        return 'text-lg';
+    };
+
 
     // Check if recipe is saved by current user
     const checkIfRecipeSaved = async () => {
@@ -176,7 +190,7 @@ export default function ViewRecipe() {
                     </svg>
                 </button>
                 
-                <h2 className="title font-semibold text-4xl">{recipe.name}</h2>
+                <h2 className={`title font-semibold ${getDynamicFontSize(recipe.name)} overflow-hidden break-all max-w-2/3 max-h-12 flex-1 mr-4`}>{recipe.name}</h2>
 
                 {user?.role === "admin" && (
                     <>
@@ -203,7 +217,7 @@ export default function ViewRecipe() {
             <div className="w-full min-h-10/12 max-h-10/12 overflow-scroll">
                 <div className="w-full flex !mb-8">
                     {/* Recipe Image */}
-                    <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/4 !mr-8">
+                    <div className="bg-[#D5FAB8] rounded-lg h-fit !p-4 w-1/4 !mr-8">
                         <div className="w-full aspect-square border-2 border-[#A6C78A] rounded-lg">
                             {recipe.image ? (
                                 <img src={recipe.image} alt={recipe.name}
@@ -248,8 +262,10 @@ export default function ViewRecipe() {
                         {/* Description */}
                         <div>
                             <label className="block font-medium !mb-2">Description</label>
-                            <div className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-lg bg-white min-h-[80px]">
-                                {recipe.description}
+                            <div className="w-full !px-3 !py-2 border-2 border-[#A6C78A] rounded-lg bg-white min-h-[80px] break-words overflow-scroll">
+                                <div className="break-all overflow-wrap-anywhere">
+                                    {recipe.description}
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -262,11 +278,11 @@ export default function ViewRecipe() {
 
                         <div className="space-y-3">
                             {recipe.instructions && recipe.instructions.map((instruction, index) => (
-                                <div key={index} className="flex items-start space-x-3 !mb-2">
-                                    <span className="w-8 h-auto bg-[#A6C78A] text-white rounded-l-lg flex items-center justify-center font-semibold min-h-[60px]">
+                                <div key={index} className="flex max-h-30 items-stretch space-x-3 !mb-2">
+                                    <div className="w-8 bg-[#A6C78A] text-white rounded-l-lg flex items-center justify-center font-semibold">
                                         {index + 1}
-                                    </span>
-                                    <div className="flex-1 !px-3 !py-2 border-2 border-[#A6C78A] bg-white rounded-r-lg min-h-[60px] flex items-center">
+                                    </div>
+                                    <div className="flex-1 !px-3 !py-2 border-2 border-[#A6C78A] bg-white rounded-r-lg min-h-[60px] flex items-center break-all overflow-auto">
                                         {instruction}
                                     </div>
                                 </div>
@@ -276,7 +292,15 @@ export default function ViewRecipe() {
 
                     {/* Ingredients */}
                     <div className="bg-[#D5FAB8] rounded-lg !p-4 w-1/2 h-fit">
-                        <h3 className="font-semibold text-lg !mb-4">Ingredients</h3>
+                        <div className="flex justify-between items-center !mb-4">
+                            <h3 className="font-semibold text-lg">Ingredients</h3>
+                            <button
+                                onClick={() => setShowNutritionModal(true)}
+                                className="flex items-center space-x-2 !px-4 !py-2 bg-[#A6C78A] rounded-lg hover:bg-[#95B574] transition-colors"
+                            >
+                                Nutrition
+                            </button>
+                        </div>
 
                         {/* Ingredients List */}
                         <div className="space-y-2">
@@ -297,6 +321,13 @@ export default function ViewRecipe() {
                     </div>
                 </div>
             </div>
+
+            {/* Nutrition Modal */}
+            <NutritionPopupModal
+                isOpen={showNutritionModal}
+                onClose={() => setShowNutritionModal(false)}
+                ingredients={recipe?.ingredients || []}
+            />
         </div>
     );
 }
