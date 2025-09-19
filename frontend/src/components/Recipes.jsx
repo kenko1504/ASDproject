@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../../contexts/AuthContext.jsx";
-import RecipeCard from "../RecipeCard.jsx";
+import { AuthContext } from "../contexts/AuthContext.jsx";
+import RecipeCard from "./RecipeCard.jsx";
 import searchImg from "../assets/search-svgrepo-com.svg";
 import filterImg from "../assets/filter-svgrepo-com.svg";
 import { useNavigate } from "react-router-dom";
