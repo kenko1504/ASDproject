@@ -3,11 +3,11 @@
     import { AuthContext } from "../../contexts/AuthContext.jsx";
 
     import "../../index.css";
-    import logoImg from "../../assets/LogoIcon.png"
-    import signOut from "../../assets/SignOut.svg"
-    import sampleProfileImg from "../../assets/SampleProfilePic.jpg"
-    import settingImg from "../../assets/Settings.svg"
-    import notificationImg from "../../assets/Notification.svg"
+    import logoImg from "../../assets/LogoIcon.png";
+    import signOut from "../../assets/SignOut.svg";
+    import userImg from "../../assets/circle-user-svgrepo-com.svg";
+    import settingImg from "../../assets/Settings.svg";
+    import notificationImg from "../../assets/Notification.svg";
 
     ;
 
@@ -21,7 +21,7 @@
         }
 
         return (
-            <div className={"sidebar min-w-[250px] w-[250px] flex flex-col bg-[#85BC59] min-h-screen border-6 rounded-2xl !pt-5 border-white "}>
+            <div className={"sidebar min-w-[250px] w-[250px] flex flex-col bg-[#85BC59] min-h-screen max-h-screen border-6 rounded-2xl !pt-5 border-white "}>
                 <Link to="/"><div className="logo flex font-semibold text-center text-xl !ml-2 !pt-5 !pb-5 content-center items-center">
                     <img className="w-10 h-10 mx-auto" src={logoImg} alt="logo" />
                     <span className={"title transition w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
@@ -44,6 +44,10 @@
                         <Link to={"/nutrition"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
                         >Nutrition</li></Link>
+                        
+                        <Link to={"/Recipes"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Recipes</li></Link>
 
                         <Link to={"/wasteBudget"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6 rounded-b-xl"
@@ -65,7 +69,7 @@
                     <div className={"sidebar-footer !mt-auto flex !p-1"}>
 
                         <div className="flex items-center bg-[#A1CF7B] w-4/6 rounded-xl !pr-2">
-                            <img className="w-8 h-8 rounded-[50%] !ml-2" src={sampleProfileImg} alt={"ProfilePic"}/>
+                            <img className="w-8 h-8 rounded-full !ml-2" src={userImg} alt={"ProfilePic"}/>
                             <span className="font-medium text-white w-full max-w-full text-center overflow-scroll">{user.username}</span>
                         </div>
                         <Link className="flex items-center bg-[#A1CF7B] !pl-1 !pr-1 rounded-xl !ml-1 !mr-1 hover:bg-[#6FAF4B]" to={"/settings"}><img className="w-8 h-8" src={settingImg} alt={"Settings"}/></Link>

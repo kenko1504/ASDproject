@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     fridgeList: { type: mongoose.Schema.Types.ObjectId, ref: 'Fridge' },
     groceryList: { type: mongoose.Schema.Types.ObjectId, ref: 'Grocery' },
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
+    savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

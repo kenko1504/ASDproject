@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import recipeRoutes from "./routes/recipeRoutes.js";
 import GroceryListModel from "./models/groceryList.js";
 import Food from "./models/food.js";
 
@@ -17,6 +18,7 @@ app.use(express.json());
 app.use("/items", itemRoutes)
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
+app.use("/recipes", recipeRoutes);
 
 //connect with MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas
