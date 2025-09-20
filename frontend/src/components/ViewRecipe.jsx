@@ -3,7 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 import editImg from "../assets/edit-svgrepo-com.svg";
-import NutritionPopupModal from './NutritionPopupModal.jsx';
+import NutritionPopupModal from "./NutritionPopupModal.jsx";
+import checkImg from "../assets/circle-check-svgrepo-com.svg";
+import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 
 export default function ViewRecipe() {
     const navigate = useNavigate();
@@ -305,7 +307,9 @@ export default function ViewRecipe() {
                         {/* Ingredients List */}
                         <div className="space-y-2">
                             {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
-                                <div key={index} className="flex items-center h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
+                                <div key={index} className="flex items-center h-10 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
+                                    <div className=" h-full w-1/24 flex items-center justify-center"><img src={checkImg} className="w-6 h-6 flex items-center justify-center"/></div>
+                                    {/* Need to add cross for missing ingredients */}
                                     <span className="flex-1 font-medium">
                                         {ingredient.ingredient?.foodName || ingredient.ingredient?.name || 'Unknown ingredient'}
                                     </span>
