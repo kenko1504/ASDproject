@@ -10,48 +10,48 @@ stages:
   - stage: test
     displayName: 'Testing Backend & Frontend'
     jobs:
+
+      # Backend Job
       - job: Backend
         displayName: 'Backend Testing'
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '20.x' # Use Node LTS for stability
+              versionSpec: '20.x'
             displayName: 'Use Node.js (Backend)'
 
-          - script: |
-              cd backend
-              npm ci
+          - script: npm ci
+            workingDirectory: backend
             displayName: 'Install Backend Dependencies'
 
-          - script: |
-              cd backend
-              npm test
+          - script: npm test
+            workingDirectory: backend
             displayName: 'Run Backend Unit Tests'
 
+      # Frontend Job
       - job: Frontend
         displayName: 'Frontend Testing'
         steps:
-          # Use Node LTS
           - task: NodeTool@0
             inputs:
               versionSpec: '20.x'
             displayName: 'Use Node.js (Frontend)'
 
-          # Install dependencies cleanly
-          - script: |
-              cd frontend
-              npm ci
+          # Install dependencies
+          - script: npm ci
+            workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          - script: npm run test -- --run
+          # Run Vitest tests with Rollup JS fallback
+          - script: npx vitest run
+            workingDirectory: frontend
             displayName: 'Run Frontend Unit Tests (Vitest)'
-            workingDirectory: frontend
             env:
-              ROLLUP_SKIP_NATIVE: true
+              ROLLUP_SKIP_NATIVE: 'true'
 
-          - script: npm run build
+          # Build frontend with Rollup JS fallback
+          - script: npx vite build
+            workingDirectory: frontend
             displayName: 'Run Frontend Build'
-            workingDirectory: frontend
             env:
-              ROLLUP_SKIP_NATIVE: true
-
+              ROLLUP_SKIP_NATIVE: 'true'
