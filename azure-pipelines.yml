@@ -24,13 +24,8 @@ stages:
 
           - script: |
               cd backend
-              echo "npm run test:unit"
+              npm test
             displayName: 'Run Backend Unit Tests'
-
-          - script: |
-              cd backend
-              echo "npm run test:integration"
-            displayName: 'Run Backend Integration Tests'
 
       - job: Frontend
         displayName: 'Frontend Testing'
@@ -46,13 +41,8 @@ stages:
 
           - script: |
               cd frontend
-              echo "npm run test:unit"
+              npm test
             displayName: 'Run Frontend Unit Tests'
-
-          - script: |
-              cd frontend
-              echo "npm run test:integration"
-            displayName: 'Run Frontend Integration Tests'
 
           - script: |
               cd frontend
