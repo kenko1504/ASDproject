@@ -66,3 +66,74 @@ export const updateUser = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+// Get all saved recipes for a user
+export const getSavedRecipes = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId).populate('savedRecipes');
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.status(200).json(user.savedRecipes);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Add a recipe to user's saved recipes
+export const addSavedRecipe = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { recipeId } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if recipe is already saved
+    if (user.savedRecipes.includes(recipeId)) {
+      return res.status(400).json({ error: "Recipe already saved" });
+    }
+
+    user.savedRecipes.push(recipeId);
+    user.updatedAt = Date.now();
+    await user.save();
+
+    res.status(200).json({ message: "Recipe saved successfully", savedRecipes: user.savedRecipes });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Remove a recipe from user's saved recipes
+export const removeSavedRecipe = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { recipeId } = req.body;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if recipe is in saved recipes
+    if (!user.savedRecipes.includes(recipeId)) {
+      return res.status(400).json({ error: "Recipe not found in saved recipes" });
+    }
+
+    user.savedRecipes = user.savedRecipes.filter(id => !id.equals(recipeId));
+    user.updatedAt = Date.now();
+    await user.save();
+
+    res.status(200).json({ message: "Recipe removed successfully", savedRecipes: user.savedRecipes });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
