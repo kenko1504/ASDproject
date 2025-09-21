@@ -4,7 +4,7 @@ trigger:
       - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest' 
 
 stages:
   - stage: test
@@ -34,25 +34,14 @@ stages:
               versionSpec: '20.x'
             displayName: 'Use Node.js'
 
-          # Install dependencies
           - script: npm ci
             workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          # Install missing native binaries
-          - script: |
-              npm install @parcel/watcher-linux-x64-glibc --save-dev --force
-              npm install lightningcss-linux-x64-gnu --save-dev --force
-            workingDirectory: frontend
-            displayName: 'Install Missing Native Binaries'
-            continueOnError: true
-
-          # Run tests
           - script: npm run test
             workingDirectory: frontend
             displayName: 'Run Vitest Unit Tests'
 
-          # Build
           - script: npm run build
             workingDirectory: frontend
             displayName: 'Build Frontend'
