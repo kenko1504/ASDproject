@@ -10,7 +10,6 @@ stages:
   - stage: test
     displayName: 'Testing Backend & Frontend'
     jobs:
-      # Backend Job
       - job: Backend
         displayName: 'Backend Testing'
         steps:
@@ -18,14 +17,6 @@ stages:
             inputs:
               versionSpec: '20.x'
             displayName: 'Use Node.js (Backend)'
-
-          - script: |
-              echo "Backend directory contents:"
-              ls -la
-              echo "Package.json exists:"
-              cat package.json | head -10
-            workingDirectory: backend
-            displayName: 'Debug Backend Environment'
 
           - script: npm ci
             workingDirectory: backend
@@ -43,28 +34,17 @@ stages:
               versionSpec: '20.x'
             displayName: 'Use Node.js'
 
-          # Debug frontend environment
-          - script: |
-              echo "Frontend directory contents:"
-              ls -la
-              echo "Package.json exists:"
-              cat package.json | head -10
-              echo "Node version: $(node --version)"
-              echo "NPM version: $(npm --version)"
-            workingDirectory: frontend
-            displayName: 'Debug Frontend Environment'
-
-          # Install dependencies with more verbose output
-          - script: |
-              npm ci --verbose
+          # Install dependencies
+          - script: npm ci
             workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          # Force install the missing Rollup binary
+          # Install missing native binaries
           - script: |
-              npm install @rollup/rollup-linux-x64-gnu --save-dev
+              npm install @parcel/watcher-linux-x64-glibc --save-dev --force
+              npm install lightningcss-linux-x64-gnu --save-dev --force
             workingDirectory: frontend
-            displayName: 'Install Missing Native Binary'
+            displayName: 'Install Missing Native Binaries'
             continueOnError: true
 
           # Run tests
@@ -72,8 +52,7 @@ stages:
             workingDirectory: frontend
             displayName: 'Run Vitest Unit Tests'
 
-          # Build (move to end and make optional)
+          # Build
           - script: npm run build
             workingDirectory: frontend
             displayName: 'Build Frontend'
-            continueOnError: true
