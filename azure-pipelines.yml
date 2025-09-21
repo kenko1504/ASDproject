@@ -43,17 +43,15 @@ stages:
               npm ci
             displayName: 'Install Frontend Dependencies'
 
-          # Run Vitest tests in CI mode with Rollup JS fallback
-          - script: |
-              cd frontend
-              export ROLLUP_SKIP_NATIVE=true
-              npm run test -- --run
+          - script: npm run test -- --run
             displayName: 'Run Frontend Unit Tests (Vitest)'
+            workingDirectory: frontend
+            env:
+              ROLLUP_SKIP_NATIVE: true
 
-          # Run frontend build (also with JS fallback)
-          - script: |
-              cd frontend
-              export ROLLUP_SKIP_NATIVE=true
-              npm run build
+          - script: npm run build
             displayName: 'Run Frontend Build'
+            workingDirectory: frontend
+            env:
+              ROLLUP_SKIP_NATIVE: true
 
