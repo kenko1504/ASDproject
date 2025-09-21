@@ -19,6 +19,14 @@ stages:
               versionSpec: '20.x'
             displayName: 'Use Node.js (Backend)'
 
+          - script: |
+              echo "Backend directory contents:"
+              ls -la
+              echo "Package.json exists:"
+              cat package.json | head -10
+            workingDirectory: backend
+            displayName: 'Debug Backend Environment'
+
           - script: npm ci
             workingDirectory: backend
             displayName: 'Install Backend Dependencies'
@@ -26,26 +34,46 @@ stages:
           - script: npm test
             workingDirectory: backend
             displayName: 'Run Backend Unit Tests'
+
       - job: Vitest
         displayName: 'Run Vitest Tests'
         steps:
-          # Use Node 20 LTS
           - task: NodeTool@0
             inputs:
               versionSpec: '20.x'
             displayName: 'Use Node.js'
 
-          # Install dependencies
-          - script: npm ci
+          # Debug frontend environment
+          - script: |
+              echo "Frontend directory contents:"
+              ls -la
+              echo "Package.json exists:"
+              cat package.json | head -10
+              echo "Node version: $(node --version)"
+              echo "NPM version: $(npm --version)"
+            workingDirectory: frontend
+            displayName: 'Debug Frontend Environment'
+
+          # Install dependencies with more verbose output
+          - script: |
+              npm ci --verbose
             workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          # Run Vitest tests in CI
+          # Force install the missing Rollup binary
+          - script: |
+              npm install @rollup/rollup-linux-x64-gnu --save-dev
+            workingDirectory: frontend
+            displayName: 'Install Missing Native Binary'
+            continueOnError: true
+
+          # Run tests
           - script: npm run test
             workingDirectory: frontend
             displayName: 'Run Vitest Unit Tests'
 
-          # Optional: build frontend
+          # Build (move to end and make optional)
           - script: npm run build
             workingDirectory: frontend
             displayName: 'Build Frontend'
+            continueOnError: true
