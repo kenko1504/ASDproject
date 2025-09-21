@@ -10,7 +10,6 @@ stages:
   - stage: test
     displayName: 'Testing Backend & Frontend'
     jobs:
-
       # Backend Job
       - job: Backend
         displayName: 'Backend Testing'
@@ -27,31 +26,26 @@ stages:
           - script: npm test
             workingDirectory: backend
             displayName: 'Run Backend Unit Tests'
-
-      # Frontend Job
-      - job: Frontend
-        displayName: 'Frontend Testing'
+      - job: Vitest
+        displayName: 'Run Vitest Tests'
         steps:
+          # Use Node 20 LTS
           - task: NodeTool@0
             inputs:
               versionSpec: '20.x'
-            displayName: 'Use Node.js (Frontend)'
+            displayName: 'Use Node.js'
 
           # Install dependencies
           - script: npm ci
             workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          # Run Vitest tests with Rollup JS fallback
-          - script: npx vitest run
+          # Run Vitest tests in CI
+          - script: npm run test
             workingDirectory: frontend
-            displayName: 'Run Frontend Unit Tests (Vitest)'
-            env:
-              ROLLUP_SKIP_NATIVE: 'true'
+            displayName: 'Run Vitest Unit Tests'
 
-          # Build frontend with Rollup JS fallback
-          - script: npx vite build
+          # Optional: build frontend
+          - script: npm run build
             workingDirectory: frontend
-            displayName: 'Run Frontend Build'
-            env:
-              ROLLUP_SKIP_NATIVE: 'true'
+            displayName: 'Build Frontend'
