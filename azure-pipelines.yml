@@ -15,11 +15,12 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '22.x'
+              versionSpec: '20.x' # Use Node LTS for stability
+            displayName: 'Use Node.js (Backend)'
 
           - script: |
               cd backend
-              npm install
+              npm ci
             displayName: 'Install Backend Dependencies'
 
           - script: |
@@ -32,19 +33,22 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '22.x'
+              versionSpec: '20.x' # Use Node LTS for stability
+            displayName: 'Use Node.js (Frontend)'
 
           - script: |
               cd frontend
-              npm install
+              npm ci
             displayName: 'Install Frontend Dependencies'
 
           - script: |
               cd frontend
-              npm test
-            displayName: 'Run Frontend Unit Tests'
+              export ROLLUP_SKIP_NATIVE=true
+              npm run test -- --run
+            displayName: 'Run Frontend Unit Tests (Vitest)'
 
           - script: |
               cd frontend
+              export ROLLUP_SKIP_NATIVE=true
               npm run build
             displayName: 'Run Frontend Build'
