@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 // Create new User
 export const createUser = async (req, res) => {
   try {
-    const { username, email, password} = req.body;
+    const { username, email, password, gender, age, height, weight } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -20,6 +20,12 @@ export const createUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      characteristics: {
+        gender,
+        age: parseInt(age),
+        height: parseInt(height),
+        weight: parseInt(weight),
+      },
     });
 
     await newUser.save();
@@ -46,7 +52,7 @@ export const deleteUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, email, password } = req.body;
+    const { username, email, password, characteristics } = req.body;
 
     const updateFields = {};
 
@@ -56,6 +62,10 @@ export const updateUser = async (req, res) => {
       const hashed = await bcrypt.hash(password, 10);
       updateFields.password = hashed;
     }
+    if (characteristics) {
+      updateFields.characteristics = characteristics;
+    }
+    updateFields.updatedAt = Date.now();
 
     const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
       new: true,

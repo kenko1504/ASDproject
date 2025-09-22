@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext.jsx";
 import { useNavigate } from "react-router-dom";
 
@@ -13,9 +13,25 @@ export default function Settings() {
     confirmEmail: "",
     password: "",
     confirmPassword: "",
+    gender: "",
+    age: "",
+    height: "",
+    weight: "",
   });
 
   const [message, setMessage] = useState("");
+
+  useEffect(() => {
+    if (user && user.characteristics) {
+      setFormData(prev => ({
+        ...prev,
+        gender: user.characteristics.gender || "",
+        age: user.characteristics.age || "",
+        height: user.characteristics.height || "",
+        weight: user.characteristics.weight || "",
+      }));
+    }
+  }, [user]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -47,6 +63,14 @@ export default function Settings() {
           updateData.password = formData.password;
         }
         break;
+      case "characteristics":
+        updateData.characteristics = {
+          gender: formData.gender,
+          age: parseInt(formData.age),
+          height: parseInt(formData.height),
+          weight: parseInt(formData.weight),
+        };
+        break;
       default:
         return;
     }
@@ -72,11 +96,21 @@ export default function Settings() {
       login(updatedUser); // Update context
       setMessage(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
 
-      setFormData((prev) => ({
-        ...prev,
-        [`${field}`]: "",
-        [`confirm${field.charAt(0).toUpperCase() + field.slice(1)}`]: "",
-      }));
+      if (field === "characteristics") {
+        setFormData((prev) => ({
+          ...prev,
+          gender: "",
+          age: "",
+          height: "",
+          weight: "",
+        }));
+      } else {
+        setFormData((prev) => ({
+          ...prev,
+          [`${field}`]: "",
+          [`confirm${field.charAt(0).toUpperCase() + field.slice(1)}`]: "",
+        }));
+      }
     } catch (err) {
       setMessage(err.message);
     }
@@ -205,10 +239,88 @@ export default function Settings() {
           </div>
         </div>
 
-        
-      </div> 
+
+      </div>
+
+      {/* Characteristics Section */}
+      <div className="flex !pt-10">
+        <div className="card w-full bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
+          <p className="font-semibold !mb-4 text-xl">Update Characteristics</p>
+          <div className="flex font-semibold !mb-4 gap-4">
+            <div className="flex-1">
+              <p>Current Gender: {user.characteristics?.gender || "Not set"}</p>
+            </div>
+            <div className="flex-1">
+              <p>Current Age: {user.characteristics?.age || "Not set"}</p>
+            </div>
+            <div className="flex-1">
+              <p>Current Height: {user.characteristics?.height ? `${user.characteristics.height} cm` : "Not set"}</p>
+            </div>
+            <div className="flex-1">
+              <p>Current Weight: {user.characteristics?.weight ? `${user.characteristics.weight} kg` : "Not set"}</p>
+            </div>
+          </div>
+          <div className="flex gap-4 !mb-4">
+            <select
+              name="gender"
+              value={formData.gender}
+              onChange={handleChange}
+              className="border border-[#85BC59] rounded-lg !p-2 flex-1 focus:outline-1 outline-[#6FAF4B]"
+            >
+              <option value="">Select Gender</option>
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+            <input
+              name="age"
+              placeholder="Age"
+              type="number"
+              value={formData.age}
+              onChange={handleChange}
+              onKeyDown={(e) => {
+                if (isNaN(e.key) && e.key !== 'Backspace' && e.key !== 'Delete' && e.key !== 'Tab' && e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') {
+                  e.preventDefault();
+                }
+              }}
+              min="1"
+              max="120"
+              step="1"
+              className="border border-[#85BC59] rounded-lg !p-2 flex-1 focus:outline-1 outline-[#6FAF4B]"
+            />
+            <input
+              name="height"
+              placeholder="Height (cm)"
+              type="number"
+              value={formData.height}
+              onChange={handleChange}
+              min="1"
+              max="300"
+              className="border border-[#85BC59] rounded-lg !p-2 flex-1 focus:outline-1 outline-[#6FAF4B]"
+            />
+            <input
+              name="weight"
+              placeholder="Weight (kg)"
+              type="number"
+              value={formData.weight}
+              onChange={handleChange}
+              min="1"
+              max="500"
+              className="border border-[#85BC59] rounded-lg !p-2 flex-1 focus:outline-1 outline-[#6FAF4B]"
+            />
+          </div>
+          <div className="w-full flex justify-center">
+            <button className="bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-2 rounded-full w-1/3"
+              onClick={() => handleUpdate("characteristics")}
+            >
+              Update Characteristics
+            </button> 
+          </div>
+          
+        </div>
+      </div>
+
       {/* Feedback */}
-      {message && <p className="!ml-4 !p-2 border-dashed border-2 w-fit border-green-600 bg-green-200 rounded font-medium">{message}</p>} 
+      {message && <p className="!ml-4 !p-2 border-dashed border-2 w-fit border-green-600 bg-green-200 rounded font-medium">{message}</p>}
       <br/>
     </div>
   );

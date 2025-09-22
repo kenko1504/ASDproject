@@ -9,6 +9,12 @@ const userSchema = new mongoose.Schema({
     groceryList: { type: mongoose.Schema.Types.ObjectId, ref: 'Grocery' },
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
     savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
+    characteristics: {
+        gender: { type: String, enum: ['Male', 'Female']},
+        age: { type: Number },
+        weight: { type: Number },
+        height: { type: Number },
+    },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
