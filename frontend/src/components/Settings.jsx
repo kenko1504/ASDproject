@@ -140,7 +140,7 @@ export default function Settings() {
   };
 
   return (
-    <div>
+    <div className="w-full">
       
       <div className="!pt-5 flex w-full relative">
         <span className="title font-semibold text-4xl">Settings</span> <br/>
