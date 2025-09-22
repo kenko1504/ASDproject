@@ -1,12 +1,10 @@
-const request = require('supertest');
-
-// Mock test to ensure pipeline passes
 describe('UserController Tests', () => {
-  test('placeholder test - should pass', () => {
+  it('should pass placeholder test', () => {
+    // Basic assertion to ensure Jest is working
     expect(1 + 1).toBe(2);
   });
 
-  // Tests needed: userController:
+  // Needed tests:
   // - Test createUser function
   // - Test updateUser function with characteristics
   // - Test deleteUser function

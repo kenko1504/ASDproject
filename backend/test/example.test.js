@@ -1,1 +1,7 @@
-//add testing code here for backend related stuff. The file must have a .test.js extension
+// Example test file for backend related stuff
+
+describe('Example Tests', () => {
+  it('should pass example test', () => {
+    expect(true).toBe(true);
+  });
+});
