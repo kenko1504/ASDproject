@@ -10,13 +10,16 @@ import Settings from "./components/Settings.jsx";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
 import GroceryList from "./components/GroceryList.jsx";
+import AddRecipe from "./components/AddRecipe.jsx";
+import ViewRecipe from "./components/ViewRecipe.jsx";
+import EditRecipe from "./components/EditRecipe.jsx";
 import "./index.css";
 
 export default function App() {
     return (
         <div className="layout flex">
             <Sidebar />
-            <main className="content flex flex-grow !p-4 !m-4 !mt-0 bg-[#f9fff9] text-[#3A4331]">
+            <main className="content flex flex-grow !p-4 !m-4 !pt-0 !pb-0 !mb-0 !mt-0 bg-[#f9fff9] text-[#3A4331]">
                 <Routes>
                     {/*<Route path="/" element={<Login />} />*/}
                     <Route path="/" element={<Dashboard/>} />
@@ -27,7 +30,10 @@ export default function App() {
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
+                    <Route path="/recipe/:recipeId" element={<ViewRecipe />} />
+                    <Route path="/editRecipe/:recipeId" element={<EditRecipe />} />
                     <Route path="/settings" element={<Settings />} />
+                    <Route path="/addRecipe" element={<AddRecipe />} />
                 </Routes>
             </main>
         </div>

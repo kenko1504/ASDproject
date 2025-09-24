@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import itemRoutes from "./routes/itemRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import recipeRoutes from "./routes/recipeRoutes.js";
 import groceryRoutes from "./routes/groceryRoutes.js";
 import Food from "./models/food.js";
 
@@ -18,6 +19,7 @@ app.use("/items", itemRoutes)
 app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/GroceryLists", groceryRoutes);
+app.use("/recipes", recipeRoutes);
 
 //connect with MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas
@@ -52,21 +54,6 @@ let items = [
 app.get("/ingredients", (req, res) => {
   res.json(items);
 });
-
-// app.post("/GroceryLists", async (req, res) => {
-//   const { name, date, note, status } = req.body;
-//   const groceryList = new GroceryListModel({ name, date, note, status });
-//   await  groceryList.save();
-//   res.json( groceryList);
-//   console.log("Grocery List saved:",  groceryList);
-// });
-
-// app.get("/GroceryLists", (req, res) => {
-//   GroceryListModel.find()
-//     .then(lists => res.json(lists))
-//     .catch(err => res.json(err));
-//   console.log("Grocery List Get");
-// })
 
 app.get("/Food", (req, res) => {
   Food.find()
