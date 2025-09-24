@@ -5,16 +5,16 @@ export const createList = async (req, res) => {
   try {
     const { UID } = req.params; // User ID from the URL
     const { name, date, note, status } = req.body;
-    const list = new GroceryList({ name, date, note, status });
+    const list = new GroceryList({ name, user: UID, date, note, status });
     await list.save(); // Save the new grocery list to the database
     console.log("Grocery List created:", list);
     
-    const user = await User.findById(UID);
-    if (!user) {
-      return res.status(404).json({ error: "User not found" }); // User error handling
-    }
-    user.groceryList.push(list._id); // Add the list ID to the user's groceryLists array
-    await user.save();
+    // const user = await User.findById(UID);
+    // if (!user) {
+    //   return res.status(404).json({ error: "User not found" }); // User error handling
+    // }
+    // user.groceryList.push(list._id); // Add the list ID to the user's groceryLists array
+    // await user.save();
     res.status(201).json(list);
   } catch (err) {
     if (err.code === 11000) { // Duplicate list name error
@@ -28,10 +28,14 @@ export const createList = async (req, res) => {
 export const getLists = async (req, res) => {
   try {
     const { UID } = req.params;
-    const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    res.status(200).json(user.groceryList || []); // Return all grocery lists for the user
-    console.log("Grocery Lists fetched:", user.groceryList);
-    console.log("uid:", user._id);
+    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
+    const lists = await GroceryList.find({ user: UID }); // Find all grocery lists for the user
+    if (!lists) {
+      return res.status(404).json({ error: "No grocery lists found for this user." });
+    }
+    res.status(200).json(lists);
+    console.log("Grocery Lists fetched:", lists);
+    console.log("uid:", UID);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
