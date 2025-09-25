@@ -155,7 +155,7 @@ export default function ViewRecipe() {
     if (loading) {
         return (
             <div className="w-full h-full min-h-screen max-h-screen flex items-center justify-center">
-                <p className="text-lg">Loading recipe...</p>
+                <p className="text-lg bg-[#E5F3DA] border-[#A6C78A] border-3 border-dashed rounded-lg !px-8 !py-4">Loading recipe...</p>
             </div>
         );
     }
@@ -211,7 +211,7 @@ export default function ViewRecipe() {
                     </>
                 )}
 
-                <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform"
+                <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transition"
                     onClick={() => navigate("/recipes")}>Back</button>
             </div>
             <br/>

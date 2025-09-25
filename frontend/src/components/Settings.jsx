@@ -320,7 +320,9 @@ export default function Settings() {
       </div>
 
       {/* Feedback */}
-      {message && <p className="!ml-4 !p-2 border-dashed border-2 w-fit border-green-600 bg-green-200 rounded font-medium">{message}</p>}
+      <div className="w-full flex justify-center">
+        {message && <p className="!ml-4 !px-8 !py-2 border-dashed w-fit border-3 bg-[#E5F3DA] border-[#A6C78A] rounded-lg">{message}</p>}
+      </div>
       <br/>
     </div>
   );

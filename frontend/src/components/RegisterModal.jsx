@@ -92,8 +92,8 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
         {/* Show success message if registration is successful */}
         {success ? (
           <div className="text-center">
-            <div className="!mb-4 !p-4 bg-green-100 border-2 border-green-400 text-green-700 rounded border-dashed">
-              <p className="font-medium">Registration successful!</p>
+            <div className="!mb-4 !p-4 border-3 bg-[#E5F3DA] border-[#A6C78A] rounded-lg border-dashed">
+              <p>Registration successful!</p>
             </div>
             <button
               onClick={handleSwitchToLogin}

@@ -243,7 +243,7 @@ export default function EditRecipe() {
     if (loading) {
         return (
             <div className="w-full h-full min-h-screen max-h-screen flex items-center justify-center">
-                <p className="text-lg">Loading recipe...</p>
+                <p className="text-lg bg-[#E5F3DA] border-[#A6C78A] border-3 border-dashed rounded-lg !px-8 !py-4">Loading recipe...</p>
             </div>
         );
     }

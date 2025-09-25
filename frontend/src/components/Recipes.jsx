@@ -269,9 +269,9 @@ export default function Recipes() {
 
       <div className="w-full max-h-9/12 flex flex-wrap overflow-scroll justify-center">
         {filteredRecipes.length === 0 ? (
-          <div className="w-full text-center !mt-8">
-            <p className="text-lg text-gray-600">
-              {recipes.length === 0 ? 'No recipes found. Add your first recipe!' : 'No recipes match your search criteria.'}
+          <div className="w-full flex justify-center !mt-8">
+            <p className="text-lg !px-4 !py-2 rounded-lg bg-[#E5F3DA] border-[#A6C78A] border-3 border-dashed w-fit">
+              No recipes match your search criteria.
             </p>
           </div>
         ) : (
