@@ -6,7 +6,7 @@ const itemSchema = new mongoose.Schema({
         required: [true, 'Item name is required']
     },
     quantity: {
-        type: String,
+        type: Number,
         required: true
     },
     price: {
