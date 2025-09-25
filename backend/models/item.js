@@ -34,6 +34,10 @@ const itemSchema = new mongoose.Schema({
     nutritionValue:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Nutrition'
+    },
+    groceryList: { // Reference to the GroceryList this item belongs to
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'GroceryList',
     }
 }, {
     timestamps: true

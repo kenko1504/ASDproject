@@ -18,7 +18,7 @@ export default function Dashboard() {
 
           <section className="card bg-[#D5FAB8] !p-4 !m-4 !mt-8 rounded-lg h-1/4">
             <div className="flex items-center w-full relative">
-                <h2 className="text-2xl font-medium">Recipes</h2>
+                <h2 className="text-2xl font-medium">Recent Recipes</h2>
                 <Link to="/" className="absolute top-0 right-0 border-3 !pl-4 !pr-4 rounded-full border-[#A6C78A] hover:bg-[#A6C78A] transition">
                     <p>View Recipes</p>
                 </Link>
