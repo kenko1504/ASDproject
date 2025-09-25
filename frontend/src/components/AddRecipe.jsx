@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+import { authenticatedFetch } from "../utils/api.js";
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
@@ -181,11 +182,8 @@ export default function AddRecipe() {
                 instructions: instructions.filter(instruction => instruction.trim() !== '')
             };
 
-            const response = await fetch('http://localhost:5000/recipes', {
+            const response = await authenticatedFetch('http://localhost:5000/recipes', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(recipeData)
             });
 

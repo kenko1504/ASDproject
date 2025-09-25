@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from "react";
-import { AuthContext } from "../contexts/AuthContext.jsx";
+import { AuthContext, getUserRoleFromToken } from "../contexts/AuthContext.jsx";
 import RecipeCard from "./RecipeCard.jsx";
 import searchImg from "../assets/search-svgrepo-com.svg";
 import filterImg from "../assets/filter-svgrepo-com.svg";
@@ -164,7 +164,7 @@ export default function Recipes() {
     <div className="w-full h-full min-h-screen max-h-screen">
       <div className="w-full relative flex !pt-5">
         <h2 className="title font-semibold text-4xl">Recipes</h2> 
-        { user.role == "admin" ? (
+        { getUserRoleFromToken() === "admin" ? (
           <button onClick={() => navigate("/addRecipe")} className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform">Add Recipe</button>
         ) : null}
       </div>
@@ -209,12 +209,12 @@ export default function Recipes() {
       </div>
 
       {/* filter and sort options */}
-      <div className="flex w-full !pl-8 !mb-2">
-        <div className={`w-full transition-all duration-300 ease-in-out overflow-hidden ${
+      <div className="flex justify-center w-full !mb-2">
+        <div className={`w-fit min-w-3/4 transition-all duration-300 ease-in-out overflow-hidden bg-[#D5FAB8] rounded-lg flex items-center justify-center !px-4 ${
           isFilterOpen ? 'h-14 opacity-100' : 'h-0 opacity-0'
         }`}>
-          <div className="flex justify-center h-14">
-            <div className="flex bg-[#D5FAB8] rounded-lg justify-center items-center w-1/3 !mr-8">
+          <div className="flex w-full justify-center h-full">
+            <div className="flex rounded-lg justify-center items-center w-1/3 !mr-8">
               <label className="!mr-4">Max Time</label>
               <input
                 type="range"
@@ -224,10 +224,10 @@ export default function Recipes() {
                 onChange={handleCookTimeChange}
                 className="!mr-4 w-5/12"
               />
-              <label className="max-w-1/12 min-w-1/12">{formatTime(cookTime)}</label>
+              <label className="min-w-3/24 max-w-3/24">{formatTime(cookTime)}</label>
             </div>
       
-            <div className="flex bg-[#D5FAB8] rounded-lg justify-center !pr-4 !pl-4 items-center w-1/3 !mr-8">
+            <div className="flex rounded-lg justify-center !pr-4 !pl-4 items-center w-5/12 !mr-8">
               <label className="!mr-4">Difficulty</label>
               <button
                onClick={() => toggleDifficulty('Easy')}
@@ -249,7 +249,7 @@ export default function Recipes() {
               </button>
             </div>
       
-            <div className="flex bg-[#D5FAB8] rounded-lg items-center w-1/6 relative !mr-8 !pl-4 !pr-4">
+            <div className="flex rounded-lg items-center w-3/12 relative !pl-4 !pr-4">
               <label className="!mr-4">Sort</label>
               <select 
                 onChange={handleSortSelect} 

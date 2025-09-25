@@ -1,11 +1,16 @@
 import express from "express";
-import { createUser, deleteUser, updateUser, getSavedRecipes, addSavedRecipe, removeSavedRecipe } from "../controllers/userController.js";
+import { createUser, deleteUser, updateUser, getSavedRecipes, addSavedRecipe, removeSavedRecipe, searchUsers, adminUpdateUser } from "../controllers/userController.js";
+import { authenticateToken, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
 router.post("/register", createUser);
 router.delete("/:id", deleteUser);
 router.put("/:id", updateUser);
+
+// Admin-only user management routes
+router.get("/search", authenticateToken, requireAdmin, searchUsers);
+router.put("/:id/admin", authenticateToken, requireAdmin, adminUpdateUser);
 
 // Saved recipes routes
 router.get("/:userId/saved-recipes", getSavedRecipes);
