@@ -6,7 +6,7 @@ const itemSchema = new mongoose.Schema({
         required: [true, 'Item name is required']
     },
     quantity: {
-        type: String,
+        type: Number,
         required: true
     },
     price: {
@@ -34,6 +34,10 @@ const itemSchema = new mongoose.Schema({
     nutritionValue:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Nutrition'
+    },
+    groceryList: { // Reference to the GroceryList this item belongs to
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'GroceryList',
     }
 }, {
     timestamps: true

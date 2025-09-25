@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     password: { type: String, required: true },
     fridgeList: { type: mongoose.Schema.Types.ObjectId, ref: 'Fridge' },
-    groceryList: { type: mongoose.Schema.Types.ObjectId, ref: 'Grocery' },
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
     savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
     characteristics: {
@@ -18,7 +17,7 @@ const userSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
-
+// userSchema.set('strictPopulate', false);
 const User = mongoose.model("User", userSchema);
 
 export default User;
