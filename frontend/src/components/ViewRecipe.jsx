@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext.jsx";
+import { AuthContext, getUserRoleFromToken } from "../contexts/AuthContext.jsx";
+import { authenticatedFetch } from "../utils/api.js";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 import editImg from "../assets/edit-svgrepo-com.svg";
 import NutritionPopupModal from "./NutritionPopupModal.jsx";
@@ -128,7 +129,7 @@ export default function ViewRecipe() {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
                 method: 'DELETE'
             });
 
@@ -177,7 +178,7 @@ export default function ViewRecipe() {
     if (loading) {
         return (
             <div className="w-full h-full min-h-screen max-h-screen flex items-center justify-center">
-                <p className="text-lg">Loading recipe...</p>
+                <p className="text-lg bg-[#E5F3DA] border-[#A6C78A] border-3 border-dashed rounded-lg !px-8 !py-4">Loading recipe...</p>
             </div>
         );
     }
@@ -216,7 +217,7 @@ export default function ViewRecipe() {
                 
                 <h2 className={`title font-semibold ${getDynamicFontSize(recipe.name)} overflow-hidden break-all max-w-2/3 max-h-12 flex-1 mr-4`}>{recipe.name}</h2>
 
-                {user?.role === "admin" && (
+                {getUserRoleFromToken() === "admin" && (
                     <>
                         <button
                             onClick={handleDeleteRecipe}
@@ -233,7 +234,7 @@ export default function ViewRecipe() {
                     </>
                 )}
 
-                <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transform"
+                <button className="absolute right-0 h-3/4 !pr-4 !pl-4 rounded-full border-[#A6C78A] border-2 hover:bg-[#A6C78A] transition"
                     onClick={() => navigate("/recipes")}>Back</button>
             </div>
             <br/>

@@ -5,7 +5,7 @@ import bcrypt from "bcrypt"
 // Create new User
 export const createUser = async (req, res) => {
   try {
-    const { username, email, password} = req.body;
+    const { username, email, password, gender, age, height, weight } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -20,6 +20,12 @@ export const createUser = async (req, res) => {
       username,
       email,
       password: hashedPassword,
+      characteristics: {
+        gender,
+        age: parseInt(age),
+        height: parseInt(height),
+        weight: parseInt(weight),
+      },
     });
 
     await newUser.save();
@@ -42,11 +48,11 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// Update User
+// Update User (regular users - no role updates)
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { username, email, password } = req.body;
+    const { username, email, password, characteristics } = req.body;
 
     const updateFields = {};
 
@@ -56,10 +62,50 @@ export const updateUser = async (req, res) => {
       const hashed = await bcrypt.hash(password, 10);
       updateFields.password = hashed;
     }
+    if (characteristics) {
+      updateFields.characteristics = characteristics;
+    }
+    updateFields.updatedAt = Date.now();
 
     const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Admin-only: Update user details (including role)
+export const adminUpdateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, email, password, characteristics, role } = req.body;
+
+    const updateFields = {};
+
+    if (username) updateFields.username = username;
+    if (email) updateFields.email = email;
+    if (password) {
+      const hashed = await bcrypt.hash(password, 10);
+      updateFields.password = hashed;
+    }
+    if (characteristics) {
+      updateFields.characteristics = characteristics;
+    }
+    if (role && (role === 'user' || role === 'admin')) {
+      updateFields.role = role;
+    }
+    updateFields.updatedAt = Date.now();
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     res.status(200).json(updatedUser);
   } catch (err) {
