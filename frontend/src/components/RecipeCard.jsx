@@ -1,6 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../contexts/AuthContext.jsx";;
+import { AuthContext, getUserRoleFromToken } from "../contexts/AuthContext.jsx";;
+import { authenticatedFetch } from "../utils/api.js";
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
 import clockImg from "../assets/clock-svgrepo-com.svg";
@@ -99,7 +100,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/recipes/${recipe._id}`, {
+            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipe._id}`, {
                 method: 'DELETE'
             });
 
@@ -138,7 +139,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
                 backgroundColor: recipe?.image ? 'transparent' : '#E5F3DA'
             }}
         >
-            { user.role == "admin" ? (
+            { getUserRoleFromToken() === "admin" ? (
                 <button onClick={handleDeleteRecipe}>
                     <img className="w-8 h-8 absolute left-4 top-4 transform transition active:scale-90 hover:scale-110" src={trashImg}/>
                 </button>

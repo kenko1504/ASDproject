@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
+import { authenticatedFetch } from "../utils/api.js";
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
@@ -216,11 +217,8 @@ export default function EditRecipe() {
                 instructions: instructions.filter(instruction => instruction.trim() !== '')
             };
 
-            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
                 body: JSON.stringify(recipeData)
             });
 
@@ -243,7 +241,7 @@ export default function EditRecipe() {
     if (loading) {
         return (
             <div className="w-full h-full min-h-screen max-h-screen flex items-center justify-center">
-                <p className="text-lg">Loading recipe...</p>
+                <p className="text-lg bg-[#E5F3DA] border-[#A6C78A] border-3 border-dashed rounded-lg !px-8 !py-4">Loading recipe...</p>
             </div>
         );
     }

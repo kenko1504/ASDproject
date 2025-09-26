@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 // LOGIN controller
 export const loginUser = async (req, res) => {
@@ -17,7 +18,21 @@ export const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid password" });
     }
 
-    res.status(200).json({ message: "Login successful", user });
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '24h' }
+    );
+
+    // Remove password from user object before sending
+    const userResponse = { ...user.toObject(), password: undefined };
+
+    res.status(200).json({
+      message: "Login successful",
+      user: userResponse,
+      token
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

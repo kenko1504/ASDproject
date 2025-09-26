@@ -48,7 +48,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-// Update User
+// Update User (regular users - no role updates)
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
@@ -70,6 +70,42 @@ export const updateUser = async (req, res) => {
     const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
       new: true,
     });
+
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Admin-only: Update user details (including role)
+export const adminUpdateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { username, email, password, characteristics, role } = req.body;
+
+    const updateFields = {};
+
+    if (username) updateFields.username = username;
+    if (email) updateFields.email = email;
+    if (password) {
+      const hashed = await bcrypt.hash(password, 10);
+      updateFields.password = hashed;
+    }
+    if (characteristics) {
+      updateFields.characteristics = characteristics;
+    }
+    if (role && (role === 'user' || role === 'admin')) {
+      updateFields.role = role;
+    }
+    updateFields.updatedAt = Date.now();
+
+    const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
+      new: true,
+    });
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
 
     res.status(200).json(updatedUser);
   } catch (err) {
@@ -143,6 +179,33 @@ export const removeSavedRecipe = async (req, res) => {
     await user.save();
 
     res.status(200).json({ message: "Recipe removed successfully", savedRecipes: user.savedRecipes });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// Admin-only: Search users by username or email
+export const searchUsers = async (req, res) => {
+  try {
+    const { searchTerm, searchType } = req.query;
+
+    if (!searchTerm) {
+      // Return all users if no search term
+      const users = await User.find({}, 'username email role createdAt').sort({ createdAt: -1 });
+      return res.status(200).json(users);
+    }
+
+    let query = {};
+
+    if (searchType === 'email') {
+      query.email = { $regex: searchTerm, $options: 'i' };
+    } else {
+      // Default to username search
+      query.username = { $regex: searchTerm, $options: 'i' };
+    }
+
+    const users = await User.find(query, 'username email role createdAt').sort({ createdAt: -1 });
+    res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
