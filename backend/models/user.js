@@ -8,22 +8,13 @@ const userSchema = new mongoose.Schema({
     fridgeList: { type: mongoose.Schema.Types.ObjectId, ref: 'Fridge' },
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
     savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
     recentRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
-=======
->>>>>>> main
     characteristics: {
         gender: { type: String, enum: ['Male', 'Female']},
         age: { type: Number },
         weight: { type: Number },
         height: { type: Number },
     },
-<<<<<<< HEAD
->>>>>>> Stashed changes
-=======
->>>>>>> main
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });
