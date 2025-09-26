@@ -492,19 +492,19 @@ export default function EditRecipe() {
                         {/* Added Ingredients */}
                         <div className="space-y-2">
                             {ingredients.map((ingredient) => (
-                                <div key={ingredient.id} className="flex items-center h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
-                                    <span className="flex-1 font-medium">{ingredient.ingredient?.foodName || ingredient.ingredient?.name || 'Unknown ingredient'}</span>
+                                <div key={ingredient.id} className="flex items-center min-h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
+                                    <span className="flex-1 font-medium flex items-center">{ingredient.ingredient?.foodName || ingredient.ingredient?.name || 'Unknown ingredient'}</span>
                                     <input
                                         type="number"
                                         value={ingredient.quantity}
                                         onChange={(e) => updateIngredientQuantity(ingredient.id, e.target.value)}
                                         placeholder="Amt"
-                                        className="w-1/6 border-x-2 !px-2 border-[#A6C78A] h-full focus:outline-none"
+                                        className="w-1/6 border-x-2 !px-2 border-[#A6C78A] self-stretch focus:outline-none"
                                     />
                                     <select
                                         value={ingredient.measurementType}
                                         onChange={(e) => updateIngredientMeasurement(ingredient.id, e.target.value)}
-                                        className="w-1/6 !px-2 h-full focus:outline-none"
+                                        className="w-1/6 !px-2 self-stretch focus:outline-none"
                                     >
                                         <option value="grams">grams</option>
                                         <option value="ml">ml</option>
@@ -512,7 +512,7 @@ export default function EditRecipe() {
                                     <button
                                         type="button"
                                         onClick={() => removeIngredient(ingredient.id)}
-                                        className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 h-full"
+                                        className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 self-stretch"
                                     >
                                         <span className="text-xl">×</span>
                                     </button>

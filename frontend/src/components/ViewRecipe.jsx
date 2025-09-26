@@ -38,6 +38,27 @@ export default function ViewRecipe() {
     };
 
 
+    // Add recipe to recent recipes
+    const addToRecentRecipes = async () => {
+        if (!user?._id || !recipeId) return;
+
+        try {
+            const response = await fetch(`http://localhost:5000/users/${user._id}/recent-recipes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ recipeId: recipeId })
+            });
+
+            if (!response.ok) {
+                console.error('Failed to add to recent recipes:', response.status);
+            }
+        } catch (error) {
+            console.error('Error adding to recent recipes:', error);
+        }
+    };
+
     // Check if recipe is saved by current user
     const checkIfRecipeSaved = async () => {
         if (!user?._id || !recipeId) return;
@@ -149,6 +170,7 @@ export default function ViewRecipe() {
         if (recipeId) {
             fetchRecipe();
             checkIfRecipeSaved();
+            addToRecentRecipes();
         }
     }, [recipeId, user?._id]);
 
@@ -307,13 +329,13 @@ export default function ViewRecipe() {
                         {/* Ingredients List */}
                         <div className="space-y-2">
                             {recipe.ingredients && recipe.ingredients.map((ingredient, index) => (
-                                <div key={index} className="flex items-center h-10 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
-                                    <div className=" h-full w-1/24 flex items-center justify-center"><img src={checkImg} className="w-6 h-6 flex items-center justify-center"/></div>
+                                <div key={index} className="flex items-center min-h-10 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
+                                    <div className="h-full w-1/24 flex items-center justify-center"><img src={checkImg} className="w-6 h-6 flex items-center justify-center"/></div>
                                     {/* Need to add cross for missing ingredients */}
-                                    <span className="flex-1 font-medium">
+                                    <span className="flex-1 font-medium flex items-center">
                                         {ingredient.ingredient?.foodName || ingredient.ingredient?.name || 'Unknown ingredient'}
                                     </span>
-                                    <div className="w-1/6 border-x-2 !px-2 border-[#A6C78A] h-full flex items-center justify-center">
+                                    <div className="w-1/6 border-x-2 !px-2 border-[#A6C78A] self-stretch flex items-center justify-center">
                                         {ingredient.quantity}
                                     </div>
                                     <div className="w-1/6 !px-2 h-full flex items-center justify-center">

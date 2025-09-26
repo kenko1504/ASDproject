@@ -1,5 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
+<<<<<<< Updated upstream
+=======
+import { authenticatedFetch } from "../utils/api.js";
+import { getUserRoleFromToken } from "../contexts/AuthContext.jsx";
+>>>>>>> Stashed changes
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
@@ -36,6 +41,9 @@ export default function AddRecipe() {
     const [searchResults, setSearchResults] = useState([]);
     const [showSearchResults, setShowSearchResults] = useState(false);
     const [showNutritionModal, setShowNutritionModal] = useState(false);
+    const [isSeeding, setIsSeeding] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const [isCleaning, setIsCleaning] = useState(false);
 
     
     // Default recipe images
@@ -205,6 +213,97 @@ export default function AddRecipe() {
         }
     };
 
+    // Handle seeding dummy recipes
+    const handleSeedRecipes = async () => {
+        if (!window.confirm('This will create 10 dummy recipes. Continue?')) {
+            return;
+        }
+
+        setIsSeeding(true);
+        try {
+            // Pass the correct imported image URLs to the backend
+            const imageUrls = defaultImages.map(img => img.path);
+
+            const response = await authenticatedFetch('http://localhost:5000/recipes/seed', {
+                method: 'POST',
+                body: JSON.stringify({ imageUrls })
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message);
+                console.log('Dummy recipes created:', result);
+            } else {
+                const error = await response.json();
+                console.error('Error seeding recipes:', error);
+                alert('Error seeding recipes: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error. Please try again.');
+        } finally {
+            setIsSeeding(false);
+        }
+    };
+
+    // Handle deleting all generated recipes
+    const handleDeleteGeneratedRecipes = async () => {
+        if (!window.confirm('This will delete ALL generated recipes. This action cannot be undone. Continue?')) {
+            return;
+        }
+
+        setIsDeleting(true);
+        try {
+            const response = await authenticatedFetch('http://localhost:5000/recipes/generated', {
+                method: 'DELETE'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message);
+                console.log('Generated recipes deleted:', result);
+            } else {
+                const error = await response.json();
+                console.error('Error deleting generated recipes:', error);
+                alert('Error deleting generated recipes: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error. Please try again.');
+        } finally {
+            setIsDeleting(false);
+        }
+    };
+
+    // Handle cleaning up orphaned recipe references
+    const handleCleanupOrphanedReferences = async () => {
+        if (!window.confirm('This will clean up orphaned recipe references from all users. Continue?')) {
+            return;
+        }
+
+        setIsCleaning(true);
+        try {
+            const response = await authenticatedFetch('http://localhost:5000/recipes/cleanup-orphaned', {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert(result.message);
+                console.log('Orphaned references cleaned:', result);
+            } else {
+                const error = await response.json();
+                console.error('Error cleaning orphaned references:', error);
+                alert('Error cleaning orphaned references: ' + error.error);
+            }
+        } catch (error) {
+            console.error('Network error:', error);
+            alert('Network error. Please try again.');
+        } finally {
+            setIsCleaning(false);
+        }
+    };
+
     return (
         <div className="w-full h-full min-h-screen max-h-screen">
             <div className="w-full h-16 relative flex !pt-5">
@@ -216,12 +315,39 @@ export default function AddRecipe() {
 
             {/* Submit Buttons */}
             <div className="flex w-full space-x-4 relative !mb-4">
-                        
-                <button className="!px-6 !py-2 bg-[#A6C78A] rounded-full hover:bg-[#95B574] transition-colors font-medium"
+
+                <button className="!px-6 !py-2 bg-[#A6C78A] rounded-full hover:bg-[#95B574] transition-colors font-medium !mr-4"
                     type="button" onClick={handleSubmit}>Save Recipe</button>
 
+                <button
+                    className="!px-6 !py-2 bg-[#EEDA45] rounded-full hover:bg-[#E5D53F] transition-colors font-medium !mr-4"
+                    type="button"
+                    onClick={handleSeedRecipes}
+                    disabled={isSeeding || isDeleting || isCleaning}
+                >
+                    {isSeeding ? 'Creating...' : 'Seed 10 Dummy Recipes'}
+                </button>
+
+                <button
+                    className="!px-6 !py-2 bg-[#CF7171] rounded-full hover:bg-[#B85F5F] transition-colors font-medium text-white !mr-4"
+                    type="button"
+                    onClick={handleDeleteGeneratedRecipes}
+                    disabled={isSeeding || isDeleting || isCleaning}
+                >
+                    {isDeleting ? 'Deleting...' : 'Delete All Generated'}
+                </button>
+
+                <button
+                    className="!px-6 !py-2 bg-[#8B8B8B] rounded-full hover:bg-[#747474] transition-colors font-medium text-white"
+                    type="button"
+                    onClick={handleCleanupOrphanedReferences}
+                    disabled={isSeeding || isDeleting || isCleaning}
+                >
+                    {isCleaning ? 'Cleaning...' : 'Cleanup Orphaned Refs'}
+                </button>
+
                 <button className="!px-6 !py-2 border-2 border-[#A6C78A] rounded-full hover:bg-[#A6C78A] transition-colors font-medium absolute right-0"
-                    type="button" onClick={() => navigate("/recipes")}>Cancel</button>                            
+                    type="button" onClick={() => navigate("/recipes")}>Cancel</button>
             </div>
 
             <div className="w-full min-h-10/12 max-h-10/12 overflow-scroll">
@@ -432,19 +558,19 @@ export default function AddRecipe() {
                         {/* Added Ingredients */}
                         <div className="space-y-2">
                             {ingredients.map((ingredient) => (
-                                <div key={ingredient.id} className="flex items-center h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
-                                    <span className="flex-1 font-medium">{ingredient.ingredient.name}</span>
+                                <div key={ingredient.id} className="flex items-center min-h-10 !pl-4 border-[#A6C78A] bg-white border-2 !mb-2 rounded-lg">
+                                    <span className="flex-1 font-medium flex items-center">{ingredient.ingredient.name}</span>
                                     <input
                                         type="number"
                                         value={ingredient.quantity}
                                         onChange={(e) => updateIngredientQuantity(ingredient.id, e.target.value)}
                                         placeholder="Amt"
-                                        className="w-1/6 border-x-2 !px-2 border-[#A6C78A] h-full focus:outline-none"
+                                        className="w-1/6 border-x-2 !px-2 border-[#A6C78A] self-stretch focus:outline-none"
                                     />
                                     <select
                                         value={ingredient.measurementType}
                                         onChange={(e) => updateIngredientMeasurement(ingredient.id, e.target.value)}
-                                        className="w-1/6 !px-2 h-full focus:outline-none"
+                                        className="w-1/6 !px-2 self-stretch focus:outline-none"
                                     >
                                         <option value="grams">grams</option>
                                         <option value="ml">ml</option>
@@ -452,7 +578,7 @@ export default function AddRecipe() {
                                     <button
                                         type="button"
                                         onClick={() => removeIngredient(ingredient.id)}
-                                        className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 h-full"
+                                        className="text-white transition bg-[#A6C78A] hover:text-[#CF7171] font-bold w-10 self-stretch"
                                     >
                                         <span className="text-xl">×</span>
                                     </button>
