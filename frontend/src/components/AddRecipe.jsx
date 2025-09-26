@@ -1,10 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-<<<<<<< Updated upstream
-=======
 import { authenticatedFetch } from "../utils/api.js";
 import { getUserRoleFromToken } from "../contexts/AuthContext.jsx";
->>>>>>> Stashed changes
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";

@@ -182,8 +182,6 @@ export const removeSavedRecipe = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
-<<<<<<< Updated upstream
-=======
 };
 
 // Add a recipe to user's recent recipes
@@ -265,5 +263,4 @@ export const searchUsers = async (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
->>>>>>> Stashed changes
 };
