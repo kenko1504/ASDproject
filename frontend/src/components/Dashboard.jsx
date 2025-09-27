@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import { AuthContext } from "../contexts/AuthContext.jsx";
-import AddButton from "./DashboardComponent/AddButton";
+
 import { Link } from "react-router-dom";
 import RecipeCard from "./RecipeCard.jsx";
 
@@ -99,8 +99,6 @@ export default function Dashboard() {
             </section>            
         </section>
 
-          
-          <AddButton/>
       </div>
   );
 }
