@@ -17,4 +17,8 @@ router.get("/:userId/saved-recipes", getSavedRecipes);
 router.post("/:userId/saved-recipes", addSavedRecipe);
 router.delete("/:userId/saved-recipes", removeSavedRecipe);
 
+// Recent recipes routes
+router.get("/:userId/recent-recipes", getRecentRecipes);
+router.post("/:userId/recent-recipes", addRecentRecipe);
+
 export default router;
