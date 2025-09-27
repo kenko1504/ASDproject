@@ -1,5 +1,5 @@
 import express from "express";
-import { createUser, deleteUser, updateUser, getSavedRecipes, addSavedRecipe, removeSavedRecipe, searchUsers, adminUpdateUser } from "../controllers/userController.js";
+import { createUser, deleteUser, updateUser, getSavedRecipes, addSavedRecipe, removeSavedRecipe, addRecentRecipe, getRecentRecipes, searchUsers, adminUpdateUser } from "../controllers/userController.js";
 import { authenticateToken, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
