@@ -13,23 +13,32 @@ export default function AddIngredientPopUp({ onClose }) {
   const handleClick = () => {
     fileInputRef.current.click(); // trigger file input
   };
-  
-  const handleSubmit = async () => { // handle form submission to backend
-    const data = { name, quantity, expiryDate, description };
 
-    try {
-      const res = await fetch("http://localhost:5000/ingredients", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-      const result = await res.json();
-      console.log("Saved ingredient:", result);
-      onClose();
-    } catch (err) {
-      console.error("Error:", err);
-    }
-  };
+  const handleSubmit = async () => {
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("quantity", quantity);
+  formData.append("expiryDate", expiryDate);
+  formData.append("description", description);
+  formData.append("inFridge", true);
+  
+  if (fileInputRef.current.files[0]) {
+    formData.append("image", fileInputRef.current.files[0]); // append actual file
+  }
+
+  try {
+    const res = await fetch("http://localhost:5000/ingredients", {
+      method: "POST",
+      body: formData 
+    });
+    const result = await res.json();
+    console.log("Saved ingredient:", result);
+    window.location.reload();
+    onClose();
+  } catch (err) {
+    console.error("Error:", err);
+  }
+};
 
   const handleChange = (e) => {
     const file = e.target.files[0];
