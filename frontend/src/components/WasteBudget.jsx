@@ -6,6 +6,15 @@ export default function WasteBudget({ items }) {
     const [budgetStats, setBudgetStats] = useState({totalValue: 0, count: 0});
     const [wasteStats, setWasteStats] = useState({expired: [], expiringSoon: [], wastedValue: 0});
 
+    //read total budget from localStorage
+    useEffect(() => {
+        const savedBudget = localStorage.getItem("budget");
+        if (savedBudget) {
+            setBudget(Number(savedBudget));
+        }
+    }, []);
+
+    //get budget and waste statistics
     useEffect(() => {
         fetch("http://localhost:5000/items/stats/budget")
             .then(res => res.json())
@@ -15,6 +24,13 @@ export default function WasteBudget({ items }) {
             .then(res => res.json())
             .then(data => setWasteStats(data));
     }, [items]);
+
+    //update sate and localStorage after updating total budget
+    const handleBudgetChange = (e) => {
+        const newBudget = Number(e.target.value);
+        setBudget(newBudget);
+        localStorage.setItem("budget", newBudget); // save localStorage to the browser
+    };
 
     const overBudget = budgetStats.totalValue > budget;
 
@@ -35,7 +51,7 @@ export default function WasteBudget({ items }) {
                 <h3 style={{marginBottom: "15px", fontSize: "20px", fontWeight: "600", color: "#374151"}}>
                     Budget Control
                 </h3>
-                <p><b>Total Value:</b> ${budgetStats.totalValue}</p>
+                <p><b>Total Value:</b> ${budgetStats.totalValue.toFixed(2)}</p>
                 <p><b>Total Items:</b> {budgetStats.count}</p>
 
                 <div style={{marginTop: "10px"}}>
@@ -43,7 +59,7 @@ export default function WasteBudget({ items }) {
                     <input
                         type="number"
                         value={budget}
-                        onChange={(e) => setBudget(Number(e.target.value))}
+                        onChange={handleBudgetChange} // update total budget after changed
                         style={{
                             marginLeft: "10px",
                             padding: "6px 10px",
