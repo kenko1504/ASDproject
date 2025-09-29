@@ -10,21 +10,16 @@ export const createList = async (req, res) => {
       return res.status(404).json({ error: "User not found" }); // User error handling
     }
     const { name, date, note, status } = req.body;
+    const existingList = await GroceryList.findOne({ name, user: UID });
+    if (existingList) {
+      return res.status(400).json({ error: "A grocery list with this name already exists." });
+    }
     const list = new GroceryList({ name, user: UID, date, note, status });
     await list.save(); // Save the new grocery list to the database
     console.log("Grocery List created:", list);
     
-    // const user = await User.findById(UID);
-    // if (!user) {
-    //   return res.status(404).json({ error: "User not found" }); // User error handling
-    // }
-    // user.groceryList.push(list._id); // Add the list ID to the user's groceryLists array
-    // await user.save();
     res.status(201).json(list);
   } catch (err) {
-    if (err.code === 11000) { // Duplicate list name error
-      return res.status(400).json({ error: "A grocery list with this name already exists." });
-    }
     res.status(500).json({ error: err.message });
   }
 };
