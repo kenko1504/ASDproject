@@ -26,10 +26,14 @@ const recipeSchema = new mongoose.Schema({
             }
         }
     ],
-    instructions: [{ 
-        type: String, 
-        required: true 
+    instructions: [{
+        type: String,
+        required: true
     }],
+    isGenerated: {
+        type: Boolean,
+        default: false
+    },
 });
 
 const Recipe = mongoose.model("Recipe", recipeSchema);

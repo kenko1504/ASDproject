@@ -1,12 +1,16 @@
 import express from "express";
-import { createRecipe, getAllRecipes, getRecipeById, updateRecipe, deleteRecipe } from "../controllers/recipeController.js";
+import { createRecipe, getAllRecipes, getRecipeById, updateRecipe, deleteRecipe, seedDummyRecipes, deleteGeneratedRecipes, cleanupOrphanedReferences } from "../controllers/recipeController.js";
+import { authenticateToken, requireAdmin } from "../middleware/auth.js";
 
 const router = express.Router();
 
-router.post("/", createRecipe);
+router.post("/", authenticateToken, requireAdmin, createRecipe);
+router.post("/seed", authenticateToken, requireAdmin, seedDummyRecipes);
+router.delete("/generated", authenticateToken, requireAdmin, deleteGeneratedRecipes);
+router.post("/cleanup-orphaned", authenticateToken, requireAdmin, cleanupOrphanedReferences);
 router.get("/", getAllRecipes);
 router.get("/:id", getRecipeById);
-router.put("/:id", updateRecipe);
-router.delete("/:id", deleteRecipe);
+router.put("/:id", authenticateToken, requireAdmin, updateRecipe);
+router.delete("/:id", authenticateToken, requireAdmin, deleteRecipe);
 
 export default router;

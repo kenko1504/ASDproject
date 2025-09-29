@@ -30,7 +30,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onRese
       if (!response.ok) {
         throw new Error(data.error || "Login failed");
       }
-      login(data.user);
+      login(data.user, data.token);
       onClose(); // Close the modal
       navigate("/");
     } catch (err) {

@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     fridgeList: { type: mongoose.Schema.Types.ObjectId, ref: 'Fridge' },
     nutritionPlan: { type: mongoose.Schema.Types.ObjectId, ref: 'NutritionPlan' },
     savedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
+    recentRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Recipe' }],
     characteristics: {
         gender: { type: String, enum: ['Male', 'Female']},
         age: { type: Number },
