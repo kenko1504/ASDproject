@@ -1,9 +1,14 @@
 import GroceryList from "../models/groceryList.js"
 import User from "../models/user.js";
+import GroceryItem from "../models/item.js";
 
 export const createList = async (req, res) => {
   try {
     const { UID } = req.params; // User ID from the URL
+    const user = await User.findById(UID);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" }); // User error handling
+    }
     const { name, date, note, status } = req.body;
     const list = new GroceryList({ name, user: UID, date, note, status });
     await list.save(); // Save the new grocery list to the database
@@ -69,27 +74,75 @@ export const updateList = async (req, res) => {
   }
 }
 
-// // Update User
-// export const updateUser = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { username, email, password } = req.body;
+export const createItem = async (req, res) => {
+  try {
+    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const list = await GroceryList.findById(GL_ID);
+    if (!list) {
+      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+    }
+    const { name, quantity, category } = req.body;
+    if (quantity < 0) {
+      return res.status(400).json({ error: "Quantity cannot be negative." });
+    }
+    const item = new GroceryItem({ name, quantity, category, groceryList: GL_ID, expiryDate: new Date(), price: 0 });
+    await item.save(); // Save the new grocery item to the database
+    console.log("Grocery Item created:", item);
+    res.status(201).json(item);
+  } catch (err) {
+    if (err.code === 11000) { // Duplicate item name error
+      return res.status(400).json({ error: "A grocery item with this name already exists." });
+    }
+    res.status(500).json({ error: err.message });
+  }
+};
 
-//     const updateFields = {};
+// uses User ID to get all their grocery items
+export const getItems = async (req, res) => {
+  try {
+    const { GL_ID } = req.params;
+    const groceryList = await GroceryList.findById(GL_ID);
+    if (!groceryList) {
+      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+    }
+    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
+    const items = await GroceryItem.find({ groceryList: GL_ID }); // Find all grocery items for the user
+    if (!items) {
+      return res.status(404).json({ error: "No grocery items found for this user." });
+    }
+    res.status(200).json({ items, groceryList });
+    console.log("Grocery Items fetched:", items);
+    console.log("GL_ID:", GL_ID);
+  } catch (err) {
+    res.status(500).json({ error: err.message});
+  }
+};
 
-//     if (username) updateFields.username = username;
-//     if (email) updateFields.email = email;
-//     if (password) {
-//       const hashed = await bcrypt.hash(password, 10);
-//       updateFields.password = hashed;
-//     }
 
-//     const updatedUser = await User.findByIdAndUpdate(id, updateFields, {
-//       new: true,
-//     });
+export const updateItem = async (req, res) => {
+  try {
+    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+    const { name, quantity, category, checked } = req.body;
+    const updatedItem = await GroceryItem.findByIdAndUpdate(
+      ITEM_ID,
+      { name, quantity, category, checked },
+      { new: true } // Return the updated document
+    );
+    res.status(200).json(updatedItem);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
 
-//     res.status(200).json(updatedUser);
-//   } catch (err) {
-//     res.status(500).json({ error: err.message });
-//   }
-// };
+// Delete grocery list from user
+export const deleteItem = async (req, res) => {
+  try {
+    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+
+    await GroceryItem.findByIdAndDelete(ITEM_ID); // Delete the grocery item from the database
+
+    res.status(200).json({ message: "Grocery item deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

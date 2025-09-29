@@ -2,9 +2,12 @@ import "../CSS/index.css";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function GroceryList() {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const [form, setForm] = useState({
         name: "", date: "", note: "", status: "active"
     });
@@ -27,7 +30,7 @@ export default function GroceryList() {
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
     };
-
+    
     const resetForm = () => {
         setForm({ name: "", date: "", note: "", status: "active" });
     };
@@ -47,11 +50,20 @@ export default function GroceryList() {
             console.error(err.response?.data || err);
         }
     };
-
+    
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
+            setLists(prevLists => prevLists.filter(list => list._id !== id));
+        }
+        catch (err) {
+            console.error(err);
+        }
+    };
+    
     // --- Modal logic ---
-    const openEditModal = (list, id) => {
+    const openEditModal = (list) => {
         setEditForm(list);
-        setEditForm({...list, _id: id}); // track the id of the list being edited
         setShowModal(true);
     };
 
@@ -82,15 +94,6 @@ export default function GroceryList() {
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
-            setLists(prevLists => prevLists.filter(list => list._id !== id));
-        }
-        catch (err) {
-            console.error(err);
-        }
-    };
 
     return (
         <div className="w-full h-screen flex items-center flex-col !px-3 !py-3">
@@ -99,10 +102,13 @@ export default function GroceryList() {
                 <label className="font-semibold">Name:</label>
                 <input name="name" type="text" placeholder="list name..." value={form.name} onChange={handleChange} className="border border-gray-300 rounded !px-2" required />
                 <label className="font-semibold">Date:</label>
-                <input name="date" type="date" value={form.date} onChange={handleChange} className="border border-gray-300 rounded !px-2" required />
+                <input name="date" type="date" onChange={handleChange} className="border border-gray-300 rounded !px-2" 
+                    value={new Date().toISOString().slice(0, 10)} // Placeholder for today's date
+                    min={new Date().toISOString().slice(0, 10)} // Prevent selecting previous days
+                    required />
                 <label className="font-semibold">Note:</label>
                 <input name="note" type="text" placeholder="list note..." value={form.note} onChange={handleChange} className="border border-gray-300 rounded !px-2" />
-                <button className="bg-blue-500 text-white rounded !px-4" type="submit">Add Item</button>
+                <button className="bg-blue-500 text-white rounded !px-4" type="submit">New List</button>
             </form>
 
             <table className="min-w-full border border-gray-300 bg-white text-center">
@@ -123,6 +129,10 @@ export default function GroceryList() {
                             <td className={`!px-2 !py-1 font-semibold ${list.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{list.status}</td>
                             <td className="!px-2 !py-1">{list.note}</td>
                             <td className="!px-2 !py-1">
+                                <button
+                                    onClick={() => navigate(`view/${list._id}`)}
+                                    className="bg-green-500 text-white !px-4 rounded !mr-2"
+                                >View</button>
                                 <button
                                     onClick={() => openEditModal(list, list._id)}
                                     className="!px-4 !mr-5 bg-blue-500 text-white rounded"
