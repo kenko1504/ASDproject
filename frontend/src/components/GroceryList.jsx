@@ -154,7 +154,7 @@ export default function GroceryList() {
                                     className="bg-green-500 text-white !px-4 rounded !mr-2"
                                 >View</button>
                                 <button
-                                    onClick={() => openEditModal(list, list._id)}
+                                    onClick={() => openEditModal(list)}
                                     className="!px-4 !mr-5 bg-blue-500 text-white rounded"
                                 >Edit</button>
                                 <button

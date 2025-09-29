@@ -11,7 +11,7 @@
 2. `cd backend` and run `npm start` in **another terminal** to communicate with the frontend.
 
 
-## Team Member Contributtions:
+## Team Member Contributions:
 ### Frontend
 - **Kenji**
 - **Matthew**
