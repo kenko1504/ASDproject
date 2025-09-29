@@ -5,7 +5,7 @@ import mongoose from 'mongoose';  // MongoDB ODM for database operations
 
 // MongoDB testing utilities
 import { MongoMemoryServer } from 'mongodb-memory-server';  // In-memory MongoDB for testing
-
+ 
 // Import controllers to test - these are the actual functions we're testing
 import { 
   createList,    // Creates a new grocery list
