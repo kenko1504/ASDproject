@@ -1,6 +1,6 @@
 import GroceryList from "../models/groceryList.js"
 import User from "../models/user.js";
-import GroceryItem from "../models/item.js";
+import GroceryItem from "../models/groceryItem.js";
 
 export const createList = async (req, res) => {
   try {
@@ -80,7 +80,7 @@ export const createItem = async (req, res) => {
     if (quantity < 0) {
       return res.status(400).json({ error: "Quantity cannot be negative." });
     }
-    const item = new GroceryItem({ name, quantity, category, groceryList: GL_ID, expiryDate: new Date(), price: 0 });
+    const item = new GroceryItem({ name, quantity, category, groceryList: GL_ID });
     await item.save(); // Save the new grocery item to the database
     console.log("Grocery Item created:", item);
     res.status(201).json(item);

@@ -34,14 +34,6 @@ const itemSchema = new mongoose.Schema({
     nutritionValue:{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Nutrition'
-    },
-    groceryList: { // Reference to the GroceryList this item belongs to
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'GroceryList',
-    },
-    checked: { // For Grocery List - whether the item has been checked off
-        type: Boolean,
-        default: false
     }
 }, {
     timestamps: true

@@ -20,7 +20,7 @@ import {
 
 // Import models for direct database operations in tests
 import GroceryList from '../models/groceryList.js';  // Grocery list model
-import GroceryItem from '../models/item.js';         // Grocery item model
+import GroceryItem from '../models/groceryItem.js';         // Grocery item model
 import User from '../models/user.js';                // User model
 
 describe('GroceryList Controller Tests', () => {
