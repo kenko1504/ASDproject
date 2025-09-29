@@ -86,9 +86,8 @@ describe('GroceryList Controller Tests', () => {
   describe('Grocery List CRUD Operations', () => {
     // Test the createList controller function
     describe('createList', () => {
-      // Happy path test - everything should work correctly
       it('should create a new grocery list successfully', async () => {
-        // Prepare test data - this is what a real client would send
+        // Prepare test grocery list data
         const listData = {
           name: 'Weekly Groceries',
           date: new Date().toISOString(),
@@ -115,7 +114,7 @@ describe('GroceryList Controller Tests', () => {
         expect(savedList.name).toBe('Weekly Groceries');
       });
 
-      // Error case test - duplicate list names should be rejected
+      // Duplicate list names should be rejected
       it('should return 400 for duplicate list name', async () => {
         // First, create a list successfully
         const listData = {
