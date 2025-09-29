@@ -1,4 +1,5 @@
 import express from "express";
+import {authenticateToken} from "../middleware/auth.js";
 import multer from "multer"; // for handling multipart/form-data, which is primarily used for uploading files
 import {
     createIngredient,
@@ -20,8 +21,8 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage: storage });
 //CRUD endpoints
-router.post("/", upload.single("image"), createIngredient);     // add ingredient
-router.get("/", getIngredients);        // get all ingredients
+router.post("/", authenticateToken, upload.single("image"), createIngredient);     // add ingredient
+router.get("/", authenticateToken, getIngredients);        // get all ingredients
 
 
 export default router;

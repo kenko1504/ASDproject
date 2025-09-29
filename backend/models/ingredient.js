@@ -6,7 +6,8 @@ const ingredient = mongoose.model("Ingredient", new mongoose.Schema({
   expiryDate: String,
   description: String,
   image: String,
-  inFridge: Boolean
+  inFridge: Boolean,
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }
 }));
 
 export default ingredient;

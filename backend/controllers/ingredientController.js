@@ -15,6 +15,7 @@ export const createIngredient = async (req, res) => {
       description,
       inFridge,
       image,
+      userId: req.user._id // associate ingredient with logged-in user
     });
 
     await ingredient.save();
@@ -26,7 +27,7 @@ export const createIngredient = async (req, res) => {
 
 export const getIngredients = async (req, res) => {
   try {
-    const ingredients = await Ingredient.find();
+    const ingredients = await Ingredient.find({userId: req.user._id});
 
     // map image filename to full URL
     const ingredientsWithUrl = ingredients.map(ing => ({
