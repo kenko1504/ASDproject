@@ -27,13 +27,16 @@ export default function AddIngredientPopUp({ onClose }) {
   }
 
   try {
+    const token = localStorage.getItem("token");
     const res = await fetch("http://localhost:5000/ingredients", {
       method: "POST",
-      body: formData 
+      headers: {
+        "Authorization": `Bearer ${token}`
+      },
+      body: formData
     });
     const result = await res.json();
     console.log("Saved ingredient:", result);
-    window.location.reload();
     onClose();
   } catch (err) {
     console.error("Error:", err);

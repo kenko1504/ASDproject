@@ -16,7 +16,12 @@ export default function FridgeList() {
   useEffect(() => {
     const fetchIngredients = async () => {
       try {
-        const res = await fetch("http://localhost:5000/ingredients");
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/ingredients", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
         const data = await res.json();
         console.log("Fetched ingredients:", data);
         setFetchedIngredients(data);
