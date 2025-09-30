@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { useRef, useEffect, useState } from "react";
+import { useRef, useEffect, useState, use } from "react";
 import SearchIcon from "../assets/grocerySearchIcon.svg";
 import MilkImage from "../assets/dummyIngredients/milk.jpg";
 import EggImage from "../assets/dummyIngredients/egg.jpg";
@@ -10,24 +10,37 @@ import FrozenPeas from "../assets/dummyIngredients/peas.jpg";
 import Carrots from "../assets/dummyIngredients/carrots.jpg";
 
 export default function FridgeList() {
-  const dummyIngredients = [
-    { image: MilkImage, name: "Milk", location: "Fridge" },
-    { image: EggImage, name: "Eggs", location: "Fridge" },
-    { image: ChickenBreastImage, name: "Chicken Breast", location: "Freezer" },
-    { image: BroccoliImage, name: "Broccoli", location: "Fridge" },
-    { image: null, name: "Yogurt", location: "Fridge" },
-    { image: Carrots, name: "Carrots", location: "Fridge" },
-    { image: null, name: "Spinach", location: "Fridge" },
-    { image: Butter, name: "Butter", location: "Fridge" },
-    { image: FrozenPeas, name: "Frozen Peas", location: "Freezer" },
-  ];
+
+  const [fetchedIngredients, setFetchedIngredients] = useState([]);
+
+  useEffect(() => {
+    const fetchIngredients = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/ingredients", {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+        const data = await res.json();
+        console.log("Fetched ingredients:", data);
+        setFetchedIngredients(data);
+        console.log("fetchIngredients array:", fetchedIngredients);
+      } catch (error) {
+        console.error("Error fetching ingredients:", error);
+      }
+    };
+
+    fetchIngredients();
+  }, []);
 
   // For search functionality
   const [query, setQuery] = useState("");
-
-  const filtered = dummyIngredients.filter((item) =>
+  
+  const filtered = fetchedIngredients.filter((item) =>
     item.name.toLowerCase().includes(query.toLowerCase())
   );
+  console.log("Filtered ingredients:", filtered);
   const containerRef = useRef(null);
   const scrollRef = useRef({ value: 0 });
 
@@ -89,15 +102,15 @@ export default function FridgeList() {
             onMouseLeave={handleMouseLeave}
           >
             {filtered
-              .filter((item) => item.location === "Fridge")
+              .filter((item) => item.inFridge === true)
               .map((item, index) => (
                 <div
                   key={index}
                   className="p-4 rounded-[20px] bg-white flex flex-row items-center flex-shrink-0"
                 >
-                  {item.image ? (
+                  {item.imageUrl ? (
                     <img
-                      src={item.image}
+                      src={item.imageUrl}
                       alt={item.name}
                       className="w-auto opacity-60 shadow-lg h-30 object-cover mb-2 rounded-[20px] transition duration-300 ease-in-out transform hover:scale-115 hover:opacity-100"
                     />
