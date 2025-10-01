@@ -24,6 +24,14 @@ export default function AddIngredientPopUp({ onClose }) {
     alert("Name cannot exceed 15 characters.");
     return;
   }
+  if (!quantity) {
+  alert("Quantity is required.");
+  return;
+  }
+  if (quantity && (isNaN(quantity) || quantity <= 0)) {
+    alert("Quantity must be a positive number.");
+    return;
+  }
   const formData = new FormData();
   formData.append("name", name);
   formData.append("quantity", quantity);
