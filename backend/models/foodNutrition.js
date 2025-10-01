@@ -10,7 +10,7 @@ const foodNutritionSchema = new mongoose.Schema({
   sugar: { type: Number, required: false },
   dietaryFiber: { type: Number, required: false },
   cholesterol: { type: Number, required: false },
-  sodium: { type: Number, required: false },
+  magnesium: { type: Number, required: false },
   calcium: { type: Number, required: false },
   iron: { type: Number, required: false },
   vitaminC: { type: Number, required: false },
