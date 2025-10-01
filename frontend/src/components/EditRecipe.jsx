@@ -7,6 +7,20 @@ import searchImg from "../assets/search-svgrepo-com.svg";
 import sampleProfilePic from "../assets/SampleProfilePic.jpg";
 import NutritionPopupModal from './NutritionPopupModal.jsx';
 
+// Recipe Images
+import R1Img from "../assets/recipeImages/Recipe1.jpg";
+import R2Img from "../assets/recipeImages/Recipe2.jpg";
+import R3Img from "../assets/recipeImages/Recipe3.jpg";
+import R4Img from "../assets/recipeImages/Recipe4.jpg";
+import R5Img from "../assets/recipeImages/Recipe5.jpg";
+import R6Img from "../assets/recipeImages/Recipe6.jpg";
+import R7Img from "../assets/recipeImages/Recipe7.jpg";
+import R8Img from "../assets/recipeImages/Recipe8.jpg";
+import R9Img from "../assets/recipeImages/Recipe9.jpg";
+import R10Img from "../assets/recipeImages/Recipe10.jpg";
+
+
+
 export default function EditRecipe() {
     const navigate = useNavigate();
     const { recipeId } = useParams();
@@ -33,7 +47,16 @@ export default function EditRecipe() {
     
     // Default recipe images
     const defaultImages = [
-        { path: sampleProfilePic, name: 'MAN' },
+        { path: R1Img, name: 'Recipe1' },
+        { path: R2Img, name: 'Recipe2' },
+        { path: R3Img, name: 'Recipe3' },
+        { path: R4Img, name: 'Recipe4' },
+        { path: R5Img, name: 'Recipe5' },
+        { path: R6Img, name: 'Recipe6' },
+        { path: R7Img, name: 'Recipe7' },
+        { path: R8Img, name: 'Recipe8' },
+        { path: R9Img, name: 'Recipe9' },
+        { path: R10Img, name: 'Recipe10' },
     ];
 
     // Fetch recipe data for editing

@@ -8,7 +8,7 @@ import clockImg from "../assets/clock-svgrepo-com.svg";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 
 
-export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange, hideAdminButtons = false, isDashboard = false }) {
+export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange, isDashboard = false }) {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [isSaved, setSaved] = useState(false);
@@ -133,13 +133,13 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
                     navigate(`/recipe/${recipe._id}`);
                 }
             }}
-            className={`${isDashboard ? '!m-2 aspect-square h-full' : '!m-8 aspect-square w-1/5'} rounded-lg hover:shadow-xl transition relative cursor-pointer transform hover:scale-105 bg-cover bg-center`}
+            className={`${isDashboard ? '!m-2 aspect-square h-full' : '!m-8 aspect-square w-1/5'} rounded-lg hover:shadow-lg transition-all relative cursor-pointer transform hover:scale-105 bg-cover bg-center`}
             style={{
                 backgroundImage: recipe?.image ? `url(${recipe.image})` : 'none',
                 backgroundColor: recipe?.image ? 'transparent' : '#E5F3DA'
             }}
         >
-            { getUserRoleFromToken() === "admin" ? (
+            { getUserRoleFromToken() === "admin" && !isDashboard ? (
                 <button onClick={handleDeleteRecipe}>
                     <img className="w-8 h-8 absolute left-4 top-4 transform transition active:scale-90 hover:scale-110" src={trashImg}/>
                 </button>
