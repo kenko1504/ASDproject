@@ -7,6 +7,8 @@ export default function Recommendations() {
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
     const [selectedFoodType, setSelectedFoodType] = useState('Any');
+    const [searchResults, setSearchResults] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
 
     const tabs = [
         { id: "plan", label: "Based on Nutritional Goals", icon: "🎯" },
@@ -59,6 +61,7 @@ export default function Recommendations() {
                 return;
             }
 
+            setIsLoading(true);
             const queryParams = {
                 filters: selectedFilters,
                 searchTerm,
@@ -70,9 +73,12 @@ export default function Recommendations() {
             const response = await axios.get(url);
             const data = response.data;
             console.log("Search Results:", data);
-            alert("Search completed. Check console for results.");
+            setSearchResults(data.results || []);
         } catch (error) {
             console.error("Error fetching search results:", error);
+            setErrorMessage("Failed to fetch search results. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -102,7 +108,7 @@ export default function Recommendations() {
             </div>
 
             {/* Tab Content Area */}
-            <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm min-h-[calc(max(100vh-18vh))] overflow-y-auto">
+            <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm h-[calc(100vh-18vh)]">
                 {/* Tab Content */}
                 {activeTab === "plan" && (
                     <div className="p-6">
@@ -199,13 +205,38 @@ export default function Recommendations() {
                                 <div className="text-center !pb-2">
                                     <button 
                                         onClick={handleSubmit}
-                                        className="bg-blue-600 hover:bg-blue-700 text-white !px-8 !py-1 rounded-lg font-semibold text-lg transition-colors shadow-md hover:shadow-lg"
+                                        disabled={isLoading}
+                                        className="bg-blue-600 hover:bg-blue-700 text-white !px-8 !py-1 rounded-lg font-semibold text-lg transition-colors shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
                                     >
-                                    Search
+                                        {isLoading ? "Searching..." : "Search"}
                                     </button>
                                 </div>
                             </div>
                         </div>
+
+                        {/* Search Results */}
+                        {searchResults.length > 0 && (
+                            <div className="mt-6">
+                                <h3 className="text-xl font-semibold !pl-2 !mb-4">Search Results per 100g ({searchResults.length})</h3>
+                                <div className="grid grid-cols-3 gap-4 overflow-y-auto h-[45vh] !px-2">
+                                    {searchResults.map((food, index) => (
+                                        <FoodResultCard key={index} food={food} />
+                                    ))}
+                                    <div className="h-[15vh]"> {/* Extra space at the bottom for better scrolling*/}
+                                    </div>
+                                    <div className="h-[15vh]"> {/* Extra space at the bottom for better scrolling*/}
+                                    </div>
+                                    <div className="h-[15vh]"> {/* Extra space at the bottom for better scrolling*/}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+
+                        {searchResults.length === 0 && !isLoading && (
+                            <div className="mt-6 text-center text-gray-500">
+                                <p>No results found. Try adjusting your search criteria.</p>
+                            </div>
+                        )}
                         
                     </div>
                 )}
@@ -215,46 +246,51 @@ export default function Recommendations() {
     );
 }
 
-// Component for food cards
-function FoodCard({ name, calories, protein, fat, carbs, iron, tags, badge, badgeColor }) {
-    const getBadgeColor = (color) => {
-        const colors = {
-            green: "text-green-600 bg-green-100",
-            blue: "text-blue-600 bg-blue-100",
-            red: "text-red-600 bg-red-100",
-            purple: "text-purple-600 bg-purple-100",
-            yellow: "text-yellow-600 bg-yellow-100",
-            orange: "text-orange-600 bg-orange-100",
-            brown: "text-amber-600 bg-amber-100"
-        };
-        return colors[color] || "text-gray-600 bg-gray-100";
-    };
-
+// Card component for search results
+function FoodResultCard({ food }) {
     return (
-        <div className="bg-gray-50 border border-gray-200 rounded-lg shadow-sm p-4 hover:shadow-md transition-shadow">
-            <div className="flex justify-between items-start mb-2">
-                <h4 className="font-semibold text-lg">{name}</h4>
-                <span className={`text-xs px-2 py-1 rounded ${getBadgeColor(badgeColor)}`}>
-                    {badge}
-                </span>
-            </div>
-            <div className="text-sm text-gray-600 mb-3">
-                <p>📊 Calories: {calories} per 100g</p>
-                <p>💪 Protein: {protein}</p>
-                <p>🥑 Fat: {fat}</p>
-                <p>🍞 Carbs: {carbs}</p>
-                {iron && <p>🩸 Iron: {iron}</p>}
-            </div>
+        <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
             <div className="mb-3">
-                {tags.map((tag, index) => (
-                    <span key={index} className="bg-white text-gray-700 text-xs px-2 py-1 rounded mr-1 border">
-                        {tag}
-                    </span>
-                ))}
+                <h4 className="text-center font-semibold text-l text-gray-800 !my-2 leading-[1.5rem] h-[3rem]">{food.foodName}</h4>
             </div>
-            <div className="flex space-x-2">
-                <button className="flex-1 bg-green-500 text-white px-3 py-2 rounded">
-                    {/* Button content */}
+            
+            <span className="text-m px-2 py-1 bg-blue-100 text-blue-600 !py-2 font-bold flex justify-center rounded !mb-2">{food.type}</span>
+            
+            <div className="grid grid-cols-4 gap-2 text-sm text-gray-600">
+                <span className="font-bold !mx-auto">⚡ Calories:</span>
+                <span className="!pl-2">{food.calories}kcal</span>
+                <span className="font-bold !mx-auto">💪 Protein:</span>
+                <span className="!pl-2">{food.protein}g</span>
+                <span className="font-bold !mx-auto">🍞 Carbs:</span>
+                <span className="!pl-2">{food.carbohydrates}g</span>
+                <span className="font-bold !mx-auto">🥑 Fat:</span>
+                <span className="!pl-2">{food.fat}g</span>
+                <span className="font-bold !mx-auto">🌾 Fiber:</span>
+                <span className="!pl-2">{food.dietaryFiber}g</span>
+                <span className="font-bold !mx-auto">🍯 Sugar:</span>
+                <span className="!pl-2">{food.sugar}g</span>
+            </div>
+
+
+            <div className="!mt-3 !pt-3 border-t border-gray-100 ">
+                <div className="grid grid-cols-4 gap-2 text-xs text-gray-500">
+                    <span className="font-bold !mx-auto">⚡ Calcium:</span>
+                    <span className="!pl-2">{food.calcium}mg</span>
+                    <span className="font-bold !mx-auto">🩸 Iron:</span>
+                    <span className="!pl-2">{food.iron}mg</span>
+                    <span className="font-bold !mx-auto">🍊 Vitamin C:</span>
+                    <span className="!pl-2">{food.vitaminC}mg</span>
+                    <span className="font-bold !mx-auto">🧂 Sodium:</span>
+                    <span className="!pl-2">{food.sodium}mg</span>
+                    <span className="font-bold !mx-auto">❤️ Cholesterol:</span>
+                    <span className="!pl-2">{food.cholesterol}mg</span>
+                </div>
+            </div>
+
+
+            <div className="mt-3 flex space-x-2">
+                <button className="flex-1 bg-green-500 hover:bg-green-600 text-white !p-1 rounded text-sm transition-colors">
+                    Add to Grocery List
                 </button>
             </div>
         </div>

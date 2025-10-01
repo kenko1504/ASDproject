@@ -50,7 +50,7 @@ export const searchByQuery = async (req, res) => {
             else if (firstFilter === "vitaminC") { sortCriteria.vitaminC = -1; } // High vitamin C first
         }
 
-        const results = await FoodNutrition.find(searchCriteria).sort(sortCriteria).limit(10);
+        const results = await FoodNutrition.find(searchCriteria).sort(sortCriteria);
         console.log("Search results:", results);
         return res.status(200).json({ results });
     } catch (error) {
