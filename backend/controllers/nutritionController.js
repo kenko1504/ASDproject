@@ -11,7 +11,30 @@ export const getDailyNutritionRequirements = async (req, res) => {
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
         }
-        res.status(200).json(nutritionRequirements.data);
+        const calories = nutritionRequirements.BMI_EER["Estimated Daily Caloric Needs"]
+        const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
+        const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
+        const targetNutrients = ["carbohydrate", "protein", "fat"]
+        const targetMinerals = ["sodium"]
+        
+        const filteredData = {}
+
+        filteredData["calories"] = calories
+        
+        macronutrientsTable.forEach((row, index) => {
+            if (index != 0 && targetNutrients.includes(row[0])) {
+                filteredData[row[0]] = row[1];
+            }
+        });
+
+        mineralsTable.forEach((row, index) => {
+            if (index != 0 && targetMinerals.includes(row[0])) {
+                filteredData[row[0]] = row[1];
+            }
+        });
+
+        console.log(filteredData)
+        res.status(200).json(filteredData);
     }catch(error){
         res.status(500).json({ message: error.message });
     }
