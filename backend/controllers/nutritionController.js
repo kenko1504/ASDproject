@@ -88,7 +88,7 @@ export const calculateNutritionRequirements = async (characteristics, nutritionP
         console.log(nutritionRequirements.data)
         return nutritionRequirements.data
     }catch(error){
-        throw error;
+        console.log(error)
     }
 }
 
