@@ -1,5 +1,4 @@
 import Nutrition from "../models/nutrition.js";
-import User from "../models/user.js";
 import axios from "axios";
 
 //get daily nutrition requirements based on biometric data
