@@ -14,6 +14,9 @@
 ## Team Member Contributions:
 ### Frontend
 - **Kenji**
+    -`/frontend/src/components/DashBoardComponent/AddButton.jsx`
+    -`/frontend/src/components/DashBoardComponent/AddIngredientPopUp.jsx`
+    -`/frontend/src/components/FridgeList.jsx`
 - **Matthew**
 - **Anthony**
     - `/frontend/src/components/GroceryList.jsx`
@@ -23,6 +26,9 @@
 
 ### Backend
 - **Kenji**
+    -  `/backend/controller/ingredientController.js`
+    -  `/backend/routes/ingredientRoutes.js`
+    -  `/backend/imageUploads`
 - **Matthew**
 - **Anthony**
     -  `/frontend/controller/groceryListController.jsx`
@@ -32,6 +38,7 @@
 
 ### Database
 - **Kenji**
+    - `./backend/models/ingredient.js`
 - **Matthew**
 - **Anthony**
     - `./backend/models/groceryList.js`
