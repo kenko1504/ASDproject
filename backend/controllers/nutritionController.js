@@ -56,7 +56,7 @@ export const calculateNutritionRequirements = (characteristics, nutritionPlan) =
                 'x-rapidapi-key': process.env.NUTRITION_API_HOST
             }
         )
-        return nutritionRequirements
+        return nutritionRequirements.data
     }catch(error){
         console.log(error);
         return null;

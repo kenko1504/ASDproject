@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from '../contexts/AuthContext';
-
-const {user} = useContext(AuthContext);
+import NutritionGraph from "./NutritionGraph";
 
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
@@ -33,6 +32,7 @@ export default function Nutritions() {
 
       <div className="nutritionGraph">
         <h2 className="title text-xl font-bold">Daily Nutrition Graph</h2>
+        <NutritionGraph />
       </div>
       
       <div className="nutrition-info !mt-5 h-200 overflow-auto">

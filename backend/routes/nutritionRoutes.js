@@ -4,8 +4,6 @@ import {
 } from "../controllers/nutritionController.js";
 const router = express.Router();
 
-router.use("/nutrition")
-
-router.get("/dailyReq", getDailyNutritionRequirements)
+router.post("/dailyReq", getDailyNutritionRequirements)
 
 export default router;

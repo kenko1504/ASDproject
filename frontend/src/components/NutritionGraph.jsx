@@ -1,17 +1,15 @@
-import {useContext} from "react"
-import { AuthContext } from "../contexts/AuthContext"
-import { ApexCharts } from "apexcharts"
-
-
-const userInfo = useContext(AuthContext)
+import { useContext } from 'react'
+import { AuthContext } from '../contexts/AuthContext'
+import { Chart } from 'react-apexcharts'
 
 async function getNutritionRequirementsInfo(){
     try{
+        const userInfo = useContext(AuthContext)
         const body = {
             characteristics: userInfo.characteristics,
             nutritionPlan: userInfo.nutritionPlan
         }
-        const searchResult = await fetch("localhost:5000/nutrition/dailyReq",
+        const searchResult = await fetch("http://localhost:5000/nutrition/dailyReq",
             {
                 method: 'POST',
                 headers: {
@@ -43,7 +41,8 @@ function NutritionGraph(){
     //nutrients: calories, protein, fat, carb, sodium == main nutrients
     //further implementation: detailed info including other nutrients
 
-    const nutrients = getNutritionInfo()
+    const userInfo = useContext(AuthContext)
+    const nutrients = getNutritionRequirementsInfo()
     const options = {
           series: [44, 55, 13, 43, 22],
           chart: {
