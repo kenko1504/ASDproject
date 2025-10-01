@@ -63,7 +63,7 @@ export const calculateNutritionRequirements = (characteristics, nutritionPlan) =
     }
 }
 
-// Get All Nutrition Data
+// Get All Foods Nutrition Data
 export const getAllNutrition = async (req, res) => {
     try {
         const items = await Nutrition.find();
@@ -73,7 +73,7 @@ export const getAllNutrition = async (req, res) => {
     }
 };
 
-// Get Specific Nutrition Data
+// Get Specific Food Nutrition Data
 export const getNutrition = async (req, res) => {
     const item = await Nutrition.findById(req.params.id);
     if (!item) return res.status(404).json({message: "Item not found"});

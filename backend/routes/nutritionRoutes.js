@@ -6,6 +6,6 @@ const router = express.Router();
 
 router.use("/nutrition")
 
-router.get("/", getDailyNutritionRequirements)
+router.get("/dailyReq", getDailyNutritionRequirements)
 
 export default router;
