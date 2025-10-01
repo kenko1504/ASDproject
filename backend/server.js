@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 import groceryRoutes from "./routes/groceryRoutes.js";
+import receiptUploadRouter from "./routes/receiptUploadRouter.js"
 import Food from "./models/food.js";
 
 
@@ -20,6 +21,7 @@ app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/GroceryLists", groceryRoutes);
 app.use("/recipes", recipeRoutes);
+app.use("/receipt", receiptUploadRouter);
 
 //connect with MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas
