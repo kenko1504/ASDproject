@@ -9,24 +9,18 @@ async function getAccessToken() {
   
   const client = await auth.getClient();
   const tokenResponse = await client.getAccessToken();
-  return tokenResponse.token;
+  return tokenResponse;
 }
 
 //recieve img file and send request to google
 export const requestReceiptOCR = async(req, res) => {
     try{
-        const token = getAccessToken()
+        const token = (await getAccessToken()).token
 
         if (!req.file) {
             return res.status(400).json({ error: 'no file' });
         }
         const base64Image = req.file.buffer.toString('base64');
-        const header = {
-            headers:{
-                'Authorization': `Bearer ${token}`,
-                'Content-Type': 'application/json; charset=utf-8'
-            }
-        }
         const response = await axios.post(
             process.env.GOOGLE_BASE_URI,
             {
@@ -36,7 +30,10 @@ export const requestReceiptOCR = async(req, res) => {
                 }
             },
             {
-                header
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json; charset=utf-8'
+                }
             }
         )
         res.status(200).json({ success: true, data: response.data });
