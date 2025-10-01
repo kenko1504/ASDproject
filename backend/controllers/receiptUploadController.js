@@ -1,7 +1,6 @@
 import { GoogleAuth } from "google-auth-library";
 import axios from "axios"
 
-
 //get token from google cloud server
 async function getAccessToken() {
   const auth = new GoogleAuth({
@@ -13,36 +12,38 @@ async function getAccessToken() {
   return tokenResponse.token;
 }
 
-
-
+//recieve img file and send request to google
 export const requestReceiptOCR = async(req, res) => {
     try{
         const token = getAccessToken()
 
         if (!req.file) {
-        return res.status(400).json({ error: 'no file' });
+            return res.status(400).json({ error: 'no file' });
         }
         const base64Image = req.file.buffer.toString('base64');
         const header = {
-        headers:{
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json; charset=utf-8'
-        }
-    }
-    const response = await axios.post(
-        process.env.GOOGLE_BASE_URI,
-        {
-            rawDocument: {
-            content: base64Image,
-            mimeType: req.file.mimetype
+            headers:{
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json; charset=utf-8'
             }
-        },
-        {
-            header
         }
-    )
+        const response = await axios.post(
+            process.env.GOOGLE_BASE_URI,
+            {
+                rawDocument: {
+                content: base64Image,
+                mimeType: req.file.mimetype
+                }
+            },
+            {
+                header
+            }
+        )
+        res.status(200).json({ success: true, data: response.data });
     }catch(error){
-        console.log(error)
+        res.status(500).json({
+            success: false,
+            error: error.response?.data || error.message
+        });
     }
-    
 }

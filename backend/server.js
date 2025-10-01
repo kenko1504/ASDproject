@@ -7,7 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 import groceryRoutes from "./routes/groceryRoutes.js";
-import receiptUploadRouter from "./routes/receiptUploadRouter.js"
+import receiptUploadRouter from "./routes/receiptUploadRoutes.js"
 import Food from "./models/food.js";
 
 

@@ -8,6 +8,9 @@ export default function AddIngredientPopUp({ onClose }) {
   const [expiryDate, setExpiryDate] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
@@ -31,11 +34,29 @@ export default function AddIngredientPopUp({ onClose }) {
     }
   };
 
-  const handleChange = (e) => {
+  const handleChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
-      const url = URL.createObjectURL(file); // preview the image
-      setImage(url);
+      setLoading(true);
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      try {
+        const response = await axios.post('http://localhost:5000/receipt/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+        setResult(response.data);
+        console.log('Document AI Result:', response.data);
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        setLoading(false);
+      }
+    }else{
+      return;
     }
   };
   return (
@@ -69,6 +90,8 @@ export default function AddIngredientPopUp({ onClose }) {
             className="hidden"
             accept="image/*"
             />
+            {loading && <p>Processing...</p>}
+            {result && <pre>{JSON.stringify(result, null, 2)}</pre>}
             {/* form */}
             <div className="w-[370px] h-[227px] flex flex-col justify-center">
               <div className="w-[370px] flex-1 flex flex-row justify-around p-10"
