@@ -1,6 +1,5 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 import { AuthContext } from '../contexts/AuthContext';
-
 
 const {user} = useContext(AuthContext);
 
@@ -33,7 +32,7 @@ export default function Nutritions() {
       </div>
 
       <div className="nutritionGraph">
-        {/* Placeholder for nutrition graph */}
+        <h2 className="title text-xl font-bold">Daily Nutrition Graph</h2>
       </div>
       
       <div className="nutrition-info !mt-5 h-200 overflow-auto">
