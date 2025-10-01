@@ -15,6 +15,15 @@ export default function AddIngredientPopUp({ onClose }) {
   };
 
   const handleSubmit = async () => {
+  const nameRegex = /^[a-zA-Z0-9 ]+$/;
+  if (!nameRegex.test(name)) {
+    alert("Name can only contain letters, numbers, and spaces.");
+    return;
+  }
+  if (name.length > 15) {
+    alert("Name cannot exceed 15 characters.");
+    return;
+  }
   const formData = new FormData();
   formData.append("name", name);
   formData.append("quantity", quantity);
