@@ -31,6 +31,11 @@ export default function Nutritions() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      <div className="nutritionGraph">
+        {/* Placeholder for nutrition graph */}
+      </div>
+      
       <div className="nutrition-info !mt-5 h-200 overflow-auto">
         <table>
           <thead>
