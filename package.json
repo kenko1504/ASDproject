@@ -1,0 +1,17 @@
+{
+  "name": "asdproject",
+  "private": true,
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd backend && npm start",
+    "client": "cd frontend && npm run dev"
+  },
+    "dependencies": {
+    "chai": "^6.0.1",
+    "mocha": "^11.7.2"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
+

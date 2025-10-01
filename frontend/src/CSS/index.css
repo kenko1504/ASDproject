@@ -6,8 +6,20 @@
 
 /* Use colour variables from css for consistency */
 @import "tailwindcss";
+
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+
+@layer utilities {
+  .scrollbar-hide-ingredient::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+  .scrollbar-hide-ingredient {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 
 * {
     margin: 0;
@@ -25,6 +37,10 @@ html {
 a {
     color: inherit;
     cursor: pointer;
+}
+
+button {
+  cursor: pointer;
 }
 
 .roboto{

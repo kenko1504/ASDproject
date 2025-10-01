@@ -2,9 +2,10 @@ trigger:
   branches:
     include:
       - main
+      - feature/*
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'windows-latest' 
 
 stages:
   - stage: test
@@ -15,46 +16,33 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '22.x'
+              versionSpec: '20.x'
+            displayName: 'Use Node.js (Backend)'
 
-          - script: |
-              cd backend
-              npm install
+          - script: npm ci
+            workingDirectory: backend
             displayName: 'Install Backend Dependencies'
 
-          - script: |
-              cd backend
-              echo "npm run test:unit"
+          - script: npm test
+            workingDirectory: backend
             displayName: 'Run Backend Unit Tests'
 
-          - script: |
-              cd backend
-              echo "npm run test:integration"
-            displayName: 'Run Backend Integration Tests'
-
-      - job: Frontend
-        displayName: 'Frontend Testing'
+      - job: Vitest
+        displayName: 'Run Vitest Tests'
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '22.x'
+              versionSpec: '20.x'
+            displayName: 'Use Node.js'
 
-          - script: |
-              cd frontend
-              npm install
+          - script: npm ci
+            workingDirectory: frontend
             displayName: 'Install Frontend Dependencies'
 
-          - script: |
-              cd frontend
-              echo "npm run test:unit"
-            displayName: 'Run Frontend Unit Tests'
+          - script: npm run test
+            workingDirectory: frontend
+            displayName: 'Run Vitest Unit Tests'
 
-          - script: |
-              cd frontend
-              echo "npm run test:integration"
-            displayName: 'Run Frontend Integration Tests'
-
-          - script: |
-              cd frontend
-              npm run build
-            displayName: 'Run Frontend Build'
+          - script: npm run build
+            workingDirectory: frontend
+            displayName: 'Build Frontend'
