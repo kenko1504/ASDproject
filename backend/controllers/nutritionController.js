@@ -7,6 +7,7 @@ export const getDailyNutritionRequirements = async (req, res) => {
     const nutritionPlan = req.body.nutritionPlan;
     try{
         const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
+        console.log(nutritionRequirements)
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
         }
@@ -18,13 +19,13 @@ export const getDailyNutritionRequirements = async (req, res) => {
 
 
 // calculate nutrition requirements
-export const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
+export const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
     const { gender, age, weight, height } = characteristics;    
-    const nutritionPlan = nutritionPlan || 'maintenance'
-    const nutritionPlanForQuery = ""
+    const modifier = nutritionPlan || 'maintenance'
+    let nutritionPlanForQuery = ""
 
     // set multiplier by nutrition plan
-    switch(nutritionPlan){
+    switch(modifier){
         case 'weight_loss':
             nutritionPlanForQuery = 'Low Active';
             break;
@@ -36,30 +37,35 @@ export const calculateNutritionRequirements = (characteristics, nutritionPlan) =
             break;
         default:
             nutritionPlanForQuery = 'Active';
+            break;
     }
+
+    console.log(nutritionPlanForQuery)
 
     try{
         const params = {
         measurement_units: 'met',
-        sex: gender,
+        sex: gender.toLowerCase(),
         age_value: age,
         age_type: 'yrs',
         cm: height,
         kilos: weight,
         activity_level: nutritionPlanForQuery
         };
-        const nutritionRequirements = axios.get(
-            `${process.env.NUTRITION_API_HOST}/api/nutrition`,
-            params,
+        const nutritionRequirements = await axios.get(
+            `https://${process.env.NUTRITION_API_HOST}/api/nutrition-info`,
             {
-                'x-rapidapi-host': process.env.NUTRITION_API_KEY,
-                'x-rapidapi-key': process.env.NUTRITION_API_HOST
+                params: params,
+                headers: {       
+                    'x-rapidapi-host': process.env.NUTRITION_API_HOST,
+                    'x-rapidapi-key': process.env.NUTRITION_API_KEY
+                }
             }
         )
+        console.log(nutritionRequirements.data)
         return nutritionRequirements.data
     }catch(error){
-        console.log(error);
-        return null;
+        throw error;
     }
 }
 

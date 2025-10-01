@@ -1,14 +1,16 @@
 import { useContext } from 'react'
-import { AuthContext } from '../contexts/AuthContext'
+import { AuthContext } from '../contexts/AuthContext.jsx'
 import { Chart } from 'react-apexcharts'
 
 async function getNutritionRequirementsInfo(){
     try{
         const userInfo = useContext(AuthContext)
         const body = {
-            characteristics: userInfo.characteristics,
-            nutritionPlan: userInfo.nutritionPlan
+            characteristics: userInfo.user.characteristics,
+            nutritionPlan: userInfo.user.nutritionPlan
         }
+
+        console.log()
         const searchResult = await fetch("http://localhost:5000/nutrition/dailyReq",
             {
                 method: 'POST',
