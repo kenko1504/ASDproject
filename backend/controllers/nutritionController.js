@@ -1,4 +1,3 @@
-import Nutrition from "../models/nutrition.js";
 import axios from "axios";
 import FoodNutrition from "../models/foodNutrition.js";
 
@@ -7,20 +6,17 @@ export const getDailyNutritionRequirements = async (req, res) => {
     const userBiometricInfo = req.body.characteristics; // Get user biometric information from request body
     const nutritionPlan = req.body.nutritionPlan;
     try{
-        const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
+        const nutritionRequirements = await calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
         console.log(nutritionRequirements)
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
         }
-        const calories = nutritionRequirements.BMI_EER["'Estimated Daily Caloric Needs'"]
         const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
         const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
         const targetNutrients = ["carbohydrate", "protein", "fat"]
         const targetMinerals = ["sodium"]
         
         const filteredData = {}
-
-        filteredData["calories"] = calories
         
         macronutrientsTable.forEach((row, index) => {
             if (index != 0 && targetNutrients.includes(row[0])) {
