@@ -36,7 +36,40 @@ export const requestReceiptOCR = async(req, res) => {
                 }
             }
         )
-        res.status(200).json({ success: true, data: response.data });
+        if(response){
+            const resultArr = response.data.entities;
+            
+            let productNames = []
+            let quantities = []
+            let prices = []
+            let shoppingDate = ""
+
+            resultArr.forEach(element => {
+                switch(element.type){
+                    case 'ProductName':
+                        productNames.push(element.mentionText)
+                        break;
+                    case 'Price':
+                        prices.push(element.mentionText)
+                        break;
+                    case 'Quantity':
+                        quantities.push(element.mentionText)
+                        break;
+                    case 'shoppingDate':
+                        shoppingDate = element.mentionText
+                        break;
+                    default:
+                        break;
+                }
+            });
+            const inputAutofills = {
+                'names': productNames,
+               'quantities': quantities,
+                'prices': prices,
+                'shoppingDate': shoppingDate
+            }
+            res.status(200).json({result:"success", data: inputAutofills})
+        }
     }catch(error){
         res.status(500).json({
             success: false,
