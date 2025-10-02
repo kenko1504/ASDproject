@@ -27,6 +27,7 @@ app.use("/ingredients", ingredientRoutes);
 app.use("/users", userRoutes);
 app.use("/GroceryLists", groceryRoutes);
 app.use("/recipes", recipeRoutes);
+app.use("/receipt", receiptUploadRoutes);
 app.use("/recommendations", recommendRoutes);
 
 //connect with MongoDB Atlas
