@@ -6,10 +6,9 @@ import {
     deleteMeal,
     updateMeal,
     getUserSpecificDayMeal
-} from "../controllers/mealController";
+} from "../controllers/mealController.js";
 const router = express.Router();
 
-router.use("/meal")
 
 router.get("/today", getUserTodayMeal)
 router.get("/day", getUserSpecificDayMeal)

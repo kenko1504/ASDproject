@@ -1,12 +1,11 @@
 import { useState, useEffect } from "react";
-import { AuthContext } from '../contexts/AuthContext';
-
-
+import NutritionGraph from "./NutritionGraph";
 
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFood, setSelectedFood] = useState(null);
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -32,7 +31,8 @@ export default function Nutritions() {
       </div>
 
       <div className="nutritionGraph">
-        <h2 className="title text-xl font-bold">Daily Nutrition Graph</h2>
+        <h2 className="title text-xl font-bold">Daily Nutritients Status</h2>
+        <NutritionGraph />
       </div>
       
       <div className="nutrition-info !mt-5 h-200 overflow-auto">
