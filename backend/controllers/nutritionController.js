@@ -11,7 +11,7 @@ export const getDailyNutritionRequirements = async (req, res) => {
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
         }
-        const calories = nutritionRequirements.BMI_EER["Estimated Daily Caloric Needs"]
+        const calories = nutritionRequirements.BMI_EER["'Estimated Daily Caloric Needs'"]
         const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
         const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
         const targetNutrients = ["carbohydrate", "protein", "fat"]
