@@ -7,7 +7,6 @@ function NutritionGraph(){
     const [nutrients, setNutrients] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
-    
     const hasFetched = useRef(false)
     const abortControllerRef = useRef(null)
 
@@ -15,7 +14,7 @@ function NutritionGraph(){
         console.log('useEffect:', userInfo)
         
         if(!userInfo?.user?.characteristics) {
-            console.log('User characteristics not found')
+            console.log('invalid user characteristics')
             setLoading(false)
             return
         }

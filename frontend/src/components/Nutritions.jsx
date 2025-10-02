@@ -6,6 +6,7 @@ export default function Nutritions() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedFood, setSelectedFood] = useState(null);
 
+
   useEffect(() => {
     const fetchData = async () => {
       const response = await fetch("http://localhost:5000/Food");
@@ -30,7 +31,7 @@ export default function Nutritions() {
       </div>
 
       <div className="nutritionGraph">
-        <h2 className="title text-xl font-bold">Daily Nutrition Graph</h2>
+        <h2 className="title text-xl font-bold">Daily Nutritients Status</h2>
         <NutritionGraph />
       </div>
       
