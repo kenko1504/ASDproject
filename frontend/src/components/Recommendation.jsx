@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import axios from "axios";
+import { AuthContext } from "../contexts/AuthContext";
 
 export default function Recommendations() {
     const [activeTab, setActiveTab] = useState("plan");
@@ -9,6 +10,7 @@ export default function Recommendations() {
     const [selectedFoodType, setSelectedFoodType] = useState('Any');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    
 
     const tabs = [
         { id: "plan", label: "Based on Nutritional Goals", icon: "🎯" },
@@ -220,7 +222,7 @@ export default function Recommendations() {
                                 <h3 className="text-xl font-semibold !pl-2 !mb-4">Search Results per 100g ({searchResults.length})</h3>
                                 <div className="grid grid-cols-3 gap-4 overflow-y-auto h-[45vh] !px-2">
                                     {searchResults.map((food, index) => (
-                                        <FoodResultCard key={index} food={food} />
+                                        <FoodResultCard key={index} food={food}/>
                                     ))}
                                     <div className="h-[15vh]"> {/* Extra space at the bottom for better scrolling*/}
                                     </div>
@@ -248,6 +250,21 @@ export default function Recommendations() {
 
 // Card component for search results
 function FoodResultCard({ food }) {
+    const { user } = useContext(AuthContext);
+
+    const handleAddToGroceryList = async () => {
+        try {
+            const response = await axios.post(`http://localhost:5000/recommendations/${user._id}/grocery`,{
+                food: food
+            });
+            if (response.status === 200) {
+                alert("Item added to grocery list!");
+            }
+        } catch (error) {
+            console.error("Error adding item to grocery list:", error);
+        }
+    };
+
     return (
         <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
             <div className="mb-3">
@@ -289,7 +306,7 @@ function FoodResultCard({ food }) {
 
 
             <div className="mt-3 flex space-x-2">
-                <button className="flex-1 bg-green-500 hover:bg-green-600 text-white !p-1 rounded text-sm transition-colors">
+                <button className="flex-1 bg-green-500 hover:bg-green-600 text-white !p-1 rounded text-sm transition-colors" onClick={handleAddToGroceryList}>
                     Add to Grocery List
                 </button>
             </div>
