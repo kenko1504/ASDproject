@@ -1,4 +1,7 @@
 import { useState, useEffect } from "react";
+import { AuthContext } from '../contexts/AuthContext';
+
+const {user} = useContext(AuthContext);
 
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
@@ -27,6 +30,11 @@ export default function Nutritions() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
+
+      <div className="nutritionGraph">
+        <h2 className="title text-xl font-bold">Daily Nutrition Graph</h2>
+      </div>
+      
       <div className="nutrition-info !mt-5 h-200 overflow-auto">
         <table>
           <thead>

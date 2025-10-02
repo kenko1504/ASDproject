@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 
 const mealSchema = new mongoose.Schema({
+    userId: {type: String},
     date: { type: Date, default: Date.now },
     mealType: { type:String, enum: ['breakfast', 'lunch', 'dinner'], required: true },
     items: [
