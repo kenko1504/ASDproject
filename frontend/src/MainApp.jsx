@@ -1,5 +1,3 @@
-import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp.jsx";
-import Header from "./components/Header.jsx";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from "./components/Dashboard.jsx";
 import Recipes from "./components/Recipes.jsx";

@@ -11,6 +11,7 @@ import recipeRoutes from "./routes/recipeRoutes.js";
 import groceryRoutes from "./routes/groceryRoutes.js";
 import ingredientRoutes from "./routes/ingredientRoutes.js";
 import recommendRoutes from "./routes/recommendRoutes.js";
+import receiptUploadRoutes from "./routes/receiptUploadRoutes.js";
 import Food from "./models/food.js";
 
 const __filename = fileURLToPath(import.meta.url);
