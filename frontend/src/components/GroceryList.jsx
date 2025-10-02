@@ -2,14 +2,18 @@ import "../CSS/index.css";
 import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 export default function GroceryList() {
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
+
     const [form, setForm] = useState({
-        name: "", date: "", note: "", status: "active"
+        name: "", date: new Date().toISOString().slice(0, 10), note: "", status: "active"
     });
     const [lists, setLists] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [error, setError] = useState("");
     const [editForm, setEditForm] = useState({
         _id: "",
         name: "",
@@ -26,14 +30,18 @@ export default function GroceryList() {
 
     const handleChange = (e) => {
         setForm({ ...form, [e.target.name]: e.target.value });
+        // Clear error when user starts typing
+        if (error) setError("");
     };
-
+    
     const resetForm = () => {
-        setForm({ name: "", date: "", note: "", status: "active" });
+        setForm({ name: "", date: new Date().toISOString().slice(0, 10), note: "", status: "active" });
+        setError(""); // Clear error when form is reset
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError(""); // Clear any previous errors
         try {
             const res = await axios.post(`http://localhost:5000/GroceryLists/${user._id}`, {
                 name: form.name,
@@ -45,13 +53,28 @@ export default function GroceryList() {
             setLists(prevLists => [...prevLists, res.data]);
         } catch (err) {
             console.error(err.response?.data || err);
+            // Display the error message from the server
+            if (err.response?.data?.error) {
+                setError(err.response.data.error);
+            } else {
+                setError("An error occurred while creating the grocery list.");
+            }
+        }
+    };
+    
+    const handleDelete = async (id) => {
+        try {
+            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
+            setLists(prevLists => prevLists.filter(list => list._id !== id));
+        }
+        catch (err) {
+            console.error(err);
         }
     };
 
     // --- Modal logic ---
-    const openEditModal = (list, id) => {
+    const openEditModal = (list) => {
         setEditForm(list);
-        setEditForm({...list, _id: id}); // track the id of the list being edited
         setShowModal(true);
     };
 
@@ -82,27 +105,30 @@ export default function GroceryList() {
         }
     };
 
-    const handleDelete = async (id) => {
-        try {
-            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
-            setLists(prevLists => prevLists.filter(list => list._id !== id));
-        }
-        catch (err) {
-            console.error(err);
-        }
-    };
 
     return (
         <div className="w-full h-screen flex items-center flex-col !px-3 !py-3">
             <h1 className="justify-self-center text-3xl font-bold text-gray-800">Grocery List</h1>
+            
+            {/* Error Message Display */}
+            {error && (
+                <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4 max-w-md">
+                    <strong className="font-bold">Error: </strong>
+                    <span className="block sm:inline">{error}</span>
+                </div>
+            )}
+            
             <form onSubmit={handleSubmit} className="flex flex-row !m-6 !gap-2 border border-gray-700 rounded !p-6">
                 <label className="font-semibold">Name:</label>
                 <input name="name" type="text" placeholder="list name..." value={form.name} onChange={handleChange} className="border border-gray-300 rounded !px-2" required />
                 <label className="font-semibold">Date:</label>
-                <input name="date" type="date" value={form.date} onChange={handleChange} className="border border-gray-300 rounded !px-2" required />
+                <input name="date" type="date" onChange={handleChange} className="border border-gray-300 rounded !px-2" 
+                    value={form.date || new Date().toISOString().slice(0, 10)} // Use form.date or default to today
+                    min={new Date().toISOString().slice(0, 10)} // Prevent selecting previous days
+                    required />
                 <label className="font-semibold">Note:</label>
                 <input name="note" type="text" placeholder="list note..." value={form.note} onChange={handleChange} className="border border-gray-300 rounded !px-2" />
-                <button className="bg-blue-500 text-white rounded !px-4" type="submit">Add Item</button>
+                <button className="bg-blue-500 text-white rounded !px-4" type="submit">New List</button>
             </form>
 
             <table className="min-w-full border border-gray-300 bg-white text-center">
@@ -124,7 +150,11 @@ export default function GroceryList() {
                             <td className="!px-2 !py-1">{list.note}</td>
                             <td className="!px-2 !py-1">
                                 <button
-                                    onClick={() => openEditModal(list, list._id)}
+                                    onClick={() => navigate(`view/${list._id}`)}
+                                    className="bg-green-500 text-white !px-4 rounded !mr-2"
+                                >View</button>
+                                <button
+                                    onClick={() => openEditModal(list)}
                                     className="!px-4 !mr-5 bg-blue-500 text-white rounded"
                                 >Edit</button>
                                 <button

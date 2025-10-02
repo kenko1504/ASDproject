@@ -1,5 +1,3 @@
-import AddIngredient from "./components/DashboardComponent/AddIngredientPopUp.jsx";
-import Header from "./components/Header.jsx";
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
 import Dashboard from "./components/Dashboard.jsx";
 import Recipes from "./components/Recipes.jsx";
@@ -10,10 +8,12 @@ import Settings from "./components/Settings.jsx";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
 import FridgeList from "./components/FridgeList.jsx";
 import GroceryList from "./components/GroceryList.jsx";
+import ViewGroceryList from "./components/ViewGroceryItems.jsx";
 import AddRecipe from "./components/AddRecipe.jsx";
 import ViewRecipe from "./components/ViewRecipe.jsx";
 import EditRecipe from "./components/EditRecipe.jsx";
 import AddButton from "./components/DashboardComponent/AddButton";
+import Recommendations from "./components/Recommendation.jsx";
 import "./index.css";
 
 export default function App() {
@@ -29,6 +29,8 @@ export default function App() {
                     <Route path="/item-management/*" element={<ItemManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/grocery-list" element={<GroceryList />} />
+                    <Route path="/grocery-list/view/:id" element={<ViewGroceryList />} />
+                    <Route path="/recommendations" element={<Recommendations />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
