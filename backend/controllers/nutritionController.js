@@ -1,5 +1,6 @@
 import Nutrition from "../models/nutrition.js";
 import axios from "axios";
+import FoodNutrition from "../models/foodNutrition.js";
 
 //get daily nutrition requirements based on biometric data
 export const getDailyNutritionRequirements = async (req, res) => {
@@ -71,11 +72,13 @@ export const getAllNutrition = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+    const items = await FoodNutrition.find();
+    res.json(items);
 };
 
 // Get Specific Food Nutrition Data
 export const getNutrition = async (req, res) => {
-    const item = await Nutrition.findById(req.params.id);
+    const item = await FoodNutrition.findById(req.params.id);
     if (!item) return res.status(404).json({message: "Item not found"});
     res.json(item);
 };

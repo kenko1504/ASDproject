@@ -14,27 +14,38 @@
 ## Team Member Contributions:
 ### Frontend
 - **Kenji**
+    -`/frontend/src/components/DashBoardComponent/AddButton.jsx`
+    -`/frontend/src/components/DashBoardComponent/AddIngredientPopUp.jsx`
+    -`/frontend/src/components/FridgeList.jsx`
 - **Matthew**
 - **Anthony**
     - `/frontend/src/components/GroceryList.jsx`
     - `/frontend/src/components/ViewGroceryItems.jsx`
+    - `/frontend/src/components/Recommendation.jsx`
 - **Jianan**
 - **Martin**
 
 ### Backend
 - **Kenji**
+    -  `/backend/controller/ingredientController.js`
+    -  `/backend/routes/ingredientRoutes.js`
+    -  `/backend/imageUploads`
 - **Matthew**
 - **Anthony**
-    -  `/frontend/controller/groceryListController.jsx`
-    -  `/frontend/routes/groceryRoutes.jsx`
+    -  `/backend/controller/groceryListController.jsx`
+    -  `/backend/routes/groceryRoutes.jsx`
+    -  `/backend/controller/recommendController.jsx`
+    -  `/backend/routes/recommendRoutes.jsx`
 - **Jianan**
 - **Martin**
 
 ### Database
 - **Kenji**
+    - `./backend/models/ingredient.js`
 - **Matthew**
 - **Anthony**
     - `./backend/models/groceryList.js`
     - `./backend/models/groceryItem.js`
+    - `./backend/models/foodNutrition.js`
 - **Jianan**
 - **Martin**

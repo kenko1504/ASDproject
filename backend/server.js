@@ -10,6 +10,7 @@ import userRoutes from "./routes/userRoutes.js";
 import recipeRoutes from "./routes/recipeRoutes.js";
 import groceryRoutes from "./routes/groceryRoutes.js";
 import ingredientRoutes from "./routes/ingredientRoutes.js";
+import recommendRoutes from "./routes/recommendRoutes.js";
 import Food from "./models/food.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -26,6 +27,7 @@ app.use("/ingredients", ingredientRoutes);
 app.use("/users", userRoutes);
 app.use("/GroceryLists", groceryRoutes);
 app.use("/recipes", recipeRoutes);
+app.use("/recommendations", recommendRoutes);
 
 //connect with MongoDB Atlas
 mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find MONGO_URI for connecting with MongoDB Atlas
@@ -49,6 +51,7 @@ app.get("/Food", (req, res) => {
     .catch(err => res.json(err));
   console.log("Food Get");
 });
+
 
 // Start server
 const PORT = 5000;
