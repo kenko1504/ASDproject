@@ -81,5 +81,4 @@
     - `./backend/models/foodNutrition.js`
 - **Jianan**
 - **Martin**
-    - `/backend/models/nutrition.js`
     - `/backend/models/meal.js`
