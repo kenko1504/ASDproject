@@ -36,6 +36,10 @@
     - `/frontend/src/components/Recommendation.jsx`
 - **Jianan**
 - **Martin**
+    - `/frontend/src/components/Nutritions.jsx`
+    - `/frontend/src/components/NutritionGraph.jsx`
+    - `/frontend/src/components/DashBoardComponent/AutoIngredientPopUp.jsx`
+    - `/frontend/src/components/DashBoardComponent/ManualIngredientPopUp.jsx`
 
 ### Backend
 - **Kenji**
@@ -44,7 +48,7 @@
     -  `/backend/imageUploads`
 - **Matthew**
     - `backend/controllers/userController.js`
-    - `backend/controllers/authController.js`
+  f  - `backend/controllers/authController.js`
     - `backend/controllers/recipeController.js`
     - `backend/middleware/auth.js`
     - `backend/routes/userRoutes.js`
@@ -53,12 +57,17 @@
     - `backend/test/userController.test.js`
     - `backend/utils/dummyRecipes.js`
 - **Anthony**
-    -  `/backend/controller/groceryListController.jsx`
-    -  `/backend/routes/groceryRoutes.jsx`
-    -  `/backend/controller/recommendController.jsx`
-    -  `/backend/routes/recommendRoutes.jsx`
+    -  `/backend/controller/groceryListController.js`
+    -  `/backend/routes/groceryRoutes.js`
+    -  `/backend/controller/recommendController.js`
+    -  `/backend/routes/recommendRoutes.js`
 - **Jianan**
 - **Martin**
+    -  `/backend/routes/nutritionRoutes.js`
+    -  `/backend/controller/nutritionController.js`
+    -  `/backend/routes/receiptUploadRoutes.js`
+    -  `/backend/middleware/upload.js`
+    -  `/backend/controller/receiptUploadController.js`
 
 ### Database
 - **Kenji**
@@ -72,3 +81,5 @@
     - `./backend/models/foodNutrition.js`
 - **Jianan**
 - **Martin**
+    - `/backend/models/nutrition.js`
+    - `/backend/models/meal.js`

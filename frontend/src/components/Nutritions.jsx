@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { AuthContext } from '../contexts/AuthContext';
 
-// const {user} = useContext(AuthContext);
+
 
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
