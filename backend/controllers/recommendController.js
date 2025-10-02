@@ -1,4 +1,6 @@
-import FoodNutrition from '../models/foodNutrition.js'; // Adjust the path as necessary
+import FoodNutrition from '../models/foodNutrition.js';
+import GroceryList from '../models/groceryList.js';
+import GroceryItem from '../models/groceryItem.js';
 
 export const searchByQuery = async (req, res) => {
     try {
@@ -51,10 +53,37 @@ export const searchByQuery = async (req, res) => {
         }
 
         const results = await FoodNutrition.find(searchCriteria).sort(sortCriteria);
-        console.log("Search results:", results);
+        // console.log("Search results:", results);
         return res.status(200).json({ results });
     } catch (error) {
         console.error("Error occurred while searching:", error);
         return res.status(500).json({ error: "An error occurred while searching" });
+    }
+};
+
+export const addToLatestGroceryList = async (req, res) => {
+    try {
+        const { uid } = req.params;
+        const food = req.body.food;
+        console.log(food, uid);
+        if (!food) {
+            return res.status(400).json({ error: "Food does not exist" });
+        }
+        if (!uid) {
+            return res.status(400).json({ error: "User ID does not exist" });
+        }
+        const list = await GroceryList.findOne({ user: uid }).sort({ date: 1 });
+        console.log("Found grocery list:", list);
+        if (!list) {
+            return res.status(404).json({ error: "Grocery list not found" });
+        }
+        console.log("Latest grocery list:", list);
+        const item = new GroceryItem({ name: `⭐ ${food.foodName}`, quantity: 1, category: food.type, groceryList: list._id });
+        await item.save();
+        console.log("Item saved:", item);
+        return res.status(200).json({ message: "Recommendation added to grocery list" });
+    } catch (error) {
+        console.error("Error occurred while adding recommendation:", error);
+        return res.status(500).json({ error: "An error occurred while adding recommendation" });
     }
 };
