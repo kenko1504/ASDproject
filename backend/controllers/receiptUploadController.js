@@ -15,11 +15,11 @@ async function getAccessToken() {
 //recieve img file and send request to google
 export const requestReceiptOCR = async(req, res) => {
     try{
-        const token = (await getAccessToken()).token
-
+        // Verify is file exists before proceeding
         if (!req.file) {
             return res.status(400).json({ error: 'no file' });
         }
+        const token = (await getAccessToken()).token
         const base64Image = req.file.buffer.toString('base64');
         const response = await axios.post(
             process.env.GOOGLE_BASE_URI,
