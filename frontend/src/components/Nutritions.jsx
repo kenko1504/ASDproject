@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { AuthContext } from '../contexts/AuthContext';
 import NutritionGraph from "./NutritionGraph";
 
 export default function Nutritions() {
