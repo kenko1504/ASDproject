@@ -9,4 +9,10 @@ test('renders add button with correct text', () => {
 
   // optionally check the text content explicitly
   expect(buttonElement.textContent).toBe('+');
+  if (expect(buttonElement.textContent).toBe('+')) {
+    console.log("Add button ui rendered correctly with text: +");
+  }
+  else {
+    console.error("Add button ui did not render correctly");
+  }
 });
