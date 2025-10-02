@@ -13,6 +13,7 @@ import AddRecipe from "./components/AddRecipe.jsx";
 import ViewRecipe from "./components/ViewRecipe.jsx";
 import EditRecipe from "./components/EditRecipe.jsx";
 import AddButton from "./components/DashboardComponent/AddButton";
+import Recommendations from "./components/Recommendation.jsx";
 import "./index.css";
 
 export default function App() {
@@ -29,6 +30,7 @@ export default function App() {
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/grocery-list" element={<GroceryList />} />
                     <Route path="/grocery-list/view/:id" element={<ViewGroceryList />} />
+                    <Route path="/recommendations" element={<Recommendations />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/wasteBudget" element={<WasteBudget />} />
                     <Route path="/recipes" element={<Recipes />} />
