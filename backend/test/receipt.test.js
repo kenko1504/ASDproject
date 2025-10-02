@@ -12,6 +12,10 @@ jest.unstable_mockModule('axios', () => ({
   }
 }));
 
+// Dynamic import of mocked modules
+const { GoogleAuth } = await import('google-auth-library');
+const axios = await import('axios');
+
 describe('Receipt OCR Tests', () => {
   let mockReq;
   let mockRes;
@@ -56,6 +60,7 @@ describe('Receipt OCR Tests', () => {
     expect(mockRes.status).toHaveBeenCalledWith(400);
     expect(mockRes.json).toHaveBeenCalledWith({ error: 'no file' });
   });
+
   test('should handle access token retrieval failure', async () => {
     mockReq.file = {
       buffer: Buffer.from('fake-image-data'),
