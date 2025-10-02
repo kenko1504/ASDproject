@@ -1,4 +1,3 @@
-import Nutrition from "../models/nutrition.js";
 import axios from "axios";
 import FoodNutrition from "../models/foodNutrition.js";
 
@@ -12,13 +11,13 @@ export const getDailyNutritionRequirements = async (req, res) => {
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
         }
-        const calories = nutritionRequirements.BMI_EER["'Estimated Daily Caloric Needs'"]
+        const calories = nutritionRequirements.BMI_EER["Estimated Daily Caloric Needs"]
         const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
         const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
         const targetNutrients = ["carbohydrate", "protein", "fat"]
         const targetMinerals = ["sodium"]
         
-        const filteredData = {}
+        let filteredData = {}
 
         filteredData["calories"] = calories
         
@@ -37,13 +36,14 @@ export const getDailyNutritionRequirements = async (req, res) => {
         console.log(filteredData)
         res.status(200).json(filteredData);
     }catch(error){
+        console.log(error)
         res.status(500).json({ message: error.message });
     }
 };
 
 
 // calculate nutrition requirements
-export const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
+const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
     const { gender, age, weight, height } = characteristics;    
     const modifier = nutritionPlan || 'maintenance'
     let nutritionPlanForQuery = ""

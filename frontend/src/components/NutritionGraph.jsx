@@ -52,6 +52,7 @@ function NutritionGraph(){
                     body: JSON.stringify(body),
                     signal: abortControllerRef.current.signal
                 })
+                console.log(searchResult)
                 
                 if (!searchResult.ok) {
                     throw new Error(`HTTP error! status: ${searchResult.status}`)
@@ -69,6 +70,7 @@ function NutritionGraph(){
                         sodium: parseFloat(data.sodium) || 0
                     })
                 }
+                console.log(nutrients)
             } catch(error){
                 if (error.name === 'AbortError') {
                     console.log('aborted')
@@ -77,12 +79,12 @@ function NutritionGraph(){
                 console.error("getNutritionInfo() error:", error)
                 setError(error.message)
             } finally {
+                console.log(nutrients)
                 setLoading(false)
             }
         }
 
         getNutritionRequirementsInfo()
-
         return () => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort()
