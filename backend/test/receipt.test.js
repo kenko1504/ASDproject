@@ -12,10 +12,6 @@ jest.unstable_mockModule('axios', () => ({
   }
 }));
 
-// Dynamic import of mocked modules
-const { GoogleAuth } = await import('google-auth-library');
-const axios = await import('axios');
-
 describe('Receipt OCR Tests', () => {
   let mockReq;
   let mockRes;
