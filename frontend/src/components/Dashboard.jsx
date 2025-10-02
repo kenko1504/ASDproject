@@ -105,7 +105,6 @@ export default function Dashboard() {
                   <div key={recipe._id} className="flex-shrink-0 !mr-4 last:!mr-0 h-full">
                     <RecipeCard
                       recipe={recipe}
-                      hideAdminButtons={true}
                       isDashboard={true}
                     />
                   </div>

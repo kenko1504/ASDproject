@@ -1,0 +1,46 @@
+import { GoogleAuth } from "google-auth-library";
+import axios from "axios"
+
+//get token from google cloud server
+async function getAccessToken() {
+  const auth = new GoogleAuth({
+    scopes: ['https://www.googleapis.com/auth/cloud-platform']
+  });
+  
+  const client = await auth.getClient();
+  const tokenResponse = await client.getAccessToken();
+  return tokenResponse;
+}
+
+//recieve img file and send request to google
+export const requestReceiptOCR = async(req, res) => {
+    try{
+        const token = (await getAccessToken()).token
+
+        if (!req.file) {
+            return res.status(400).json({ error: 'no file' });
+        }
+        const base64Image = req.file.buffer.toString('base64');
+        const response = await axios.post(
+            process.env.GOOGLE_BASE_URI,
+            {
+                rawDocument: {
+                content: base64Image,
+                mimeType: req.file.mimetype
+                }
+            },
+            {
+                headers:{
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json; charset=utf-8'
+                }
+            }
+        )
+        res.status(200).json({ success: true, data: response.data });
+    }catch(error){
+        res.status(500).json({
+            success: false,
+            error: error.response?.data || error.message
+        });
+    }
+}

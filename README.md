@@ -18,6 +18,18 @@
     -`/frontend/src/components/DashBoardComponent/AddIngredientPopUp.jsx`
     -`/frontend/src/components/FridgeList.jsx`
 - **Matthew**
+    - `frontend/src/components/AddRecipe.jsx`
+    - `frontend/src/components/EditRecipe.jsx`
+    - `frontend/src/components/LandingPage.jsx`
+    - `frontend/src/components/LoginModal.jsx`
+    - `frontend/src/components/NutritionPopupModal.jsx`
+    - `frontend/src/components/RecipeCard.jsx`
+    - `frontend/src/components/Recipes.jsx`
+    - `frontend/src/components/RegisterModal.jsx`
+    - `frontend/src/components/Settings.jsx`
+    - `frontend/src/components/ViewRecipe.jsx`
+    - `frontend/src/contexts/AuthContext.jsx`
+    - `frontend/src/utils/api.js`
 - **Anthony**
     - `/frontend/src/components/GroceryList.jsx`
     - `/frontend/src/components/ViewGroceryItems.jsx`
@@ -31,6 +43,15 @@
     -  `/backend/routes/ingredientRoutes.js`
     -  `/backend/imageUploads`
 - **Matthew**
+    - `backend/controllers/userController.js`
+    - `backend/controllers/authController.js`
+    - `backend/controllers/recipeController.js`
+    - `backend/middleware/auth.js`
+    - `backend/routes/userRoutes.js`
+    - `backend/routes/authRoutes.js`
+    - `backend/routes/recipeRoutes.js`
+    - `backend/test/userController.test.js`
+    - `backend/utils/dummyRecipes.js`
 - **Anthony**
     -  `/backend/controller/groceryListController.jsx`
     -  `/backend/routes/groceryRoutes.jsx`
@@ -43,6 +64,8 @@
 - **Kenji**
     - `./backend/models/ingredient.js`
 - **Matthew**
+    - `backend/models/user.js`
+    - `backend/models/recipe.js`
 - **Anthony**
     - `./backend/models/groceryList.js`
     - `./backend/models/groceryItem.js`

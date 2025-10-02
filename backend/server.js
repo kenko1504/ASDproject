@@ -14,6 +14,7 @@ import nutritionRoutes from "./routes/nutritionRoutes.js";
 import mealRoutes from "./routes/mealRoutes.js"
 
 import recommendRoutes from "./routes/recommendRoutes.js";
+import receiptUploadRoutes from "./routes/receiptUploadRoutes.js";
 import Food from "./models/food.js";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -30,6 +31,7 @@ app.use("/ingredients", ingredientRoutes);
 app.use("/users", userRoutes);
 app.use("/GroceryLists", groceryRoutes);
 app.use("/recipes", recipeRoutes);
+app.use("/receipt", receiptUploadRoutes);
 app.use("/nutrition", nutritionRoutes)
 app.use("/meal", mealRoutes)
 app.use("/recommendations", recommendRoutes);
