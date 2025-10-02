@@ -21,6 +21,7 @@
 - **Anthony**
     - `/frontend/src/components/GroceryList.jsx`
     - `/frontend/src/components/ViewGroceryItems.jsx`
+    - `/frontend/src/components/Recommendation.jsx`
 - **Jianan**
 - **Martin**
 
@@ -31,8 +32,10 @@
     -  `/backend/imageUploads`
 - **Matthew**
 - **Anthony**
-    -  `/frontend/controller/groceryListController.jsx`
-    -  `/frontend/routes/groceryRoutes.jsx`
+    -  `/backend/controller/groceryListController.jsx`
+    -  `/backend/routes/groceryRoutes.jsx`
+    -  `/backend/controller/recommendController.jsx`
+    -  `/backend/routes/recommendRoutes.jsx`
 - **Jianan**
 - **Martin**
 
@@ -43,5 +46,6 @@
 - **Anthony**
     - `./backend/models/groceryList.js`
     - `./backend/models/groceryItem.js`
+    - `./backend/models/foodNutrition.js`
 - **Jianan**
 - **Martin**
