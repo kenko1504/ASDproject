@@ -1,7 +1,6 @@
 import { useState, useRef } from "react";
-import axios from "axios"
 
-export default function ManualIngredientPopUp({ onClose }) {
+export default function AddIngredientPopUp({ onClose }) {
 
   // use state for form
   const [name, setName] = useState("");
@@ -9,9 +8,6 @@ export default function ManualIngredientPopUp({ onClose }) {
   const [expiryDate, setExpiryDate] = useState("");
   const [description, setDescription] = useState("");
   const [image, setImage] = useState(null);
-  const [result, setResult] = useState(null);
-  const [loading, setLoading] = useState(false);
-  
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
@@ -64,29 +60,11 @@ export default function ManualIngredientPopUp({ onClose }) {
   }
 };
 
-  const handleChange = async (e) => {
+  const handleChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setLoading(true);
-
-      const formData = new FormData();
-      formData.append('image', file);
-
-      try {
-        const response = await axios.post('http://localhost:5000/receipt/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
-        });
-        setResult(response.data);
-        console.log('Document AI Result:', response.data);
-      } catch (error) {
-        console.error('Error:', error);
-      } finally {
-        setLoading(false);
-      }
-    }else{
-      return;
+      const url = URL.createObjectURL(file); // preview the image
+      setImage(url);
     }
   };
   return (
@@ -97,13 +75,29 @@ export default function ManualIngredientPopUp({ onClose }) {
           <div className="bg-[#85BC59] w-[400px] h-[464px] rounded-[10px] shadow-2xl flex flex-col items-center">
             {/* Header */}
             <div className="h-10 p-10 flex items-center justify-center mb-4">
-              <h2 className="text-white">Manual Upload</h2>
+              <h2 className="text-white">Ingredient Details</h2>
               <button onClick={onClose}
                 className="relative right-[-120px] text-[#36874D] hover:text-white-600 text-2xl font-bold leading-none"
               >
                 ×
               </button>
             </div>
+            {/* insert image block}
+            */}
+            <div onClick={handleClick} className="bg-gradient-to-b from-[#A1CF7B] to-[#85BC59] h-[180px] w-[370px] m-4 rounded-[10px] flex items-center justify-center cursor-pointer">
+              {image ? (
+              <img src={image} alt="uploaded" className="h-full w-full object-cover rounded-[10px]" />
+              ) : (
+                <span className="text-white">Upload optional image here</span>
+              )}
+            </div>
+            <input
+            type="file"
+            ref={fileInputRef}
+            onChange={handleChange}
+            className="hidden"
+            accept="image/*"
+            />
             {/* form */}
             <div className="w-[370px] h-[227px] flex flex-col justify-center">
               <div className="w-[370px] flex-1 flex flex-row justify-around p-10"
