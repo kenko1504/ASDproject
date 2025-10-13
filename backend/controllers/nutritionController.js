@@ -6,14 +6,6 @@ export const getDailyNutritionRequirements = async (req, res) => {
     const userBiometricInfo = req.body.characteristics; // Get user biometric information from request body
     const nutritionPlan = req.body.nutritionPlan;
     try{
-<<<<<<< Updated upstream
-        const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
-        console.log(nutritionRequirements)
-        if(!nutritionRequirements){
-            return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
-        }
-        const calories = nutritionRequirements.BMI_EER["Estimated Daily Caloric Needs"]
-=======
         const nutritionRequirements = JSON.stringify(await calculateNutritionRequirements(userBiometricInfo, nutritionPlan));
         if(!nutritionRequirements){
             return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
@@ -25,18 +17,10 @@ export const getDailyNutritionRequirements = async (req, res) => {
         console.log('Calculated calories:', calories);
 
         // Extract macronutrients and minerals from the tables
->>>>>>> Stashed changes
         const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
         const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
         const targetNutrients = ["carbohydrate", "protein", "fat"]
         const targetMinerals = ["sodium"]
-<<<<<<< Updated upstream
-        
-        let filteredData = {}
-
-        filteredData["calories"] = calories
-        
-=======
 
         console.log('macronutrientsTable:', macronutrientsTable);
         console.log('macronutrientsTable length:', macronutrientsTable?.length);
@@ -52,7 +36,6 @@ export const getDailyNutritionRequirements = async (req, res) => {
             }
         }
 
->>>>>>> Stashed changes
         macronutrientsTable.forEach((row, index) => {
             console.log(row[0], row[1] , "index:", index )
             if (index != 0 && targetNutrients.map(n => n.toLowerCase()).includes(row[0].toLowerCase())) {
