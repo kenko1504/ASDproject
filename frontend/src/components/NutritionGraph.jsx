@@ -110,29 +110,67 @@ function NutritionGraph(){
     ])
 
     const options = {
-        series: nutrients ? [
-            nutrients.calories, 
-            nutrients.protein, 
-            nutrients.fat, 
-            nutrients.carbohydrates, 
-            nutrients.sodium
-        ] : [0, 0, 0, 0, 0],
+    series: [
+            {
+                name: 'Daily Requirement',
+                data: nutrients ? [
+                    parseFloat(nutrients.calories) || 0,
+                    parseFloat(nutrients.Protein) || 0,
+                    parseFloat(nutrients.Fat) || 0,
+                    parseFloat(nutrients.Carbohydrate) || 0,
+                    parseFloat(nutrients.Sodium) || 0
+                ] : [0, 0, 0, 0, 0]
+            },
+            {
+                name: 'Today\'s Intake',
+                data: [0, 0, 0, 0, 0]
+            }
+        ],
         chart: {
-            width: 380,
-            type: 'pie',
+            type: 'bar',
+            height: 380,
+            toolbar: {
+                show: true
+            }
         },
-        labels: ['Calories', 'Protein', 'Fat', 'Carbohydrates', 'Sodium'],
-        responsive: [{
-            breakpoint: 480,
-            options: {
-                chart: {
-                    width: 400
-                },
-                legend: {
-                    position: 'bottom'
+        plotOptions: {
+            bar: {
+                horizontal: false,
+                columnWidth: '55%',
+                endingShape: 'rounded'
+            },
+        },
+        dataLabels: {
+            enabled: false
+        },
+        stroke: {
+            show: true,
+            width: 2,
+            colors: ['transparent']
+        },
+        xaxis: {
+            categories: ['Calories', 'Protein', 'Fat', 'Carbohydrates', 'Sodium'],
+        },
+        yaxis: {
+            title: {
+                text: 'Amount'
+            }
+        },
+        fill: {
+            opacity: 1
+        },
+        tooltip: {
+            y: {
+                formatter: function (val) {
+                    return val + " units"
                 }
             }
-        }]
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left'
+        },
+        colors: ['#008FFB', '#00E396']
     }
 
     if(loading) {
