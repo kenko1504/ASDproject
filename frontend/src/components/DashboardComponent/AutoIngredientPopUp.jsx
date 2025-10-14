@@ -2,13 +2,6 @@ import { useState, useRef } from "react";
 import axios from "axios"
 import uploadIcon from "../../assets/Upload.svg"
 export default function AutoIngredientPopUp({ onClose }) {
-
-  // use state for form
-  const [name, setName] = useState("");
-  const [quantity, setQuantity] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
@@ -24,33 +17,46 @@ export default function AutoIngredientPopUp({ onClose }) {
     setProducts(products.filter((_, index) => index !== indexToDelete));
   };
 
-  const handleSubmit = async () => {
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("quantity", quantity);
-  formData.append("expiryDate", expiryDate);
-  formData.append("description", description);
-  formData.append("inFridge", true);
+const handleSubmit = async (e) => {
+  e.preventDefault();
   
-  if (fileInputRef.current.files[0]) {
-    formData.append("image", fileInputRef.current.files[0]); // append actual file
-  }
+  const token = localStorage.getItem("token");
+  console.log(products)
+  for (const product of products) {
+    try {
+      const payload = {
+        name: product.name,
+        quantity: product.quantity,
+        price: product.price,
+        category: "Other",
+        expiryDate: product.expiryDate || result.data.data.shoppingDate
+      };
 
-  try {
-    const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/ingredients", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${token}`
-      },
-      body: formData
-    });
-    const result = await res.json();
-    console.log("Saved ingredient:", result);
-    onClose();
-  } catch (err) {
-    console.error("Error:", err);
+      console.log("payload:", payload)
+      const res = await fetch("http://localhost:5000/items", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+
+      const itemResult = await res.json();
+      console.log("Saved item:", itemResult);
+      
+    } catch (err) {
+      console.error("Error saving item:", err);
+      alert(`Failed to save ${product.name}`);
+      return;
+    }
   }
+  
+  alert("All ingredients saved successfully!");
+  onClose();
 };
 
   const handleChange = async (e) => {
@@ -68,8 +74,12 @@ export default function AutoIngredientPopUp({ onClose }) {
           }
         });
         setResult(response.data);
-        setProducts(response.data.data.products);
-        console.log('Document AI Result:', response.data);
+        const productsWithExpiry = response.data.data.products.map(product => ({
+          ...product,
+          expiryDate: response.data.data.shoppingDate || ""
+        }));
+      setProducts(productsWithExpiry);
+      console.log('Document AI Result:', response.data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
@@ -149,7 +159,7 @@ export default function AutoIngredientPopUp({ onClose }) {
                               />
                               <input 
                                 type="date" 
-                                value={product.expiryDate || result.data.shoppingDate || ""}
+                                value={product.expiryDate || result.data.shoppingDate}
                                 onChange={(e) => {
                                   const newProducts = [...products];
                                   newProducts[index].expiryDate = e.target.value;
