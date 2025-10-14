@@ -11,11 +11,17 @@ export default function AutoIngredientPopUp({ onClose }) {
   const [image, setImage] = useState(null);
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [products, setProducts] = useState([]);
   
   const fileInputRef = useRef(null);
 
   const handleClick = () => {
     fileInputRef.current.click(); // trigger file input
+  };
+
+   const handleDelete = (indexToDelete) => {
+    console.log("Deleting index:", indexToDelete);
+    setProducts(products.filter((_, index) => index !== indexToDelete));
   };
 
   const handleSubmit = async () => {
@@ -62,14 +68,13 @@ export default function AutoIngredientPopUp({ onClose }) {
           }
         });
         setResult(response.data);
+        setProducts(response.data.data.products);
         console.log('Document AI Result:', response.data);
       } catch (error) {
         console.error('Error:', error);
       } finally {
         setLoading(false);
       }
-    }else{
-      return;
     }
   };
   return (
@@ -92,8 +97,8 @@ export default function AutoIngredientPopUp({ onClose }) {
             {result ? (
                     <div className="p-2 rounded mt-2 w-11/12 h-10/12 overflow-scroll-auto">
                       <form action="" className="flex flex-col gap-4">
-                        <div className="flex justify-between py-2 text-center">
-                          <label className="flex-2 ">
+                        <div className="flex py-2 text-center">
+                          <label className="flex-[2]">
                             Name
                           </label>
                           <label className="flex-1">
@@ -105,14 +110,62 @@ export default function AutoIngredientPopUp({ onClose }) {
                           <label className="flex-1">
                             Expiry Date
                           </label>
+                          <label className="flex-1">DELETE</label>
                         </div>
-                        {result.data.names?.map((name, index) => (
-                          <div key={index} className="flex justify-between py-2 h-1/12 gap-3">
-                            <input type="text" defaultValue={name} className="border rounded w-full flex-2" required/>
-                            <input type="text" defaultValue={result.data.quantities[index] ? result.data.quantities[index] : ""} className="border rounded w-full flex-1 text-right" required/>
-                            <input type="text" defaultValue={result.data.prices[index] ? result.data.prices[index] : ""} className="border rounded w-full flex-1 text-right" required/>
-                            <input type="date" defaultValue={result.data.shoppingDate ? result.data.shoppingDate : ""} className="border rounded w-full flex-1 text-right"  placeholder="Expiry Date" required/>
-                          </div>
+                        {products.map((product, index) => (
+                            <div key={index} className="flex py-2 gap-3">
+                              <input 
+                                type="text" 
+                                value={product.name}
+                                onChange={(e) => {
+                                  const newProducts = [...products];
+                                  newProducts[index].name = e.target.value;
+                                  setProducts(newProducts);
+                                }}
+                                className="flex-[2] border rounded px-2 py-1 min-w-0" 
+                                required
+                              />
+                              <input 
+                                type="text" 
+                                value={product.quantity}
+                                onChange={(e) => {
+                                  const newProducts = [...products];
+                                  newProducts[index].quantity = e.target.value;
+                                  setProducts(newProducts);
+                                }}
+                                className="flex-1 border rounded px-2 py-1 text-right min-w-0" 
+                                required
+                              />
+                              <input 
+                                type="text" 
+                                value={product.price}
+                                onChange={(e) => {
+                                  const newProducts = [...products];
+                                  newProducts[index].price = e.target.value;
+                                  setProducts(newProducts);
+                                }}
+                                className="flex-1 border rounded px-2 py-1 text-right min-w-0" 
+                                required
+                              />
+                              <input 
+                                type="date" 
+                                value={product.expiryDate || result.data.shoppingDate || ""}
+                                onChange={(e) => {
+                                  const newProducts = [...products];
+                                  newProducts[index].expiryDate = e.target.value;
+                                  setProducts(newProducts);
+                                }}
+                                className="flex-1 border rounded px-2 py-1 min-w-0" 
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() => handleDelete(index)}
+                                className="flex-1 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600 min-width-0"
+                              >
+                                DELETE
+                              </button>
+                            </div>
                         ))}
                       <button onClick={handleSubmit} className="mt-4 bg-white text-green-600 px-4 py-2 rounded hover:bg-gray-200 w-4/12 self-center">
                         Save Ingredients
