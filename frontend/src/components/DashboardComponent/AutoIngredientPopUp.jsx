@@ -106,7 +106,7 @@ const handleSubmit = async (e) => {
             */}
             {result ? (
                     <div className="p-2 rounded mt-2 w-11/12 h-10/12 overflow-scroll-auto">
-                      <form action="" className="flex flex-col gap-4">
+                      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                         <div className="flex py-2 text-center">
                           <label className="flex-[2]">
                             Name
@@ -177,7 +177,7 @@ const handleSubmit = async (e) => {
                               </button>
                             </div>
                         ))}
-                      <button onClick={handleSubmit} className="mt-4 bg-white text-green-600 px-4 py-2 rounded hover:bg-gray-200 w-4/12 self-center">
+                      <button type="submit" className="mt-4 bg-white text-green-600 px-4 py-2 rounded hover:bg-gray-200 w-4/12 self-center">
                         Save Ingredients
                       </button>
                       </form>
