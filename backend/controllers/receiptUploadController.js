@@ -37,8 +37,10 @@ export const requestReceiptOCR = async(req, res) => {
             }
         )
         if(response){
-            const resultArr = response.data.entities;
+            const resultArr = response.data.document.entities;
             
+            console.log(resultArr)
+
             let productNames = []
             let quantities = []
             let prices = []
@@ -53,21 +55,42 @@ export const requestReceiptOCR = async(req, res) => {
                         prices.push(element.mentionText)
                         break;
                     case 'Quantity':
-                        quantities.push(element.mentionText)
+                        if(element.mentionText.includes("x")){
+                            const text = element.mentionText.replace('g', ''); // remove all whitespace
+                            const qty = element.mentionText.split("x")[1].trim();
+                            const unit = element.mentionText.split("x")[0].trim();
+                            quantities.push(qty * unit);
+                        }else if(element.mentionText.includes("kg")){
+                            const text = element.mentionText.replace('kg', '').trim();
+                            const qty = parseFloat(text) * 1000; // convert kg to g
+                            quantities.push(qty);
+                        }else{
+                            const text = element.mentionText.replace('g', '').trim();
+                            const qty = parseFloat(text);
+                            quantities.push(qty);
+                        }
                         break;
-                    case 'shoppingDate':
+                    case 'ShoppingDate':
                         shoppingDate = element.mentionText
                         break;
                     default:
                         break;
                 }
             });
+            if(shoppingDate === ""){
+                const currentDate = new Date();
+                const year = currentDate.getFullYear();
+                const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+                const day = String(currentDate.getDate()).padStart(2, '0');
+                shoppingDate = `${year}-${month}-${day}`;
+            }
             const inputAutofills = {
                 'names': productNames,
                'quantities': quantities,
                 'prices': prices,
                 'shoppingDate': shoppingDate
             }
+            console.log(inputAutofills)
             res.status(200).json({result:"success", data: inputAutofills})
         }
     }catch(error){
