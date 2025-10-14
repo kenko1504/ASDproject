@@ -53,7 +53,7 @@ export const requestReceiptOCR = async(req, res) => {
                                 name = labels.mentionText;
                             }else if(labels.type === "Quantity"){
                                 quantity = labels.mentionText;
-                                if(quantity.includes("kg")){
+                                if(quantity.includes(".") || quantity.includes("kg")){
                                     quantity = parseFloat(quantity.replace("kg","")) * 1000;
                                 }else if(quantity.includes("g")){
                                     quantity = parseFloat(quantity.replace("g",""));
