@@ -194,7 +194,7 @@ function NutritionGraph(){
             <p className="plan">
                 Current Nutrition Plan: {userInfo.user.nutritionPlan || 'Default'}
             </p>
-            <Chart options={options} series={options.series} type="pie" width={380} />
+            <Chart options={options} type="pie" width={380} />
         </div>
     )
 }
