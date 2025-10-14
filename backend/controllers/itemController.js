@@ -10,7 +10,6 @@ export const createItem = async (req, res) => {
         res.json(newItem);
     } catch (err) {
         res.status(500).json({error: err.message});
-        throw err
     }
 }
 
