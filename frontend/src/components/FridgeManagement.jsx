@@ -6,7 +6,7 @@ import "../CSS/index.css";
 
 
 
-export default function ItemManagement() {
+export default function FridgeManagement() {
     const [items, setItems] = useState([]);
     // const [editingItem, setEditingItem] = useState(null); // on editing item
     const [searchItem, setSearchItem] = useState(""); // search item by name
