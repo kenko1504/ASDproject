@@ -37,37 +37,57 @@ export const requestReceiptOCR = async(req, res) => {
             }
         )
         if(response){
-            const resultArr = response.data.entities;
-            
-            let productNames = []
-            let quantities = []
-            let prices = []
+
+            let products = []
             let shoppingDate = ""
 
+            const resultArr = response.data.document.entities;
             resultArr.forEach(element => {
-                switch(element.type){
-                    case 'ProductName':
-                        productNames.push(element.mentionText)
-                        break;
-                    case 'Price':
-                        prices.push(element.mentionText)
-                        break;
-                    case 'Quantity':
-                        quantities.push(element.mentionText)
-                        break;
-                    case 'shoppingDate':
-                        shoppingDate = element.mentionText
-                        break;
-                    default:
-                        break;
+                if(element.type === "Product"){
+                    console.log(element)
+                        let name = "";
+                        let quantity = "";
+                        let price = "";
+                    element.properties.forEach(labels => {
+                            if(labels.type === "ProductName"){
+                                name = labels.mentionText;
+                            }else if(labels.type === "Quantity"){
+                                quantity = labels.mentionText;
+                                if(quantity.includes(".") || quantity.includes("kg")){
+                                    quantity = parseFloat(quantity.replace("kg","")) * 1000;
+                                }else if(quantity.includes("g")){
+                                    quantity = parseFloat(quantity.replace("g",""));
+                                }else if(quantity.includes("L")){
+                                    quantity = parseFloat(quantity.replace("L","")) * 1000;
+                                }else if(quantity.includes("ml")){
+                                    quantity = parseFloat(quantity.replace("ml",""));
+                                }else if(quantity.includes("x")){
+                                    const qty = quantity.split("x")[0];
+                                    const weight = quantity.split("x")[1];
+                                    quantity = parseInt(qty) * parseInt(weight);
+                                }
+                            }else if(labels.type === "Price"){
+                                price = labels.mentionText;
+                            }
+                    })
+                    products.push({
+                        'name': name,
+                        'quantity': quantity,
+                        'price': price
+                    });
+                }else if(element.type === "ShoppingDate"){
+                    shoppingDate = element.mentionText;
                 }
             });
+            if(!Date.parse(shoppingDate)){
+                const sevenDaysLater = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+                shoppingDate = sevenDaysLater.toISOString().split('T')[0];
+            }
             const inputAutofills = {
-                'names': productNames,
-               'quantities': quantities,
-                'prices': prices,
+                'products': products,
                 'shoppingDate': shoppingDate
             }
+            console.log(inputAutofills)
             res.status(200).json({result:"success", data: inputAutofills})
         }
     }catch(error){
@@ -75,5 +95,6 @@ export const requestReceiptOCR = async(req, res) => {
             success: false,
             error: error.response?.data || error.message
         });
+        throw error;
     }
 }
