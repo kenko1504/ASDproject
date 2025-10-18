@@ -120,6 +120,47 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
         }
     };
 
+    const handleMealAdd = async () => {
+        // Implementation for adding recipe to meal plan can be added here
+        try {
+            const mealType = () => {
+                const hours = new Date().getHours();
+                if (hours < 12) return 'breakfast';
+                else if (hours < 17) return 'lunch';
+                else return 'dinner';
+            }
+            const date = new Date(Date.now()).toISOString().split('T')[0];
+            console.log(date);
+            const response = await fetch(`http://localhost:5000/meal`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user.token}`
+                },
+                body: JSON.stringify({
+                    userId: user._id,
+                    date: date,
+                    mealType: mealType(),
+                    recipeId: recipe._id,
+                    items: recipe.ingredients.map(ing => ({
+                        ingredient: ing.ingredient._id || ing.ingredient,  // ObjectId
+                        quantity: ing.quantity,
+                        measurementType: ing.measurementType
+                    }))
+                })
+            });
+            if (response.ok) {
+                alert('Recipe added to meal plan successfully.');
+            }else{
+                const errorData = await response.json();
+                alert(errorData.error)
+            }
+        } catch (error) {
+            console.error('Error adding recipe to meal plan:', error);
+            alert('Failed to add recipe to meal plan. Please try again.');
+        }
+    };
+
     // Check if recipe is saved when component mounts or recipe/user changes
     useEffect(() => {
         checkIfRecipeSaved();
@@ -144,6 +185,12 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
                     <img className="w-8 h-8 absolute left-4 top-4 transform transition active:scale-90 hover:scale-110" src={trashImg}/>
                 </button>
             ) : null}
+            <button onClick={(e) => {
+                e.stopPropagation();
+                handleMealAdd();
+            }} className="absolute w-8 h-8 left-18 top-4 rounded-2xl bg-amber-100/30 flex items-center justify-center hover:shadow-lg transform transition active:scale-90 hover:scale-110">
+                <span className="font-bold text-2xl text-white">+</span>
+            </button>
             <button 
                 onClick={(e) => {
                     e.stopPropagation();

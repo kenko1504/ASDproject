@@ -15,8 +15,6 @@ import mealRoutes from "./routes/mealRoutes.js"
 
 import recommendRoutes from "./routes/recommendRoutes.js";
 import receiptUploadRoutes from "./routes/receiptUploadRoutes.js";
-import Food from "./models/food.js";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -52,12 +50,7 @@ let items = [
   { id: 2, name: "Apple", price: 20 },
 ];
 
-app.get("/Food", (req, res) => {
-  Food.find()
-    .then(items => res.json(items))
-    .catch(err => res.json(err));
-  console.log("Food Get");
-});
+
 
 
 // Start server

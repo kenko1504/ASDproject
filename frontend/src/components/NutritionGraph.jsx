@@ -1,17 +1,22 @@
 import { useContext, useEffect, useState, useRef } from 'react'
 import { AuthContext } from '../contexts/AuthContext.jsx'
-import { Chart } from 'react-apexcharts'
+import Chart from 'react-apexcharts'
 
 function NutritionGraph(){
     const userInfo = useContext(AuthContext)
-    const [nutrients, setNutrients] = useState(null)
+    
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
     const hasFetched = useRef(false)
     const abortControllerRef = useRef(null)
 
+    const [nutrients, setNutrients] = useState(null)
+    const [userTodayMeal, setUserTodayMeal] = useState(null)
+    const [userTodayNutrition, setUserTodayNutrition] = useState(null)
+
     useEffect(() => {
         console.log('useEffect:', userInfo)
+        console.log('hasFetched:', hasFetched.current)
         
         if(!userInfo?.user?.characteristics) {
             console.log('invalid user characteristics')
@@ -34,7 +39,6 @@ function NutritionGraph(){
             try {
                 setLoading(true)
                 setError(null)
-                hasFetched.current = true
                 
                 const body = {
                     characteristics: userInfo.user.characteristics,
@@ -62,29 +66,119 @@ function NutritionGraph(){
                 console.log('API response:', data)
                 
                 if(data){
-                    setNutrients({
+                    console.log('Setting nutrients:', data)
+                    const nutrientData = {
                         calories: parseFloat(data.calories) || 0,
-                        protein: parseFloat(data.protein) || 0,
-                        fat: parseFloat(data.fat) || 0,
-                        carbohydrates: parseFloat(data.carbohydrate) || 0,
-                        sodium: parseFloat(data.sodium) || 0
-                    })
+                        protein: parseFloat(data.Protein) || 0,
+                        fat: parseFloat(data.Fat) || 0,
+                        carbohydrates: parseFloat(data.Carbohydrate) || 0,
+                        sodium: parseFloat(data.Sodium) || 0
+                    }
+                    setNutrients(nutrientData)
+                    console.log('Nutrients set:', nutrientData)
                 }
-                console.log(nutrients)
+
+                return data
+
             } catch(error){
                 if (error.name === 'AbortError') {
                     console.log('aborted')
-                    return
+                    return null
                 }
                 console.error("getNutritionInfo() error:", error)
                 setError(error.message)
+                return null
+            }
+        }
+
+        async function getUserTodayMeal() {
+            try {
+                const response = await fetch(`http://localhost:5000/meal/${userInfo.user._id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userInfo.token}`
+                    }
+                })
+                
+                if (response.ok) {
+                    const data = await response.json()
+                    setUserTodayMeal(data)
+                    return data
+                } else {
+                    console.error('Error fetching user today meal:', response.status)
+                    setUserTodayMeal(null)
+                    return null
+                }
+            } catch (error) {
+                console.error('Error fetching user today meal:', error)
+                setUserTodayMeal(null)
+                return null
+            }
+        }
+
+        async function getUserTodayNutrition(meals) {
+            if (!meals || meals.length === 0) {
+                return
+            }
+
+            const nutritionTotals = {
+                calories: 0,
+                protein: 0,
+                fat: 0,
+                carbohydrates: 0,
+                sodium: 0
+            }
+
+            const promises = meals.flatMap(meal => 
+                meal.items.map(async (item) => {
+                    try {
+                        const result = await fetch(`http://localhost:5000/meal/food/${item._id}`)
+                        console.log(result)
+                    } catch (error) {
+                        console.error('Error fetching item:', error)
+                    }
+                })
+            )
+
+            const results = await Promise.all(promises)
+            
+            results.forEach(data => {
+                if (data) {
+                    nutritionTotals.calories += parseFloat(data.calories) || 0
+                    nutritionTotals.protein += parseFloat(data.protein) || 0
+                    nutritionTotals.fat += parseFloat(data.fat) || 0
+                    nutritionTotals.carbohydrates += parseFloat(data.carbohydrates) || 0
+                    nutritionTotals.sodium += parseFloat(data.sodium) || 0
+                }
+            })
+
+            setUserTodayNutrition(nutritionTotals)
+        }
+
+        async function fetchAllData() {
+            try {
+                setLoading(true)
+                setError(null)
+                hasFetched.current = true
+
+                // 순차적으로 실행
+                await getNutritionRequirementsInfo()
+                const mealsData = await getUserTodayMeal()
+                
+                if (mealsData && mealsData.length > 0) {
+                    await getUserTodayNutrition(mealsData)
+                }
+            } catch (error) {
+                console.error('Error:', error)
+                setError(error.message)
             } finally {
-                console.log(nutrients)
                 setLoading(false)
             }
         }
 
-        getNutritionRequirementsInfo()
+        fetchAllData()
+        
         return () => {
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort()
@@ -96,36 +190,37 @@ function NutritionGraph(){
         userInfo?.user?.characteristics?.gender,
         userInfo?.user?.characteristics?.height,
         userInfo?.user?.characteristics?.weight,
-        userInfo?.user?.nutritionPlan
+        userInfo?.user?.nutritionPlan,
+        userInfo?.user?._id,
+        userInfo?.token
     ])
 
-    useEffect(() => {
-        hasFetched.current = false
-    }, [
-        userInfo?.user?.characteristics?.age,
-        userInfo?.user?.characteristics?.gender,
-        userInfo?.user?.characteristics?.height,
-        userInfo?.user?.characteristics?.weight,
-        userInfo?.user?.nutritionPlan
-    ])
+    console.log('Rendering with nutrients:', nutrients)
+
+    const series = [
+        {
+            name: 'Daily Requirement',
+            data: nutrients ? [
+                nutrients.calories,
+                nutrients.protein,
+                nutrients.fat,
+                nutrients.carbohydrates,
+                nutrients.sodium
+            ] : [0, 0, 0, 0, 0]
+        },
+        {
+            name: 'Today\'s Intake',
+            data: userTodayNutrition ? [
+                userTodayNutrition.calories,
+                userTodayNutrition.protein,
+                userTodayNutrition.fat,
+                userTodayNutrition.carbohydrates,
+                userTodayNutrition.sodium
+            ] : [0, 0, 0, 0, 0]
+        }
+    ]
 
     const options = {
-    series: [
-            {
-                name: 'Daily Requirement',
-                data: nutrients ? [
-                    parseFloat(nutrients.calories) || 0,
-                    parseFloat(nutrients.Protein) || 0,
-                    parseFloat(nutrients.Fat) || 0,
-                    parseFloat(nutrients.Carbohydrate) || 0,
-                    parseFloat(nutrients.Sodium) || 0
-                ] : [0, 0, 0, 0, 0]
-            },
-            {
-                name: 'Today\'s Intake',
-                data: [0, 0, 0, 0, 0]
-            }
-        ],
         chart: {
             type: 'bar',
             height: 380,
@@ -149,7 +244,7 @@ function NutritionGraph(){
             colors: ['transparent']
         },
         xaxis: {
-            categories: ['Calories', 'Protein', 'Fat', 'Carbohydrates', 'Sodium'],
+            categories: ['Calories(kcal)', 'Protein(g)', 'Fat(g)', 'Carbohydrates(g)', 'Sodium(mg)'],
         },
         yaxis: {
             title: {
@@ -192,9 +287,9 @@ function NutritionGraph(){
     return(
         <div className="graphs">
             <p className="plan">
-                Current Nutrition Plan: {userInfo.user.nutritionPlan || 'Default'}
+                Current Nutrition Plan: <b>{userInfo.user.nutritionPlan || 'Default'}</b>
             </p>
-            <Chart options={options} type="pie" width={380} />
+            <Chart options={options} series={series} type="bar" width={1200} height={700} />
         </div>
     )
 }
