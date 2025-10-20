@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback} from "react";
 import "../CSS/index.css";
 
-export default function WasteBudget({ items }) {
+export default function WasteBudget() {
     const [budget, setBudget] = useState(500);
     const [budgetStats, setBudgetStats] = useState({totalValue: 0, count: 0});
     const [wasteStats, setWasteStats] = useState({expired: [], expiringSoon: [], wastedValue: 0});
@@ -14,22 +14,100 @@ export default function WasteBudget({ items }) {
         }
     }, []);
 
-    //get budget and waste statistics
+    // Helper to round to 2 decimals reliably
+    const round2decimals = (n) => Math.round((Number(n) || 0) * 100) / 100;
+
+    const fetchWasteBudget = useCallback(async () => {
+        try{
+            const token = localStorage.getItem("token");
+            if (!token) {
+                setBudgetStats({ totalValue: 0, count: 0 });
+                setWasteStats({ expired: [], expiringSoon: [], wastedValue: 0 });
+                return;
+            }
+            const res = await fetch("http://localhost:5000/ingredients", {
+                headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (res.status === 401 || res.status === 403) {
+                // Not authenticated or token expired
+                localStorage.removeItem("token");
+                setBudgetStats({ totalValue: 0, count: 0 });
+                setWasteStats({ expired: [], expiringSoon: [], wastedValue: 0 });
+                return;
+            }
+
+            const ingredients = await res.json();
+            const list = Array.isArray(ingredients) ? ingredients : [];
+
+
+            //Calculate Budget Stats
+            const totalValueRaw = list.reduce(
+                (sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) / 500.0 || 0), 0
+            );
+            const totalValue = round2decimals(totalValueRaw);
+            setBudgetStats({ totalValue, count: list.length });
+
+
+            //Calculate Waste Stats
+            const now = new Date();
+            const soon = new Date();
+            soon.setDate(now.getDate() + 3); // expiring soon in 3 days
+
+            const withDate = (date) => (date ? new Date(date) : null);
+
+            const expired = list.filter((i) => {
+                const date = withDate(i.expiryDate);
+                return date && date < now;
+            });
+
+            const expiringSoon = list.filter((i) => {
+                const date = withDate(i.expiryDate);
+                return date && date >= now && date <= soon;
+            });
+
+            const wastedValueRaw = expired.reduce(
+                (sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) / 500.0 || 0), 0
+            );
+            const wastedValue = round2decimals(wastedValueRaw);
+
+            setWasteStats({ expired, expiringSoon, wastedValue });
+        }catch (e) {
+            console.error("Failed to fetch ingredients:", e);
+            // rollback to empty stats on error
+            setBudgetStats({ totalValue: 0, count: 0 });
+            setWasteStats({ expired: [], expiringSoon: [], wastedValue: 0 });
+        }
+    },[])
+
+    // Fetch once on mount
     useEffect(() => {
-        fetch("http://localhost:5000/items/stats/budget")
-            .then(res => res.json())
-            .then(data => setBudgetStats(data));
+        fetchWasteBudget();
+    }, [fetchWasteBudget]);
 
-        fetch("http://localhost:5000/items/stats/waste")
-            .then(res => res.json())
-            .then(data => setWasteStats(data));
-    }, [items]);
+    // listen to a global refresh event triggered after add/update/delete
+    useEffect(() => {
+        const refresh = () => fetchWasteBudget();
+        window.addEventListener("ingredients:refresh", refresh);
+        return () => window.removeEventListener("ingredients:refresh", refresh);
+    }, [fetchWasteBudget]);
 
-    //update sate and localStorage after updating total budget
+    // //get budget and waste statistics
+    // useEffect(() => {
+    //     fetch("http://localhost:5000/items/stats/budget")
+    //         .then(res => res.json())
+    //         .then(data => setBudgetStats(data));
+    //
+    //     fetch("http://localhost:5000/items/stats/waste")
+    //         .then(res => res.json())
+    //         .then(data => setWasteStats(data));
+    // }, [items]);
+
+    //update state and localStorage after updating total budget
     const handleBudgetChange = (e) => {
         const newBudget = Number(e.target.value);
         setBudget(newBudget);
-        localStorage.setItem("budget", newBudget); // save localStorage to the browser
+        localStorage.setItem("budget", String(newBudget)); // save localStorage to the browser
     };
 
     const overBudget = budgetStats.totalValue > budget;

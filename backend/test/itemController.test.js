@@ -2,7 +2,7 @@ import request from "supertest";
 import express from "express";
 import mongoose from "mongoose";
 import {MongoMemoryServer} from "mongodb-memory-server";
-import Item from "../models/item.js";
+import Ingredient from "../models/ingredient.js";
 import {
     createItem,
     getItems,
@@ -15,6 +15,9 @@ import {
 describe("ItemController Tests", () => {
     let mongoServer;
     let app;
+
+    //fixed userid, simulate the logged-in user
+    const TEST_USER_ID = new mongoose.Types.ObjectId();
 
     // setup before all tests
     beforeAll(async () => {
@@ -41,19 +44,19 @@ describe("ItemController Tests", () => {
 
     //clean up database before each test
     beforeEach(async () => {
-        await Item.deleteMany({});
+        await Ingredient.deleteMany({});
     });
 
     //test creating an item
-    describe("Create a new Item", () => {
-        it('should create a new item successfully', async () => {
+    describe("Create a new ingredient", () => {
+        it('should create a new ingredient successfully', async () => {
             const newItem = {
                 name: "pear",
                 quantity: 10,
                 price: 2.5,
                 category: "Fruit",
                 expiryDate: "2025-10-09",
-                imgUrl: "pear.jpg"
+                userId: TEST_USER_ID.toString()
             };
 
             const response = await request(app)
@@ -69,7 +72,7 @@ describe("ItemController Tests", () => {
             expect(response.body.category).toBe("Fruit");
 
             //verify database
-            const saved = await Item.findOne({name: "pear"});
+            const saved = await Ingredient.findOne({name: "pear"});
             expect(saved).not.toBeNull();
             expect(saved.quantity).toBe(10);
             expect(saved.price).toBe(2.5);
@@ -88,11 +91,25 @@ describe("ItemController Tests", () => {
     });
 
     //test reading all items
-    describe("Get all items", () => {
-        it("should return all items", async () => {
-            await Item.create([
-                {name: "pear", price: 5, quantity: 2, category: "Fruit", expiryDate: "2025-10-01", imgUrl: "pear.jpg"},
-                {name: "beef", price: 20, quantity: 1, category: "Meat", expiryDate: "2025-11-01", imgUrl: "beef.jpg"},
+    describe("Get all ingredients", () => {
+        it("should return all ingredients", async () => {
+            await Ingredient.create([
+                {
+                    name: "pear",
+                    price: 5,
+                    quantity: 2,
+                    category: "Fruit",
+                    expiryDate: "2025-10-01",
+                    userId: TEST_USER_ID.toString()
+                },
+                {
+                    name: "beef",
+                    price: 20,
+                    quantity: 1,
+                    category: "Meat",
+                    expiryDate: "2025-11-01",
+                    userId: TEST_USER_ID.toString()
+                },
             ]);
 
             const response = await request(app).get("/api/items").expect(200);
@@ -103,15 +120,15 @@ describe("ItemController Tests", () => {
     })
 
     //test getting an item by its id
-    describe("Get item by id", () => {
-        it("should return a single item by id", async () => {
-            const item = await Item.create({
+    describe("Get ingredient by id", () => {
+        it("should return a single ingredient by id", async () => {
+            const item = await Ingredient.create({
                 name: "pear",
                 price: 3,
                 quantity: 5,
                 category: "Fruit",
                 expiryDate: "2025-12-01",
-                imgUrl: "pear.jpg"
+                userId: TEST_USER_ID.toString()
             });
 
             const response = await request(app)
@@ -121,23 +138,23 @@ describe("ItemController Tests", () => {
             expect(response.body).toHaveProperty("name", "pear");
         });
 
-        it("should return 404 if the item is not found", async () => {
+        it("should return 404 if the ingredient is not found", async () => {
             const fakeId = new mongoose.Types.ObjectId();
             const response = await request(app).get(`/api/items/${fakeId}`).expect(404);
             expect(response.body).toHaveProperty("message", "Item not found");
         });
     });
 
-    //test updating an item
-    describe("Update an item", () => {
-        it("should update an existing item", async () => {
-            const item = await Item.create({
+    //test updating an ingredient
+    describe("Update an ingredient", () => {
+        it("should update an existing ingredient", async () => {
+            const item = await Ingredient.create({
                 name: "beef",
                 price: 4,
                 quantity: 8,
                 category: "Meat",
                 expiryDate: "2025-12-05",
-                imgUrl: "beef.jpg"
+                userId: TEST_USER_ID.toString()
             });
 
             const response = await request(app)
@@ -147,11 +164,11 @@ describe("ItemController Tests", () => {
 
             expect(response.body).toHaveProperty("price", 6);
 
-            const updated = await Item.findById(item._id);
+            const updated = await Ingredient.findById(item._id);
             expect(updated.price).toBe(6);
         });
 
-        it("should return 404 if the item is not found", async () => {
+        it("should return 404 if the ingredient is not found", async () => {
             const fakeId = new mongoose.Types.ObjectId();
             const response = await request(app)
                 .put(`/api/items/${fakeId}`)
@@ -163,16 +180,16 @@ describe("ItemController Tests", () => {
     });
 
 
-    //test deleting an item
-    describe("Delete an item", () => {
-        it("should delete an item", async () => {
-            const item = await Item.create({
+    //test deleting an ingredient
+    describe("Delete an ingredient", () => {
+        it("should delete an ingredient", async () => {
+            const item = await Ingredient.create({
                 name: "beef",
                 price: 10,
                 quantity: 2,
                 category: "Meat",
                 expiryDate: "2025-12-10",
-                imgUrl: "beef.jpg"
+                userId: TEST_USER_ID.toString()
             });
 
             const response = await request(app)
@@ -181,11 +198,11 @@ describe("ItemController Tests", () => {
 
             expect(response.body).toHaveProperty("message", "Item is deleted");
 
-            const deleted = await Item.findById(item._id);
+            const deleted = await Ingredient.findById(item._id);
             expect(deleted).toBeNull();
         });
 
-        it("should return 404 if the item is not found", async () => {
+        it("should return 404 if the ingredient is not found", async () => {
             const fakeId = new mongoose.Types.ObjectId();
             const response = await request(app).delete(`/api/items/${fakeId}`).expect(404);
             expect(response.body).toHaveProperty("message", "Item not found");

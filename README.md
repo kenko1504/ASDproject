@@ -35,7 +35,7 @@
     - `/frontend/src/components/ViewGroceryItems.jsx`
     - `/frontend/src/components/Recommendation.jsx`
 - **Jianan**
-    - `/frontend/src/components/ItemManagement.jsx` 
+    - `/frontend/src/components/FridgeManagement.jsx`
     - `/frontend/src/components/AddItem.jsx` 
     - `/frontend/src/components/UpdateItem.jsx` 
     - `/frontend/src/components/WasteBudget.jsx`
@@ -71,6 +71,8 @@
 - **Jianan**
     -  `/backend/controller/itemController.js`
     -  `/backend/routes/itemRoutes.js`
+    -  `/backend/controller/ingredientController.js`
+    -  `/backend/routes/ingredientRoutes.js`
 - **Martin**
     -  `/backend/routes/nutritionRoutes.js`
     -  `/backend/controller/nutritionController.js`
