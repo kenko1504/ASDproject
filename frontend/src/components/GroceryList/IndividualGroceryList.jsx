@@ -2,16 +2,18 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import AddGroceryItem from "./AddGroceryItem";
+import EditGroceryItem from "./EditGroceryItem";
 
 export default function ViewGroceryItems() {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [item, setItem] = useState({ name: "", quantity: 0, category: "Other" });
     const [itemList, setItemList] = useState([]);
     const [groceryList, setGroceryList] = useState([]);
-
     const [showModal, setShowModal] = useState(false);
     const [editItem, setEditItem] = useState({ _id: "", name: "", quantity: 0, category: "Other" });
+    const [addError, setAddError] = useState("");
+    const [editError, setEditError] = useState("");
 
     useEffect(() => {
         axios.get(`http://localhost:5000/GroceryLists/${id}/items`)
@@ -23,26 +25,25 @@ export default function ViewGroceryItems() {
             .catch(err => console.log(err))
     }, [id]);
 
-    const handleChange = (e) => {
-        setItem({ ...item, [e.target.name]: e.target.value });
-    };
-
-    const resetItem = () => {
-        setItem({ name: "", quantity: 0, category: "Other" });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    const handleAddSubmit = async (itemData) => {
+        setAddError(""); // Clear any previous errors
         try {
             const res = await axios.post(`http://localhost:5000/GroceryLists/${id}/items`, {
-                name: item.name,
-                quantity: item.quantity,
-                category: item.category
+                name: itemData.name,
+                quantity: itemData.quantity,
+                category: itemData.category
             });
-            resetItem();
             setItemList(prevLists => [...prevLists, res.data]);
+            return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);
+            // Display the error message from the server
+            if (err.response?.data?.error) {
+                setAddError(err.response.data.error);
+            } else {
+                setAddError("An error occurred while adding the item.");
+            }
+            return false; // Failure
         }
     };
 
@@ -93,24 +94,26 @@ export default function ViewGroceryItems() {
         setEditItem({ _id: "", name: "", quantity: 0, category: "Other" });
     };
 
-    const handleEditChange = (e) => {
-        setEditItem({ ...editItem, [e.target.name]: e.target.value });
-    };
-
-    const handleEditSubmit = async (e) => {
-        e.preventDefault();
+    const handleEditUpdate = async (editItemData) => {
+        setEditError(""); // Clear any previous errors
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/item/${editItem._id}`, {
-                name: editItem.name,
-                quantity: editItem.quantity,
-                category: editItem.category
+            const res = await axios.put(`http://localhost:5000/GroceryLists/item/${editItemData._id}`, {
+                name: editItemData.name,
+                quantity: editItemData.quantity,
+                category: editItemData.category
             });
-            // Finds the list that has the same id as the list being edited
-            // List is updated otherwise it remains the same
-            setItemList(itemList.map(item => item._id === editItem._id ? res.data : item));
-            closeModal();
+            // Finds the item that has the same id as the item being edited
+            // Item is updated otherwise it remains the same
+            setItemList(itemList.map(item => item._id === editItemData._id ? res.data : item));
+            return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);
+            if (err.response?.data?.error) {
+                setEditError(err.response.data.error);
+            } else {
+                setEditError("An error occurred while updating the item.");
+            }
+            return false; // Failure
         }
     };
 
@@ -126,21 +129,9 @@ export default function ViewGroceryItems() {
                 <h1 className="text-3xl font-bold text-gray-800">{groceryList.name}</h1>
                 <div className="w-20"></div> {/* Spacer for center alignment */}
             </div>
-            <form onSubmit={handleSubmit} className="flex flex-row !m-6 !gap-2 border border-gray-700 rounded !p-6">
-                <label className="font-semibold">Name:</label>
-                <input name="name" type="text" placeholder="item name..." value={item.name} onChange={handleChange} className="border border-gray-300 rounded !px-2" required />
-                <label className="font-semibold">Quantity:</label>
-                <input name="quantity" type="number" placeholder="quantity" value={item.quantity} onChange={handleChange} className="border border-gray-300 rounded !px-2" required min="1" />
-                <label className="font-semibold">Category:</label>
-                <select name="category" value={item.category} onChange={handleChange} className="border border-gray-300 rounded !px-2" required>
-                    <option value="Meat">Meat</option>
-                    <option value="Vegetable">Vegetable</option>
-                    <option value="Fruit">Fruit</option>
-                    <option value="Drink">Drink</option>
-                    <option value="Other">Other</option>
-                </select>
-                <button className="bg-blue-500 text-white rounded !px-4" type="submit">Add Item</button>
-            </form>
+
+            <AddGroceryItem onSubmit={handleAddSubmit} error={addError} />
+
             <table className="min-w-full border border-gray-300 bg-white text-center">
                 <thead className="bg-gray-100">
                     <tr>
@@ -179,28 +170,14 @@ export default function ViewGroceryItems() {
                 </tbody>
             </table>
 
-            {/* Editing Modal */}
             {showModal && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-                    <div className="bg-white !p-6 rounded shadow-lg w-96">
-                        <h2 className="text-xl font-bold !mb-10 text-center">Edit Item</h2>
-                        <form onSubmit={handleEditSubmit} className="flex flex-col gap-2">
-                            <label className="flex justify-between items-center"><span className="font-semibold">Name:</span>
-                                <input name="name" value={editItem.name} onChange={handleEditChange} className="border border-gray-300 !p-1 rounded" required />
-                            </label>
-                            <label className="flex justify-between items-center"><span className="font-semibold">Quantity:</span>
-                                <input name="quantity" type="number" value={editItem.quantity} onChange={handleEditChange} className="border border-gray-300 !p-1 rounded" required />
-                            </label>
-                            <label className="flex justify-between items-center"><span className="font-semibold">Category:</span>
-                                <input name="note" value={editItem.category} onChange={handleEditChange} className="border border-gray-300 !p-1 rounded" />
-                            </label>
-                            <div className="flex justify-end gap-2 !mt-2">
-                                <button type="button" onClick={closeModal} className="bg-gray-300 !px-3 !py-1 rounded">Cancel</button>
-                                <button type="submit" className="bg-blue-500 text-white !px-3 !py-1 rounded">Save</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
+                <EditGroceryItem
+                    isOpen={showModal}
+                    onClose={closeModal}
+                    item={editItem}
+                    onUpdate={handleEditUpdate}
+                    error={editError}
+                />
             )}
         </div>
     );

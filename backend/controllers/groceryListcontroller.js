@@ -76,7 +76,7 @@ export const updateList = async (req, res) => {
 export const createItem = async (req, res) => {
   try {
     const { gid } = req.params; // Grocery List ID from the URL
-    const list = await GroceryList.findById(id);
+    const list = await GroceryList.findById(gid);
     if (!list) {
       return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
     }
