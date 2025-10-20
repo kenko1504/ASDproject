@@ -4,6 +4,7 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AddGroceryList from "./AddGroceryList";
 import EditGroceryList from "./EditGroceryList";
+import { formatDate } from "../../utils/dateUtils";
 
 export default function GroceryList() {
     const { user } = useContext(AuthContext);
@@ -103,7 +104,7 @@ export default function GroceryList() {
                     {lists.map((list) => (
                         <tr key={list._id} className="border-gray-300 border-b hover:bg-gray-50">
                             <td className="!px-2 !py-1">{list.name}</td>
-                            <td className="!px-2 !py-1">{new Date(list.date).toLocaleDateString()}</td>
+                            <td className="!px-2 !py-1">{formatDate(list.date)}</td>
                             <td className={`!px-2 !py-1 font-semibold ${list.status === "active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"}`}>{list.status}</td>
                             <td className="!px-2 !py-1">{list.note}</td>
                             <td className="!px-2 !py-1">
@@ -130,6 +131,7 @@ export default function GroceryList() {
                 onClose={closeModal}
                 list={selectedList}
                 onUpdate={handleEditUpdate}
+                error={error}
             />
         </div>
     );

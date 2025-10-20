@@ -13,15 +13,15 @@ import {
 const router = express.Router();
 
 // Grocery Lists CDRUD
-router.post("/:UID", createList);    
-router.get("/:UID", getLists);
-router.put("/:GL_ID", updateList);
-router.delete("/:GL_ID", deleteList);
+router.post("/:uid", createList);    
+router.get("/:uid", getLists);
+router.put("/:id", updateList);
+router.delete("/:id", deleteList);
 // A Grocery List Items CDRUD
-router.post("/:GL_ID/items", createItem);
-router.get("/:GL_ID/items", getItems);
-router.put("/item/:ITEM_ID", updateItem);
-router.delete("/item/:ITEM_ID", deleteItem);
+router.post("/:id/items", createItem);
+router.get("/:id/items", getItems);
+router.put("/item/:id", updateItem);
+router.delete("/item/:id", deleteItem);
 
 
 // router.get("/:id", getList);       

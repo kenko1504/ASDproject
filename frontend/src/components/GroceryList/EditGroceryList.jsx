@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
+import { today, localDate } from "../../utils/dateUtils";
 
-export default function EditGroceryList({ isOpen, onClose, list, onUpdate }) {
+export default function EditGroceryList({ isOpen, onClose, list, onUpdate, error }) {
     const [editForm, setEditForm] = useState({
         _id: "",
         name: "",
-        date: "",
+        date: today(),
         note: "",
         status: "active"
     });
@@ -55,9 +56,10 @@ export default function EditGroceryList({ isOpen, onClose, list, onUpdate }) {
                         <input 
                             name="date" 
                             type="date" 
-                            value={editForm.date.slice(0, 10)} 
-                            onChange={handleEditChange} 
+                            value={localDate(editForm.date)} 
+                            onChange={handleEditChange}
                             className="border border-gray-300 !p-1 rounded" 
+                            min={today()}
                             required 
                         />
                     </label>

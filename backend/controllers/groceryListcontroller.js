@@ -4,17 +4,17 @@ import GroceryItem from "../models/groceryItem.js";
 
 export const createList = async (req, res) => {
   try {
-    const { UID } = req.params; // User ID from the URL
-    const user = await User.findById(UID);
+    const { uid } = req.params; // User ID from the URL
+    const user = await User.findById(uid);
     if (!user) {
       return res.status(404).json({ error: "User not found" }); // User error handling
     }
     const { name, date, note, status } = req.body;
-    const existingList = await GroceryList.findOne({ name, user: UID });
+    const existingList = await GroceryList.findOne({ name, user: uid });
     if (existingList) {
       return res.status(400).json({ error: "A grocery list with this name already exists." });
     }
-    const list = new GroceryList({ name, user: UID, date, note, status });
+    const list = new GroceryList({ name, user: uid, date, note, status });
     await list.save(); // Save the new grocery list to the database
     console.log("Grocery List created:", list);
     
@@ -27,15 +27,15 @@ export const createList = async (req, res) => {
 // uses User ID to get all their grocery lists
 export const getLists = async (req, res) => {
   try {
-    const { UID } = req.params;
-    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    const lists = await GroceryList.find({ user: UID }); // Find all grocery lists for the user
+    const { uid } = req.params;
+    // const user = await User.findById(uid).populate("groceryList"); // Populate the groceryLists field with actual list documents
+    const lists = await GroceryList.find({ user: uid }); // Find all grocery lists for the user
     if (!lists) {
       return res.status(404).json({ error: "No grocery lists found for this user." });
     }
     res.status(200).json(lists);
     console.log("Grocery Lists fetched:", lists);
-    console.log("uid:", UID);
+    console.log("uid:", uid);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -44,9 +44,9 @@ export const getLists = async (req, res) => {
 // Delete grocery list from user
 export const deleteList = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const { id } = req.params; // Grocery List ID from the URL
     
-    await GroceryList.findByIdAndDelete(GL_ID); // Delete the grocery list from the database
+    await GroceryList.findByIdAndDelete(id); // Delete the grocery list from the database
 
     res.status(200).json({ message: "Grocery list deleted successfully" });
   } catch (err) {
@@ -56,10 +56,10 @@ export const deleteList = async (req, res) => {
 
 export const updateList = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const { id } = req.params; // Grocery List ID from the URL
     const { name, date, note, status } = req.body;
     const updatedList = await GroceryList.findByIdAndUpdate(
-      GL_ID,
+      id,
       { name, date, note, status },
       { new: true } // Return the updated document
     );
@@ -71,8 +71,8 @@ export const updateList = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
-    const list = await GroceryList.findById(GL_ID);
+    const { id } = req.params; // Grocery List ID from the URL
+    const list = await GroceryList.findById(id);
     if (!list) {
       return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
     }
@@ -80,7 +80,7 @@ export const createItem = async (req, res) => {
     if (quantity < 0) {
       return res.status(400).json({ error: "Quantity cannot be negative." });
     }
-    const item = new GroceryItem({ name, quantity, category, groceryList: GL_ID });
+    const item = new GroceryItem({ name, quantity, category, groceryList: id });
     await item.save(); // Save the new grocery item to the database
     console.log("Grocery Item created:", item);
     res.status(201).json(item);
@@ -95,19 +95,19 @@ export const createItem = async (req, res) => {
 // uses User ID to get all their grocery items
 export const getItems = async (req, res) => {
   try {
-    const { GL_ID } = req.params;
-    const groceryList = await GroceryList.findById(GL_ID);
+    const { id } = req.params;
+    const groceryList = await GroceryList.findById(id);
     if (!groceryList) {
       return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
     }
-    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    const items = await GroceryItem.find({ groceryList: GL_ID }); // Find all grocery items for the user
+    // const user = await User.findById(uid).populate("groceryList"); // Populate the groceryLists field with actual list documents
+    const items = await GroceryItem.find({ groceryList: id }); // Find all grocery items for the user
     if (!items) {
       return res.status(404).json({ error: "No grocery items found for this user." });
     }
     res.status(200).json({ items, groceryList });
     console.log("Grocery Items fetched:", items);
-    console.log("GL_ID:", GL_ID);
+    console.log("id:", id);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -116,10 +116,10 @@ export const getItems = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   try {
-    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+    const { id } = req.params; // Grocery Item ID from the URL
     const { name, quantity, category, checked } = req.body;
     const updatedItem = await GroceryItem.findByIdAndUpdate(
-      ITEM_ID,
+      id,
       { name, quantity, category, checked },
       { new: true } // Return the updated document
     );
@@ -132,9 +132,9 @@ export const updateItem = async (req, res) => {
 // Delete grocery list from user
 export const deleteItem = async (req, res) => {
   try {
-    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+    const { id } = req.params; // Grocery Item ID from the URL
 
-    await GroceryItem.findByIdAndDelete(ITEM_ID); // Delete the grocery item from the database
+    await GroceryItem.findByIdAndDelete(id); // Delete the grocery item from the database
 
     res.status(200).json({ message: "Grocery item deleted successfully" });
   } catch (err) {

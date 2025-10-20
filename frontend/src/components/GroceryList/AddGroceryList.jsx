@@ -1,9 +1,10 @@
 import { useState } from "react";
+import { localDate, today } from "../../utils/dateUtils";
 
 export default function AddGroceryList({ onSubmit, error }) {
     const [form, setForm] = useState({
         name: "", 
-        date: new Date().toISOString().slice(0, 10), 
+        date: today(), 
         note: "", 
         status: "active"
     });
@@ -15,7 +16,7 @@ export default function AddGroceryList({ onSubmit, error }) {
     const resetForm = () => {
         setForm({ 
             name: "", 
-            date: new Date().toISOString().slice(0, 10), 
+            date: today(), 
             note: "", 
             status: "active" 
         });
@@ -51,8 +52,8 @@ export default function AddGroceryList({ onSubmit, error }) {
                         type="date" 
                         onChange={handleChange} 
                         className="border border-gray-300 rounded !px-3 !py-2 text-base" 
-                        value={form.date || new Date().toISOString().slice(0, 10)}
-                        min={new Date().toISOString().slice(0, 10)}
+                        value={form.date || today()}
+                        min={today()}
                         required 
                     />
                 </div>
