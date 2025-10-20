@@ -56,10 +56,14 @@ export const deleteList = async (req, res) => {
 
 export const updateList = async (req, res) => {
   try {
-    const { id } = req.params; // Grocery List ID from the URL
+    const { gid, uid } = req.params; // Grocery List ID from the URL
     const { name, date, note, status } = req.body;
+    const existingList = await GroceryList.findOne({ name, user: uid, _id: { $ne: gid } });
+    if (existingList) {
+      return res.status(400).json({ error: "A grocery list with this name already exists." });
+    }
     const updatedList = await GroceryList.findByIdAndUpdate(
-      id,
+      gid,
       { name, date, note, status },
       { new: true } // Return the updated document
     );
@@ -71,7 +75,7 @@ export const updateList = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const { id } = req.params; // Grocery List ID from the URL
+    const { gid } = req.params; // Grocery List ID from the URL
     const list = await GroceryList.findById(id);
     if (!list) {
       return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
@@ -80,7 +84,7 @@ export const createItem = async (req, res) => {
     if (quantity < 0) {
       return res.status(400).json({ error: "Quantity cannot be negative." });
     }
-    const item = new GroceryItem({ name, quantity, category, groceryList: id });
+    const item = new GroceryItem({ name, quantity, category, groceryList: gid });
     await item.save(); // Save the new grocery item to the database
     console.log("Grocery Item created:", item);
     res.status(201).json(item);
@@ -95,19 +99,18 @@ export const createItem = async (req, res) => {
 // uses User ID to get all their grocery items
 export const getItems = async (req, res) => {
   try {
-    const { id } = req.params;
-    const groceryList = await GroceryList.findById(id);
+    const { gid } = req.params;
+    const groceryList = await GroceryList.findById(gid);
     if (!groceryList) {
       return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
     }
-    // const user = await User.findById(uid).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    const items = await GroceryItem.find({ groceryList: id }); // Find all grocery items for the user
+    const items = await GroceryItem.find({ groceryList: gid }); // Find all grocery items for the user
     if (!items) {
       return res.status(404).json({ error: "No grocery items found for this user." });
     }
     res.status(200).json({ items, groceryList });
     console.log("Grocery Items fetched:", items);
-    console.log("id:", id);
+    console.log("id:", gid);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }

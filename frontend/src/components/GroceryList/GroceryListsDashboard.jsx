@@ -12,7 +12,8 @@ export default function GroceryList() {
 
     const [lists, setLists] = useState([]);
     const [showModal, setShowModal] = useState(false);
-    const [error, setError] = useState("");
+    const [addError, setAddError] = useState("");
+    const [editError, setEditError] = useState("");
     const [selectedList, setSelectedList] = useState(null);
 
     useEffect(() => {
@@ -22,7 +23,7 @@ export default function GroceryList() {
     }, [user._id]);
 
     const handleAddSubmit = async (formData) => {
-        setError(""); // Clear any previous errors
+        setAddError(""); // Clear any previous errors
         try {
             const res = await axios.post(`http://localhost:5000/GroceryLists/${user._id}`, {
                 name: formData.name,
@@ -36,9 +37,9 @@ export default function GroceryList() {
             console.error(err.response?.data || err);
             // Display the error message from the server
             if (err.response?.data?.error) {
-                setError(err.response.data.error);
+                setAddError(err.response.data.error);
             } else {
-                setError("An error occurred while creating the grocery list.");
+                setAddError("An error occurred while creating the grocery list.");
             }
             return false; // Failure
         }
@@ -66,8 +67,9 @@ export default function GroceryList() {
     };
 
     const handleEditUpdate = async (editFormData) => {
+        setEditError(""); // Clear any previous errors
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/${editFormData._id}`, {
+            const res = await axios.put(`http://localhost:5000/GroceryLists/${user._id}/list/${editFormData._id}`, {
                 name: editFormData.name,
                 date: editFormData.date,
                 note: editFormData.note,
@@ -79,6 +81,11 @@ export default function GroceryList() {
             return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);
+            if (err.response?.data?.error) {
+                setEditError(err.response.data.error);
+            } else {
+                setEditError("An error occurred while updating the grocery list.");
+            }
             return false; // Failure
         }
     };
@@ -88,7 +95,7 @@ export default function GroceryList() {
         <div className="w-full h-screen flex items-center flex-col !px-3 !py-3">
             <h1 className="justify-self-center text-3xl font-bold text-gray-800 !p-5">Grocery List</h1>
             
-            <AddGroceryList onSubmit={handleAddSubmit} error={error} />
+            <AddGroceryList onSubmit={handleAddSubmit} error={addError} />
 
             <table className="min-w-full border border-gray-300 bg-white text-center">
                 <thead className="bg-gray-100">
@@ -131,7 +138,7 @@ export default function GroceryList() {
                 onClose={closeModal}
                 list={selectedList}
                 onUpdate={handleEditUpdate}
-                error={error}
+                error={editError}
             />
         </div>
     );

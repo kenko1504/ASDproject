@@ -15,11 +15,11 @@ const router = express.Router();
 // Grocery Lists CDRUD
 router.post("/:uid", createList);    
 router.get("/:uid", getLists);
-router.put("/:id", updateList);
-router.delete("/:id", deleteList);
+router.put("/:uid/list/:gid", updateList);
+router.delete("/:gid", deleteList);
 // A Grocery List Items CDRUD
-router.post("/:id/items", createItem);
-router.get("/:id/items", getItems);
+router.post("/:gid/items", createItem);
+router.get("/:gid/items", getItems);
 router.put("/item/:id", updateItem);
 router.delete("/item/:id", deleteItem);
 

@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { localDate, today } from "../../utils/dateUtils";
+import { today } from "../../utils/dateUtils";
+
 
 export default function AddGroceryList({ onSubmit, error }) {
     const [form, setForm] = useState({
