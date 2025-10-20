@@ -24,17 +24,17 @@ function NutritionGraph(){
             return
         }
 
-        if (hasFetched.current) {
-            console.log('already requested.')
-            return
-        }
+        // if (hasFetched.current) {
+        //     console.log('already requested.')
+        //     return
+        // }
 
         async function getNutritionRequirementsInfo(){
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort()
             }
 
-            abortControllerRef.current = new AbortController()
+            // abortControllerRef.current = new AbortController()
 
             try {
                 setLoading(true)
@@ -54,7 +54,7 @@ function NutritionGraph(){
                         'X-Request-ID': `${Date.now()}-${Math.random()}`
                     },
                     body: JSON.stringify(body),
-                    signal: abortControllerRef.current.signal
+                    // signal: abortControllerRef.current.signal
                 })
                 console.log(searchResult)
                 
@@ -119,41 +119,41 @@ function NutritionGraph(){
 
         async function getUserTodayNutrition(meals) {
             if (!meals || meals.length === 0) {
-                return
+        setUserTodayNutrition({
+            calories: 0,
+            protein: 0,
+            fat: 0,
+            carbohydrates: 0,
+            sodium: 0
+        })
+        return
+    }
+
+    const nutritionTotals = {
+        calories: 0,
+        protein: 0,
+        fat: 0,
+        carbohydrates: 0,
+        sodium: 0
+    }
+
+    meals.forEach(meal => {
+        meal.items.forEach(item => {
+            const ingredient = item.ingredient 
+            if (ingredient) {
+                const multiplier = item.quantity / 100
+
+                nutritionTotals.calories += (parseFloat(ingredient.calories) * multiplier) || 0
+                nutritionTotals.protein += (parseFloat(ingredient.protein) * multiplier) || 0
+                nutritionTotals.fat += (parseFloat(ingredient.fat) * multiplier) || 0
+                nutritionTotals.carbohydrates += (parseFloat(ingredient.carbohydrates) * multiplier) || 0
+                nutritionTotals.sodium += (parseFloat(ingredient.sodium) * multiplier) || 0
             }
+        })
+    })
 
-            const nutritionTotals = {
-                calories: 0,
-                protein: 0,
-                fat: 0,
-                carbohydrates: 0,
-                sodium: 0
-            }
-
-            const promises = meals.flatMap(meal => 
-                meal.items.map(async (item) => {
-                    try {
-                        const result = await fetch(`http://localhost:5000/meal/food/${item._id}`)
-                        console.log(result)
-                    } catch (error) {
-                        console.error('Error fetching item:', error)
-                    }
-                })
-            )
-
-            const results = await Promise.all(promises)
-            
-            results.forEach(data => {
-                if (data) {
-                    nutritionTotals.calories += parseFloat(data.calories) || 0
-                    nutritionTotals.protein += parseFloat(data.protein) || 0
-                    nutritionTotals.fat += parseFloat(data.fat) || 0
-                    nutritionTotals.carbohydrates += parseFloat(data.carbohydrates) || 0
-                    nutritionTotals.sodium += parseFloat(data.sodium) || 0
-                }
-            })
-
-            setUserTodayNutrition(nutritionTotals)
+    console.log('Total nutrition calculated:', nutritionTotals)
+    setUserTodayNutrition(nutritionTotals)
         }
 
         async function fetchAllData() {
@@ -162,8 +162,7 @@ function NutritionGraph(){
                 setError(null)
                 hasFetched.current = true
 
-                // 순차적으로 실행
-                await getNutritionRequirementsInfo()
+                const nutritionReq = await getNutritionRequirementsInfo()
                 const mealsData = await getUserTodayMeal()
                 
                 if (mealsData && mealsData.length > 0) {

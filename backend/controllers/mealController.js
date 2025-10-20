@@ -34,7 +34,7 @@ export const getUserTodayMeal = async (req, res) => {
 
   console.log("Result: ", mealToday)
 
-  console.log("items test",mealToday[0].items)
+  console.log("items test", mealToday[0])
 
   res.json(mealToday);
 };
