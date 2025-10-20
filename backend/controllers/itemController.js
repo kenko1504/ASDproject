@@ -1,4 +1,4 @@
-import Item from "../models/item.js";
+import Item from "../models/ingredient.js";
 
 
 //Create item
