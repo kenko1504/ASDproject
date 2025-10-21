@@ -27,6 +27,19 @@ export default function Settings() {
 
   const [message, setMessage] = useState("");
 
+  // TOTP/2FA state
+  const [totpEnabled, setTotpEnabled] = useState(false);
+  const [backupCodesCount, setBackupCodesCount] = useState(0);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [passwordModalAction, setPasswordModalAction] = useState(""); // "disable" or "regenerate"
+  const [passwordInput, setPasswordInput] = useState("");
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [qrCode, setQrCode] = useState("");
+  const [totpSecret, setTotpSecret] = useState("");
+  const [totpVerificationCode, setTotpVerificationCode] = useState("");
+  const [showBackupCodesModal, setShowBackupCodesModal] = useState(false);
+  const [backupCodes, setBackupCodes] = useState([]);
+
   // Admin user search state
   const [searchTerm, setSearchTerm] = useState("");
   const [searchType, setSearchType] = useState("username"); // "username" or "email"
@@ -53,6 +66,24 @@ export default function Settings() {
       }));
     }
   }, [user]);
+
+  // Fetch TOTP status on mount
+  useEffect(() => {
+    fetchTOTPStatus();
+  }, []);
+
+  const fetchTOTPStatus = async () => {
+    try {
+      const response = await authenticatedFetch("http://localhost:5000/auth/totp/status");
+      if (response.ok) {
+        const data = await response.json();
+        setTotpEnabled(data.totpEnabled);
+        setBackupCodesCount(data.backupCodesCount);
+      }
+    } catch (err) {
+      console.error("Failed to fetch TOTP status:", err);
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -298,6 +329,128 @@ export default function Settings() {
     }
   };
 
+  // TOTP Management Functions
+  const handleSetup2FA = async () => {
+    try {
+      const response = await authenticatedFetch("http://localhost:5000/auth/totp/setup", {
+        method: "POST",
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setTotpSecret(data.secret);
+        setQrCode(data.qrCode);
+        setShowQRModal(true);
+      } else {
+        const error = await response.json();
+        setMessage(`Error: ${error.error || 'Failed to setup 2FA'}`);
+      }
+    } catch (err) {
+      setMessage("Failed to setup 2FA");
+    }
+  };
+
+  const handleEnable2FA = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await authenticatedFetch("http://localhost:5000/auth/totp/enable", {
+        method: "POST",
+        body: JSON.stringify({
+          token: totpVerificationCode,
+          secret: totpSecret,
+        }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBackupCodes(data.backupCodes);
+        setShowQRModal(false);
+        setShowBackupCodesModal(true);
+        setTotpVerificationCode("");
+        fetchTOTPStatus();
+        setMessage("2FA enabled successfully");
+      } else {
+        const error = await response.json();
+        setMessage(`Error: ${error.error || 'Failed to enable 2FA'}`);
+      }
+    } catch (err) {
+      setMessage("Failed to enable 2FA");
+    }
+  };
+
+  const handleDisable2FA = async () => {
+    try {
+      const response = await authenticatedFetch("http://localhost:5000/auth/totp/disable", {
+        method: "POST",
+        body: JSON.stringify({ password: passwordInput }),
+      });
+      if (response.ok) {
+        setShowPasswordModal(false);
+        setPasswordInput("");
+        fetchTOTPStatus();
+        setMessage("2FA disabled successfully");
+      } else {
+        const error = await response.json();
+        setMessage(`Error: ${error.error || 'Failed to disable 2FA'}`);
+      }
+    } catch (err) {
+      setMessage("Failed to disable 2FA");
+    }
+  };
+
+  const handleRegenerateBackupCodes = async () => {
+    try {
+      const response = await authenticatedFetch("http://localhost:5000/auth/totp/backup-codes", {
+        method: "POST",
+        body: JSON.stringify({ password: passwordInput }),
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setBackupCodes(data.backupCodes);
+        setShowPasswordModal(false);
+        setPasswordInput("");
+        setShowBackupCodesModal(true);
+        fetchTOTPStatus();
+        setMessage("Backup codes regenerated successfully");
+      } else {
+        const error = await response.json();
+        setMessage(`Error: ${error.error || 'Failed to regenerate backup codes'}`);
+      }
+    } catch (err) {
+      setMessage("Failed to regenerate backup codes");
+    }
+  };
+
+  const openPasswordModal = (action) => {
+    setPasswordModalAction(action);
+    setShowPasswordModal(true);
+  };
+
+  const handlePasswordSubmit = (e) => {
+    e.preventDefault();
+    if (passwordModalAction === "disable") {
+      handleDisable2FA();
+    } else if (passwordModalAction === "regenerate") {
+      handleRegenerateBackupCodes();
+    }
+  };
+
+  const closePasswordModal = () => {
+    setShowPasswordModal(false);
+    setPasswordInput("");
+    setPasswordModalAction("");
+  };
+
+  const closeQRModal = () => {
+    setShowQRModal(false);
+    setTotpVerificationCode("");
+    setQrCode("");
+    setTotpSecret("");
+  };
+
+  const closeBackupCodesModal = () => {
+    setShowBackupCodesModal(false);
+    setBackupCodes([]);
+  };
+
   return (
     <div className="w-full max-h-screen">
       
@@ -473,6 +626,55 @@ export default function Settings() {
             >
               Update Characteristics
             </button> 
+          </div>
+        </div>
+      </div>
+
+      {/* Two-Factor Authentication Section */}
+      <div className="flex">
+        <div className="card w-full bg-[#D5FAB8] !p-4 !m-4 !mt-0 rounded-lg">
+          <div className="flex items-center justify-between">
+            <p className="font-semibold text-xl">Two-Factor Authentication (2FA)</p>
+            <div className="w-1/6 h-12 rounded-full bg-white !p-1 flex relative">
+              <div
+                className={`absolute top-1 bottom-1 bg-[#A6C78A] rounded-full transition-all duration-300 ease-in-out ${
+                  totpEnabled ? 'left-1/2 right-1' : 'left-1 right-1/2'
+                }`}/>
+
+              <button
+                onClick={totpEnabled ? () => openPasswordModal("disable") : undefined}
+                disabled={!totpEnabled}
+                className={`w-1/2 h-full rounded-full !mr-1 transition-all duration-50 relative z-10 border-dashed border-[#A6C78A] ${
+                  totpEnabled ? 'hover:border-3' : ''
+                }`}
+              >
+                Disable
+              </button>
+              <button
+                onClick={!totpEnabled ? handleSetup2FA : undefined}
+                disabled={totpEnabled}
+                className={`w-1/2 h-full rounded-full transition-all duration-50 relative z-10 border-dashed border-[#A6C78A] ${
+                  !totpEnabled ? 'hover:border-3' : ''
+                }`}
+              >
+                Enable
+              </button>
+            </div>
+          </div>
+
+          <div >
+            {totpEnabled && (
+              <div className="flex items-center justify-between !mt-4">
+                <p className="!pl-8">Backup codes remaining: {backupCodesCount}</p>
+                <button
+                  onClick={() => openPasswordModal("regenerate")}
+                  className="bg-[#A6C78A] hover:bg-[#95B574] w-1/6 transition !px-4 !py-2 rounded-full"
+                >
+                  Regenerate Backup Codes
+                </button>
+              </div>
+            )}
+            
           </div>
         </div>
       </div>
@@ -670,6 +872,138 @@ export default function Settings() {
         </>
       )}
       </div>
+
+      {/* Password Confirmation Modal */}
+      {showPasswordModal && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full !mx-4 relative !p-8">
+            <button
+              onClick={closePasswordModal}
+              className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+            >
+              ×
+            </button>
+            <h2 className="title text-bold text-4xl !mb-6">
+              {passwordModalAction === "disable" ? "Disable 2FA" : "Regenerate Backup Codes"}
+            </h2>
+            <p className="text-gray-600 !mb-4">
+              Please enter your password to confirm this action.
+            </p>
+            <form onSubmit={handlePasswordSubmit} className="space-y-4">
+              <input
+                type="password"
+                placeholder="Password"
+                value={passwordInput}
+                onChange={(e) => setPasswordInput(e.target.value)}
+                required
+                className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59]"
+              />
+              <button
+                type="submit"
+                className="w-full !mb-4 bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
+              >
+                Confirm
+              </button>
+              <div className="flex justify-center">
+                <button
+                 type="button"
+                 onClick={closePasswordModal}
+                 className="w-1/2 bg-gray-400 hover:bg-gray-500 transition text-white !px-4 !py-3 rounded-full font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* QR Code Setup Modal */}
+      {showQRModal && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full !mx-4 relative !p-8">
+            <button
+              onClick={closeQRModal}
+              className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+            >
+              ×
+            </button>
+            <h2 className="title text-bold text-4xl !mb-6">Setup 2FA</h2>
+            <p className="text-gray-600 !mb-4">
+              Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+            </p>
+            <div className="flex justify-center !mb-4">
+              <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+            </div>
+            <div className="text-xs text-gray-500 text-center !mb-4">
+              <p className="!mb-2">Or enter this code manually:</p>
+              <div className="bg-gray-100 !p-3 rounded">
+                <code className="text-xs break-all">{totpSecret}</code>
+              </div>
+            </div>
+            <form onSubmit={handleEnable2FA} className="space-y-4">
+              <input
+                type="text"
+                placeholder="Enter 6-digit code"
+                maxLength="6"
+                value={totpVerificationCode}
+                onChange={(e) => setTotpVerificationCode(e.target.value.replace(/\D/g, ''))}
+                required
+                className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59] text-center text-2xl tracking-widest"
+              />
+              <button
+                type="submit"
+                className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] !mb-4 transition text-white !px-4 !py-3 rounded-full font-medium"
+              >
+                Verify & Enable
+              </button>
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={closeQRModal}
+                  className="w-1/2 bg-gray-400 hover:bg-gray-500 transition text-white !px-4 !py-3 rounded-full font-medium"
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Backup Codes Modal */}
+      {showBackupCodesModal && (
+        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-50">
+          <div className="bg-white rounded-2xl shadow-lg max-w-md w-full !mx-4 relative !p-8">
+            <button
+              onClick={closeBackupCodesModal}
+              className="absolute top-2 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+            >
+              ×
+            </button>
+            <h2 className="title text-bold text-4xl !mb-6">Backup Codes</h2>
+            <div className="!mb-4 !p-4 border-3 bg-yellow-50 border-yellow-300 rounded-lg border-dashed">
+              <p className="text-yellow-800 font-medium !mb-2">⚠ Save these backup codes!</p>
+              <p className="text-yellow-700 text-sm">
+                Store them safely. You can use these codes if you lose access to your authenticator app.
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-2 !mb-4">
+              {backupCodes.map((code, index) => (
+                <div key={index} className="bg-gray-100 !p-2 rounded text-center font-mono text-sm">
+                  {code}
+                </div>
+              ))}
+            </div>
+            <button
+              onClick={closeBackupCodesModal}
+              className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
+            >
+              I've Saved My Backup Codes
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

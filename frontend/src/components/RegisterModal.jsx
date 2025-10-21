@@ -13,6 +13,12 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
   });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [authToken, setAuthToken] = useState(null);
+  const [totpSecret, setTotpSecret] = useState("");
+  const [qrCode, setQrCode] = useState("");
+  const [totpVerificationCode, setTotpVerificationCode] = useState("");
+  const [backupCodes, setBackupCodes] = useState([]);
+  const [totpSetupStep, setTotpSetupStep] = useState("choice"); // "choice", "qr", "verify", "backup"
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -31,17 +37,15 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
       if (!res.ok) {
         throw new Error(data.error || "Registration failed");
       }
-      setSuccess(true);
+      // Store token for TOTP setup
+      setAuthToken(data.token);
+      // Move to step 3 (2FA setup choice)
+      setCurrentStep(3);
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) {
-      handleClose();
-    }
-  };
 
   const handleContinue = () => {
     setCurrentStep(2);
@@ -49,8 +53,70 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
   };
 
   const handleBack = () => {
-    setCurrentStep(1);
+    if (currentStep === 3 && totpSetupStep !== "choice") {
+      // If in TOTP setup flow, go back to choice screen
+      setTotpSetupStep("choice");
+      setError("");
+    } else {
+      setCurrentStep(1);
+      setError("");
+    }
+  };
+
+  const handleSetup2FA = async () => {
     setError("");
+    try {
+      const res = await fetch("http://localhost:5000/auth/totp/setup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "TOTP setup failed");
+      }
+      setTotpSecret(data.secret);
+      setQrCode(data.qrCode);
+      setTotpSetupStep("qr");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleVerifyTOTP = async (e) => {
+    e.preventDefault();
+    setError("");
+    try {
+      const res = await fetch("http://localhost:5000/auth/totp/enable", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({
+          token: totpVerificationCode,
+          secret: totpSecret,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error(data.error || "TOTP verification failed");
+      }
+      setBackupCodes(data.backupCodes);
+      setTotpSetupStep("backup");
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleSkip2FA = () => {
+    setSuccess(true);
+  };
+
+  const handleFinish2FA = () => {
+    setSuccess(true);
   };
 
   const handleSwitchToLogin = () => {
@@ -68,15 +134,20 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
     setCurrentStep(1);
     setError("");
     setSuccess(false);
+    setAuthToken(null);
+    setTotpSecret("");
+    setQrCode("");
+    setTotpVerificationCode("");
+    setBackupCodes([]);
+    setTotpSetupStep("choice");
     onClose();
   };
 
   if (!isOpen) return null;
 
   return (
-    <div 
+    <div
       className="fixed inset-0 bg-black/50 flex justify-center items-center z-50"
-      onClick={handleOverlayClick}
     >
       <div className="bg-white !p-8 rounded-xl shadow-lg max-w-md w-full !mx-4 relative">
         {/* Close button */}
@@ -143,7 +214,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                   Continue
                 </button>
               </form>
-            ) : (
+            ) : currentStep === 2 ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <select
                   name="gender"
@@ -210,15 +281,106 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
                     type="submit"
                     className="w-3/4 bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
                   >
-                    Register
+                    Continue
                   </button>
                 </div>
               </form>
+            ) : (
+              // Step 3: 2FA Setup
+              <>
+                {totpSetupStep === "choice" && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600 !mb-6">
+                      Setup Two-Factor Authentication
+                    </p>
+                    <button
+                      onClick={handleSetup2FA}
+                      className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !mb-4 !py-3 rounded-full font-medium"
+                    >
+                      Set Up 2FA
+                    </button>
+                    <button
+                      onClick={handleSkip2FA}
+                      className="w-full border-2 border-[#85BC59] transition text-[#85BC59] hover:text-[#6FAF4B] hover:border-[#6FAF4B] hover:font-semibold !px-4 !py-3 rounded-full font-medium"
+                    >
+                      No Thanks
+                    </button>
+                  </div>
+                )}
+
+                {totpSetupStep === "qr" && (
+                  <div className="space-y-4">
+                    <p className="text-gray-600 !mb-4">
+                      Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+                    </p>
+                    <div className="flex justify-center !mb-4">
+                      <img src={qrCode} alt="QR Code" className="w-48 h-48" />
+                    </div>
+                    <div className="text-xs text-gray-500 text-center !mb-4">
+                      <p className="!mb-1">Or enter this code manually:</p>
+                      <div className="bg-gray-100 !p-3 rounded">
+                        <code className="text-xs break-all">{totpSecret}</code>
+                      </div>
+                    </div>
+                    <form onSubmit={handleVerifyTOTP} className="space-y-4">
+                      <input
+                        type="text"
+                        placeholder="Enter 6-digit code"
+                        maxLength="6"
+                        value={totpVerificationCode}
+                        onChange={(e) => setTotpVerificationCode(e.target.value.replace(/\D/g, ''))}
+                        required
+                        className="w-full !p-2 !mb-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#85BC59] text-center text-2xl tracking-widest"
+                      />
+                      <button
+                        type="submit"
+                        className="w-full !mb-4 bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
+                      >
+                        Verify & Enable
+                      </button>
+                      <div className="flex justify-center">
+                        <button
+                          type="button"
+                          onClick={handleBack}
+                          className="w-1/2 bg-gray-400 hover:bg-gray-500 transition text-white !px-4 !py-3 rounded-full font-medium"
+                        >
+                          Back
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                )}
+
+                {totpSetupStep === "backup" && (
+                  <div className="space-y-4">
+                    <div className="!mb-4 !p-4 border-3 bg-yellow-50 border-yellow-300 rounded-lg border-dashed">
+                      <p className="text-yellow-800 font-medium !mb-2">⚠ Save these backup codes!</p>
+                      <p className="text-yellow-700 text-sm">
+                        Store them safely. You can use these codes if you lose access to your authenticator app.
+                      </p>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2 !mb-4">
+                      {backupCodes.map((code, index) => (
+                        <div key={index} className="bg-gray-100 !p-2 rounded text-center font-mono text-sm">
+                          {code}
+                        </div>
+                      ))}
+                    </div>
+                    <button
+                      onClick={handleFinish2FA}
+                      className="w-full bg-[#85BC59] hover:bg-[#6FAF4B] transition text-white !px-4 !py-3 rounded-full font-medium"
+                    >
+                      I've Saved My Backup Codes
+                    </button>
+                  </div>
+                )}
+              </>
             )}
 
             <div className="w-full justify-center flex !mt-4">
               <div className={`rounded-full w-2 h-2 !mr-2 ${currentStep === 1 ? 'bg-gray-400' : 'bg-gray-300'}`}/>
-              <div className={`rounded-full w-2 h-2 ${currentStep === 2 ? 'bg-gray-400' : 'bg-gray-300'}`}/>
+              <div className={`rounded-full w-2 h-2 !mr-2 ${currentStep === 2 ? 'bg-gray-400' : 'bg-gray-300'}`}/>
+              <div className={`rounded-full w-2 h-2 ${currentStep === 3 ? 'bg-gray-400' : 'bg-gray-300'}`}/>
             </div>
             
             {error && (
