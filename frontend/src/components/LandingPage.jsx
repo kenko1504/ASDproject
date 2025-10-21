@@ -37,12 +37,12 @@ export default function LandingPage() {
 
     return (
         <div className="h-screen justify-center items-center flex">
-            <div className="justify-center text-center items-center">
-                <h1 className="text-8xl !mb-10">FridgeManager</h1>
+            <div className="justify-center text-center items-center bg-[#E5F3DA] border-[#A6C78A] !py-30 !px-60 rounded-4xl border-dashed border-12">
+                <h1 className="text-8xl !mb-10 font-bold text-[#3A4331]">FridgeManager</h1>
                 
                 <button 
                     onClick={openLoginModal}
-                    className="text-4xl bg-[#36874D] hover:bg-[#2d6d3e] transition text-white !p-2 !pl-12 !pr-12 rounded-full drop-shadow-lg drop-shadow-gray-400 mb-6"
+                    className="text-4xl hover:bg-[#6FAF4B] bg-[#85BC59] transition text-white !px-24 !py-2 rounded-full hover:drop-shadow-xl transform hover:scale-105 drop-shadow-gray-400 mb-6"
                 >
                     Get Started
                 </button>

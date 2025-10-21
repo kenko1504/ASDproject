@@ -1,4 +1,4 @@
-import {useState, useEffect} from "react";
+import {useState, useEffect, useRef} from "react";
 import {useParams} from "react-router-dom";
 
 export default function UpdateItem({onUpdate, onCancel}) {
@@ -9,28 +9,60 @@ export default function UpdateItem({onUpdate, onCancel}) {
         price: "",
         category: "Other",
         expiryDate: "",
-        imgUrl: ""
+        description: "",
+        inFridge: true
     });
 
-    const availableImages = ["beef.jpg", "pear.jpg"]; //images in the images directory
+    const [imagePreview, setImagePreview] = useState(null);
+    const fileInputRef = useRef(null);
+    // const availableImages = ["beef.jpg", "pear.jpg"]; //images in the images directory
     const [errors, setErrors] = useState({});//store the error information
 
+
     useEffect(() => {
-        //fetch the item details by id
-        fetch(`http://localhost:5000/items/${id}`)
-            .then(res => res.json())
-            .then(data => setForm({
-                ...data,
-                expiryDate: data.expiryDate.split("T")[0], // formated date
-            }))
-            .catch(err => console.error(err))
+        const token = localStorage.getItem("token");
+
+        (async function load() {
+            try {
+                const res = await fetch(`http://localhost:5000/ingredients/${id}`, {
+                    headers: {
+                        Authorization: `Bearer ${token || ""}`
+                    }
+                });
+                if (res.status === 401 || res.status === 403) {
+                    alert("Please login again.");
+                    return;
+                }
+                if (!res.ok) throw new Error("Failed to load ingredient");
+                const data = await res.json();
+
+                setForm({
+                    name: data.name ?? "",
+                    quantity: data.quantity ?? "",
+                    price: data.price ?? "",
+                    category: data.category || "Other",
+                    expiryDate: data.expiryDate ? String(data.expiryDate).split("T")[0] : "",
+                    description: data.description || "",
+                    inFridge: data.inFridge ?? true,
+                });
+
+                setImagePreview(
+                    data.imageUrl
+                    || (data.image ? `http://localhost:5000/imageUploads/${data.image}` : null)
+                    || data.imgUrl
+                    || null
+                );
+            } catch (err) {
+                console.error(err);
+            }
+        })();
     }, [id]);
 
 
     //update item
     const handleUpdateItem = (e) => {
         const { name, value } = e.target;
-        setForm({ ...form, [name]: value });
+        setForm((s) => ({ ...s, [name]: value }));
 
         // check if the entered data is valid
         let newErrors = { ...errors };
@@ -47,32 +79,56 @@ export default function UpdateItem({onUpdate, onCancel}) {
         setErrors(newErrors);
     };
 
-
+    // const handleFileChange = (e) => {
+    //     const file = e.target.files?.[0];
+    //     if (file) {
+    //         setPreviewUrl(URL.createObjectURL(file));
+    //     }
+    // };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const res = await fetch(`http://localhost:5000/items/${id}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(form)
-            });
-            if (!res.ok) {
-                throw new Error("Failed to update item");
-            }
-            const updated = await res.json();
-            onUpdate(updated); // notify parent component to update data
-        } catch (err) {
-            console.error("Failed in updating item: ", err);
+        const token = localStorage.getItem("token");
+        const hasNewImage = fileInputRef.current?.files?.[0];
+        let body;
+        let headers = { Authorization: `Bearer ${token || ""}` };
+
+        if (hasNewImage) {
+            const fd = new FormData();
+            Object.entries(form).forEach(([k, v]) => fd.append(k, v));
+            fd.append("image", fileInputRef.current.files[0]);
+            body = fd;
+        } else {
+            headers["Content-Type"] = "application/json";
+            body = JSON.stringify(form);
         }
-    }
+
+        try {
+            const res = await fetch(`http://localhost:5000/ingredients/${id}`, {
+                method: "PUT",
+                headers,
+                body,
+            });
+            if (!res.ok) throw new Error("Failed to update ingredient");
+            const updated = await res.json();
+            onUpdate?.(updated); // notify the parent component to refresh
+        } catch (err) {
+            console.error("Failed updating ingredient:", err);
+            alert("Update failed");
+        }
+    };
+
+    const onPickImage = (e) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            setImagePreview(URL.createObjectURL(file));
+        }
+    };
 
     return (
         <div className={"content roboto"} style={{ maxWidth: "700px", margin: "40px auto" }}>
-            <h2 className={"justify-self-center text-3xl font-bold text-gray-800"} style={{textAlign:"center", marginBottom: "20px"}}>Update Item</h2>
+            <h2 className={"justify-self-center text-3xl font-bold text-gray-800"} style={{textAlign:"center", marginBottom: "20px"}}>Update Ingredient</h2>
             <form onSubmit={handleSubmit} style={{
                 background: "white",
                 padding: "20px",
@@ -85,17 +141,10 @@ export default function UpdateItem({onUpdate, onCancel}) {
                     <tr>
                         <td style={{ padding: "10px", fontWeight: "500" }}>Image:</td>
                         <td style={{ padding: "10px" }}>
-                            <select name="imgUrl" value={form.imgUrl} onChange={handleUpdateItem} style={{
-                                width: "100%",
-                                padding: "8px",
-                                border: "1px solid #ccc",
-                                borderRadius: "6px"
-                            }}>
-                                <option value={""}>--Select an image--</option>
-                                {availableImages.map((img, i) => (
-                                    <option key={i} value={img}>{img}</option>
-                                ))}
-                            </select>
+                            {imagePreview ? (
+                                <img src={imagePreview} alt="preview" style={{ width: 100, height: 100, objectFit: "cover", borderRadius: 8, display: "block", marginBottom: 8 }} />
+                            ) : null}
+                            <input type="file" ref={fileInputRef} onChange={onPickImage} accept="image/*" />
                         </td>
                     </tr>
                     <tr>
@@ -110,7 +159,7 @@ export default function UpdateItem({onUpdate, onCancel}) {
                         </td>
                     </tr>
                     <tr>
-                        <td style={{ padding: "10px", fontWeight: "500" }}>Quantity:</td>
+                        <td style={{ padding: "10px", fontWeight: "500" }}>Quantity(g):</td>
                         <td style={{ padding: "10px" }}>
                             <input name="quantity" value={form.quantity} onChange={handleUpdateItem} required
                                    style={{
@@ -124,7 +173,7 @@ export default function UpdateItem({onUpdate, onCancel}) {
                         </td>
                     </tr>
                     <tr>
-                        <td style={{ padding: "10px", fontWeight: "500" }}>Price($):</td>
+                        <td style={{ padding: "10px", fontWeight: "500" }}>Price($/500g):</td>
                         <td style={{ padding: "10px" }}>
                             <input name="price" value={form.price} onChange={handleUpdateItem} required style={{
                                 width: "100%",

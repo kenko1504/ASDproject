@@ -9,7 +9,6 @@
     import settingImg from "../../assets/Settings.svg";
     import notificationImg from "../../assets/Notification.svg";
 
-    ;
 
     export default function Sidebar(){
         const { user, logout } = useContext(AuthContext);
@@ -24,18 +23,13 @@
             <div className={"sidebar min-w-[250px] w-[250px] flex flex-col bg-[#85BC59] min-h-screen max-h-screen border-6 rounded-2xl !pt-5 border-white "}>
                 <Link to="/"><div className="logo flex font-semibold text-center text-xl !ml-2 !pt-5 !pb-5 content-center items-center">
                     <img className="w-10 h-10 mx-auto" src={logoImg} alt="logo" />
-                    <span className={"title transition w-8/12 text-white weight-bold text-center text-2xl"}>FridgeManager</span>
+                    <span className={"title transition w-8/12 text-white font-bold text-center text-2xl"}>FridgeManager</span>
                 </div></Link>
                 <nav className="flex flex-col items-center !mt-5">
-                    <ul className=" text-white text-center w-6/7 font-medium">
-
+                    <ul className=" text-white text-center w-6/7 font-semibold">
                         <Link to={"/fridge"}><li 
-                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] rounded-t-xl"
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6 rounded-t-xl"
                         >Your Fridge</li></Link>
-
-                        <Link to={"/item-management"}><li 
-                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
-                        >Item Management</li></Link>
 
                         <Link to={"/grocery-list"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
@@ -44,6 +38,10 @@
                         <Link to={"/nutrition"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
                         >Nutrition</li></Link>
+
+                        <Link to={"/recommendations"}><li 
+                            className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"
+                        >Recommendation</li></Link>
                         
                         <Link to={"/Recipes"}><li 
                             className="h-20 flex items-center justify-center transition hover:bg-[#6FAF4B] bg-[#A1CF7B] border-t-[#85BC59] border-t-6"

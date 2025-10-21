@@ -5,9 +5,23 @@
 */
 
 /* Use colour variables from css for consistency */
-@import "tailwindcss";
 @import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@200..1000&display=swap');
+
+@import "tailwindcss";
+
+
+@layer utilities {
+  .scrollbar-hide-ingredient::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+  .scrollbar-hide-ingredient {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+}
+
 
 * {
     margin: 0;
@@ -20,6 +34,14 @@
 html {
     background-color: var(--background-colour);
     color: var(--text-colour);
+}
+
+body {
+    font-family: 'Nunito', sans-serif;
+}
+
+* {
+    font-family: inherit;
 }
 
 a {
