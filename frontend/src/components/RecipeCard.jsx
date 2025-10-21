@@ -160,10 +160,10 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
 
             </button>
             {/* <div className="absolute right-2 h-18 backdrop-blur-sm blur-sm bg-white/20 bottom-2 left-2 rounded-lg"></div> */}
-            <span className="absolute bottom-12 left-2 !px-2 w-fit max-w-2/3 overflow-auto break-all max-h-16 font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
+            <span className="absolute bottom-12 left-2 !px-2 w-fit max-w-7/12 overflow-auto break-words max-h-16 font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
                 {recipe?.name || 'Recipe Name'}
             </span>
-            <span className="absolute bottom-12 right-2 !px-2 w-fit max-w-2/3 overflow-auto font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
+            <span className="absolute bottom-12 right-2 !px-2 w-fit max-w-5/12 overflow-auto font-bold drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full">
                 {recipe?.difficulty || 'Easy'}
             </span>
             <div className="absolute bottom-4 left-2 drop-shadow-lg backdrop-blur-sm bg-white/25 rounded-full flex">
