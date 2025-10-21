@@ -45,9 +45,8 @@ steps:
     displayName: 'Copy project files'
 
   # Publish pipeline artifact
-  - task: PublishPipelineArtifact@1
+  - task: PublishBuildArtifacts@1
     inputs:
-      artifactName: 'nodejs-app'
-      targetPath: '$(Build.ArtifactStagingDirectory)'
-      publishLocation: 'pipeline'
-    displayName: 'Publish pipeline artifact'
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'release'
+      publishLocation: 'Container'
