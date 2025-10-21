@@ -38,6 +38,7 @@ steps:
       customCommand: 'run build'
     env:
       VITE_API_BASE_URL: 'https://fridgeconnection.azurewebsites.net'
+      MODE: 'production'
 
   # Install backend production dependencies only
   - task: Npm@1
