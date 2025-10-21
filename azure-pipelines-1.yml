@@ -14,25 +14,36 @@ steps:
     inputs:
       versionSource: 'spec'
       versionSpec: $(nodeVersion)
+
+  # Install frontend dependencies
   - task: Npm@1
     displayName: 'Install Modules in /frontend'
     inputs:
       command: 'ci'
       workingDir: 'frontend'
 
+  # Install backend dependencies
   - task: Npm@1
-    displayName: 'Install Modules in /frontend'
+    displayName: 'Install Modules in /backend'
     inputs:
       command: 'ci'
       workingDir: 'backend'
 
-  # Build the project
+  # Build the frontend
   - task: Npm@1
-    displayName: 'Building Modules in /frontend'
+    displayName: 'Build frontend for production'
     inputs:
       command: 'custom'
       workingDir: 'frontend'
       customCommand: 'run build'
+
+  # Install backend production dependencies only
+  - task: Npm@1
+    displayName: 'Install backend production dependencies'
+    inputs:
+      command: 'custom'
+      workingDir: 'backend'
+      customCommand: 'ci --only=production'
 
   # Copy project files to artifact staging directory
   - task: CopyFiles@2
@@ -41,8 +52,22 @@ steps:
       contents: |
         frontend/dist/**
         backend/**
+        !backend/node_modules/**
+        !backend/test/**
+        !backend/imageUploads/**
+        !backend/*.csv
+        web.config
+        .deployment
       targetFolder: '$(Build.ArtifactStagingDirectory)'
     displayName: 'Copy project files'
+
+  # Copy production node_modules separately
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/backend'
+      contents: 'node_modules/**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/backend'
+    displayName: 'Copy backend production dependencies'
 
   # Publish pipeline artifact
   - task: PublishBuildArtifacts@1
