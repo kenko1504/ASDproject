@@ -1,0 +1,52 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '22.x'
+
+steps:
+  # Install Node.js
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSource: 'spec'
+      versionSpec: $(nodeVersion)
+  - task: Npm@1
+    displayName: 'Install Modules in /frontend'
+    inputs:
+      command: 'ci'
+      workingDir: 'frontend'
+
+  - task: Npm@1
+    displayName: 'Install Modules in /frontend'
+    inputs:
+      command: 'ci'
+      workingDir: 'backend'
+
+  # Build the project
+  - task: Npm@1
+    displayName: 'Building Modules in /frontend'
+    inputs:
+      command: 'custom'
+      workingDir: 'frontend'
+      customCommand: 'run build'
+
+  # Copy project files to artifact staging directory
+  - task: CopyFiles@2
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)'
+      contents: |
+        frontend/dist/**
+        backend/**
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+    displayName: 'Copy project files'
+
+  # Publish pipeline artifact
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'release'
+      publishLocation: 'Container'
