@@ -116,7 +116,7 @@ export default function GroceryList() {
                             <td className="!px-2 !py-1">{list.note}</td>
                             <td className="!px-2 !py-1">
                                 <button
-                                    onClick={() => navigate(`view/${list._id}`)}
+                                    onClick={() => navigate(`view/${list._id}/${list.status}`)}
                                     className="bg-green-500 text-white !px-4 rounded !mr-2"
                                 >View</button>
                                 <button

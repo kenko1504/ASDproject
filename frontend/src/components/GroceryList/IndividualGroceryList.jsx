@@ -8,7 +8,7 @@ import CopyGroceryList from "./CopyGroceryList";
 import services from "./groceryServices";
 
 export default function ViewGroceryItems() {
-    const { gid } = useParams();
+    const { gid, status } = useParams();
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [itemList, setItemList] = useState([]);
@@ -173,7 +173,7 @@ export default function ViewGroceryItems() {
                     ← Back
                 </button>
                 <h1 className="text-3xl font-bold text-gray-800 !pt-5">{groceryList.name}</h1>
-                {groceryList.status !== "completed" ? <div  className="flex space-x-3">
+                {status !== "completed" ? <div  className="flex space-x-3">
                     <button 
                         onClick={openCopyModal}
                         className="bg-green-500 text-white !px-4 !py-2 !mr-3 rounded hover:bg-green-600"
@@ -188,7 +188,7 @@ export default function ViewGroceryItems() {
                     </button>
                 </div> : <div></div>}
             </div>
-            { groceryList.status !== "completed" ? <AddGroceryItem onSubmit={handleAddSubmit} error={addError} /> 
+            { status !== "completed" ? <AddGroceryItem onSubmit={handleAddSubmit} error={addError} /> 
             : <div className="text-red-500">Completed</div>}
 
             <table className="min-w-full border border-gray-300 bg-white text-center">

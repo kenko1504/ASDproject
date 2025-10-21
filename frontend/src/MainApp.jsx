@@ -27,7 +27,7 @@ export default function App() {
                     <Route path="/fridge/*" element={<FridgeManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/grocery-list" element={<GroceryList />} />
-                    <Route path="/grocery-list/view/:gid" element={<ViewGroceryList />} />
+                    <Route path="/grocery-list/view/:gid/:status" element={<ViewGroceryList />} />
                     <Route path="/recommendations" element={<Recommendations />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/wasteBudget" element={<WasteBudget />} />
