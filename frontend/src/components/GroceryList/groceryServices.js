@@ -8,6 +8,7 @@ const groceryServices = {
     getList(uid){ return getAPI(`${rootURI}/${uid}`, token);},
     updateList(uid, gid, data){ return putAPI(`${rootURI}/${uid}/list/${gid}`, data, token);},
     deleteList(uid,gid){ return deleteAPI(`${rootURI}/${uid}/list/${gid}`, token);},
+    copyList(uid, gid, data){ return postAPI(`${rootURI}/${uid}/list/${gid}/copy`, data, token);},
 
     // Grocery List Item Management
     createItem(uid, gid, data){ return postAPI(`${rootURI}/${uid}/list/${gid}/item`, data, token);},

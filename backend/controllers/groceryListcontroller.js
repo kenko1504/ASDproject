@@ -179,3 +179,58 @@ export const deleteItem = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
+
+export const copyList = async (req, res) => {
+  try {
+    const { uid, gid } = req.params; // User ID and grocery list ID from the URL
+    const { name, date, note } = req.body; // New name for the copied list
+    
+    // Validate that the user exists
+    const user = await User.findById(uid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Validate that the grocery list exists and belongs to the user
+    const originalList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!originalList) {
+      return res.status(404).json({ error: "Grocery list not found or unauthorized access" });
+    }
+    
+    // Check if a list with the new name already exists
+    const existingList = await GroceryList.findOne({ name, user: uid });
+    if (existingList) {
+      return res.status(400).json({ error: "A grocery list with this name already exists." });
+    }
+    
+    // Create a new grocery list (copy)
+    const newList = new GroceryList({
+      name: name,
+      user: uid,
+      date: date,
+      note: note
+    });
+    await newList.save();
+    
+    // Get all items from the original list
+    const originalItems = await GroceryItem.find({ groceryList: gid });
+    
+    // Create copies of all items for the new list
+    const newItems = originalItems.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      category: item.category,
+      checked: false, // Reset checked status for new list
+      groceryList: newList._id
+    }));
+    
+    // Insert all new items
+    if (newItems.length > 0) {
+      await GroceryItem.insertMany(newItems);
+    }
+    
+    res.status(201).json(newList);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

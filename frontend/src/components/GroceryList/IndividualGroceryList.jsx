@@ -4,6 +4,7 @@ import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../../contexts/AuthContext";
 import AddGroceryItem from "./AddGroceryItem";
 import EditGroceryItem from "./EditGroceryItem";
+import CopyGroceryList from "./CopyGroceryList";
 import services from "./groceryServices";
 
 export default function ViewGroceryItems() {
@@ -13,9 +14,11 @@ export default function ViewGroceryItems() {
     const [itemList, setItemList] = useState([]);
     const [groceryList, setGroceryList] = useState([]);
     const [showModal, setShowModal] = useState(false);
+    const [showCopyModal, setShowCopyModal] = useState(false);
     const [editItem, setEditItem] = useState({ _id: "", name: "", quantity: 0, category: "Other" });
     const [addError, setAddError] = useState("");
     const [editError, setEditError] = useState("");
+    const [copyError, setCopyError] = useState("");
 
     useEffect(() => {
         services.getItem(user._id, gid)
@@ -119,6 +122,47 @@ export default function ViewGroceryItems() {
         }
     };
 
+    // Copy list functionality
+    const handleCopyList = async (newList) => {
+        setCopyError(""); // Clear any previous errors
+        try {
+            const res = await services.copyList(user._id, gid, newList);
+            // Navigate to the main grocery list page to see the new copied list
+            navigate('/grocery-list');
+            return true; // Success
+        } catch (err) {
+            console.error(err.response?.data || err);
+            // Display the error message from the server
+            if (err.response?.data?.error) {
+                setCopyError(err.response.data.error);
+            } else {
+                setCopyError("An error occurred while copying the grocery list.");
+            }
+            return false; // Failure
+        }
+    };
+
+    const handleCloseList = async () => {
+        if (!confirm("Are you sure you want to close this grocery list?")) {
+            return;
+        }
+        try {
+            await services.updateList(user._id, gid, { status: "completed" });
+            navigate('/grocery-list');
+        } catch (error) {
+            console.error("Error updating list status:", error);
+        }
+    };
+
+    const openCopyModal = () => {
+        setShowCopyModal(true);
+    };
+
+    const closeCopyModal = () => {
+        setShowCopyModal(false);
+        setCopyError("");
+    };
+
     return (
         <div className="w-full h-screen flex items-center flex-col !px-3 !py-3">
             <div className="flex items-center justify-between w-full max-w-4xl !mb-4">
@@ -129,10 +173,23 @@ export default function ViewGroceryItems() {
                     ← Back
                 </button>
                 <h1 className="text-3xl font-bold text-gray-800 !pt-5">{groceryList.name}</h1>
-                <div className="w-20"></div>
+                {groceryList.status !== "completed" ? <div  className="flex space-x-3">
+                    <button 
+                        onClick={openCopyModal}
+                        className="bg-green-500 text-white !px-4 !py-2 !mr-3 rounded hover:bg-green-600"
+                    >
+                        Copy List
+                    </button>
+                    <button 
+                        onClick={handleCloseList}
+                        className="bg-red-500 text-white !px-4 !py-2 rounded hover:bg-red-600"
+                    >
+                        Close List
+                    </button>
+                </div> : <div></div>}
             </div>
-
-            <AddGroceryItem onSubmit={handleAddSubmit} error={addError} />
+            { groceryList.status !== "completed" ? <AddGroceryItem onSubmit={handleAddSubmit} error={addError} /> 
+            : <div className="text-red-500">Completed</div>}
 
             <table className="min-w-full border border-gray-300 bg-white text-center">
                 <thead className="bg-gray-100">
@@ -181,6 +238,14 @@ export default function ViewGroceryItems() {
                     error={editError}
                 />
             )}
+
+            <CopyGroceryList
+                isOpen={showCopyModal}
+                onClose={closeCopyModal}
+                onCopy={handleCopyList}
+                error={copyError}
+                currentListName={groceryList.name}
+            />
         </div>
     );
 }
