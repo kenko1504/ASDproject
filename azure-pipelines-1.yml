@@ -37,7 +37,7 @@ steps:
       workingDir: 'frontend'
       customCommand: 'run build'
     env:
-      # Inject API URL at build time
+      # Inject API URL at build time - baked into the frontend build
       VITE_API_BASE_URL: 'https://fridgeinventorymanager.azurewebsites.net'
       MODE: 'production'
 
