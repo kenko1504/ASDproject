@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
   const [currentStep, setCurrentStep] = useState(1);
@@ -28,7 +29,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
     setError("");
     setSuccess(false);
     try {
-      const res = await fetch("http://localhost:5000/users/register", {
+      const res = await fetch(`${API_BASE_URL}/users/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -66,7 +67,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
   const handleSetup2FA = async () => {
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/auth/totp/setup", {
+      const res = await fetch(`${API_BASE_URL}/auth/totp/setup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -89,7 +90,7 @@ export default function RegisterModal({ isOpen, onClose, onSwitchToLogin }) {
     e.preventDefault();
     setError("");
     try {
-      const res = await fetch("http://localhost:5000/auth/totp/enable", {
+      const res = await fetch(`${API_BASE_URL}/auth/totp/enable`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

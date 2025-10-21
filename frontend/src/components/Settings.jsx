@@ -8,6 +8,7 @@ import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function Settings() {
   const { user, logout, login } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -74,7 +75,7 @@ export default function Settings() {
 
   const fetchTOTPStatus = async () => {
     try {
-      const response = await authenticatedFetch("http://localhost:5000/auth/totp/status");
+      const response = await authenticatedFetch(`${API_BASE_URL}/auth/totp/status`);
       if (response.ok) {
         const data = await response.json();
         setTotpEnabled(data.totpEnabled);
@@ -133,7 +134,7 @@ export default function Settings() {
     }
 
     try {
-      const res = await fetch(`http://localhost:5000/users/${user._id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/${user._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updateData),
@@ -175,7 +176,7 @@ export default function Settings() {
     if (!confirmDelete) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${user._id}`, {
+      const response = await fetch(`${API_BASE_URL}/users/${user._id}`, {
         method: "DELETE",
       });
 
@@ -203,7 +204,7 @@ export default function Settings() {
         queryParams.append("searchType", searchType);
       }
 
-      const response = await authenticatedFetch(`http://localhost:5000/users/search?${queryParams}`);
+      const response = await authenticatedFetch(`${API_BASE_URL}/users/search?${queryParams}`);
       if (response.ok) {
         const userData = await response.json();
         setUsers(userData);
@@ -275,7 +276,7 @@ export default function Settings() {
 
     try {
       // Use admin endpoint for user updates (includes role changes)
-      const response = await authenticatedFetch(`http://localhost:5000/users/${editingUserId}/admin`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}/users/${editingUserId}/admin`, {
         method: 'PUT',
         body: JSON.stringify(editFormData)
       });
@@ -304,7 +305,7 @@ export default function Settings() {
     if (!confirmDelete) return;
 
     try {
-      const response = await authenticatedFetch(`http://localhost:5000/users/${userId}`, {
+      const response = await authenticatedFetch(`${API_BASE_URL}/users/${userId}`, {
         method: 'DELETE'
       });
 
@@ -332,7 +333,7 @@ export default function Settings() {
   // TOTP Management Functions
   const handleSetup2FA = async () => {
     try {
-      const response = await authenticatedFetch("http://localhost:5000/auth/totp/setup", {
+      const response = await authenticatedFetch(`${API_BASE_URL}/auth/totp/setup`, {
         method: "POST",
       });
       if (response.ok) {
@@ -352,7 +353,7 @@ export default function Settings() {
   const handleEnable2FA = async (e) => {
     e.preventDefault();
     try {
-      const response = await authenticatedFetch("http://localhost:5000/auth/totp/enable", {
+      const response = await authenticatedFetch(`${API_BASE_URL}/auth/totp/enable`, {
         method: "POST",
         body: JSON.stringify({
           token: totpVerificationCode,
@@ -378,7 +379,7 @@ export default function Settings() {
 
   const handleDisable2FA = async () => {
     try {
-      const response = await authenticatedFetch("http://localhost:5000/auth/totp/disable", {
+      const response = await authenticatedFetch(`${API_BASE_URL}/auth/totp/disable`, {
         method: "POST",
         body: JSON.stringify({ password: passwordInput }),
       });
@@ -398,7 +399,7 @@ export default function Settings() {
 
   const handleRegenerateBackupCodes = async () => {
     try {
-      const response = await authenticatedFetch("http://localhost:5000/auth/totp/backup-codes", {
+      const response = await authenticatedFetch(`${API_BASE_URL}/auth/totp/backup-codes`, {
         method: "POST",
         body: JSON.stringify({ password: passwordInput }),
       });

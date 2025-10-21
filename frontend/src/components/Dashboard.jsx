@@ -4,6 +4,7 @@ import {AuthContext} from "../contexts/AuthContext.jsx";
 import {Link} from "react-router-dom";
 import RecipeCard from "./RecipeCard.jsx";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function Dashboard() {
     const {user} = useContext(AuthContext);
     const [recentRecipes, setRecentRecipes] = useState([]);
@@ -19,7 +20,7 @@ export default function Dashboard() {
         }
 
         try {
-            const response = await fetch(`http://localhost:5000/users/${user._id}/recent-recipes`);
+            const response = await fetch(`${API_BASE_URL}/users/${user._id}/recent-recipes`);
             if (response.ok) {
                 const data = await response.json();
                 setRecentRecipes(data);
@@ -50,7 +51,7 @@ export default function Dashboard() {
                 setIngredients([]);
                 return;
             }
-            const res = await fetch("http://localhost:5000/ingredients", {
+            const res = await fetch(`${API_BASE_URL}/ingredients`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
             if (res.status === 401 || res.status === 403) {
@@ -124,7 +125,7 @@ export default function Dashboard() {
                 setBudgetStats({totalValue: 0, count: 0});
                 return;
             }
-            const res = await fetch("http://localhost:5000/ingredients", {
+            const res = await fetch(`${API_BASE_URL}/ingredients`, {
                 headers: {Authorization: `Bearer ${token}`},
             });
             if (res.status === 401 || res.status === 403) {

@@ -8,6 +8,7 @@ import NutritionPopupModal from "./NutritionPopupModal.jsx";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function ViewRecipe() {
     const navigate = useNavigate();
     const { recipeId } = useParams();
@@ -44,7 +45,7 @@ export default function ViewRecipe() {
         if (!user?._id || !recipeId) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/users/${user._id}/recent-recipes`, {
+            const response = await fetch(`${API_BASE_URL}/users/${user._id}/recent-recipes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -65,7 +66,7 @@ export default function ViewRecipe() {
         if (!user?._id || !recipeId) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`);
+            const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`);
             const savedRecipes = await response.json();
 
             const isRecipeSaved = savedRecipes.some(savedRecipe => savedRecipe._id === recipeId);
@@ -85,7 +86,7 @@ export default function ViewRecipe() {
         try {
             if (isSaved) {
                 // Remove from saved recipes
-                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ export default function ViewRecipe() {
                 }
             } else {
                 // Add to saved recipes
-                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -129,7 +130,7 @@ export default function ViewRecipe() {
         if (!confirmDelete) return;
 
         try {
-            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/${recipeId}`, {
                 method: 'DELETE'
             });
 
@@ -151,7 +152,7 @@ export default function ViewRecipe() {
     const fetchRecipe = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`);
+            const response = await fetch(`${API_BASE_URL}/recipes/${recipeId}`);
 
             if (response.ok) {
                 const data = await response.json();

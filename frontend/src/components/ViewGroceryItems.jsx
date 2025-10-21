@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function ViewGroceryItems() {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -14,7 +15,7 @@ export default function ViewGroceryItems() {
     const [editItem, setEditItem] = useState({ _id: "", name: "", quantity: 0, category: "Other" });
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/GroceryLists/${id}/items`)
+        axios.get(`${API_BASE_URL}/GroceryLists/${id}/items`)
             .then(({ data }) => {
                 const { items, groceryList } = data;
                 setItemList(items);
@@ -34,7 +35,7 @@ export default function ViewGroceryItems() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`http://localhost:5000/GroceryLists/${id}/items`, {
+            const res = await axios.post(`${API_BASE_URL}/GroceryLists/${id}/items`, {
                 name: item.name,
                 quantity: item.quantity,
                 category: item.category
@@ -48,7 +49,7 @@ export default function ViewGroceryItems() {
 
     const handleDelete = async (itemId) => {
         try {
-            await axios.delete(`http://localhost:5000/GroceryLists/item/${itemId}`);
+            await axios.delete(`${API_BASE_URL}/GroceryLists/item/${itemId}`);
             setItemList(prevLists => prevLists.filter(item => item._id !== itemId));
         } catch (error) {
             console.error("Error deleting item:", error);
@@ -65,7 +66,7 @@ export default function ViewGroceryItems() {
         );
         // Save to backend
         try {
-            await axios.put(`http://localhost:5000/GroceryLists/item/${item._id}`, {
+            await axios.put(`${API_BASE_URL}/GroceryLists/item/${item._id}`, {
                 name: item.name,
                 quantity: item.quantity,
                 category: item.category,
@@ -100,7 +101,7 @@ export default function ViewGroceryItems() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/item/${editItem._id}`, {
+            const res = await axios.put(`${API_BASE_URL}/GroceryLists/item/${editItem._id}`, {
                 name: editItem.name,
                 quantity: editItem.quantity,
                 category: editItem.category

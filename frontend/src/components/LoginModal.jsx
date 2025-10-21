@@ -1,6 +1,7 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext.jsx";
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onReset }) {
   const [formData, setFormData] = useState({
@@ -24,7 +25,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onRese
     setError("");
     setSuccess("");
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -55,7 +56,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onRese
     setError("");
     setSuccess("");
     try {
-      const response = await fetch("http://localhost:5000/auth/login", {
+      const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

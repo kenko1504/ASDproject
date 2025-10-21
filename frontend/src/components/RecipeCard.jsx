@@ -7,6 +7,7 @@ import checkImg from "../assets/circle-check-svgrepo-com.svg";
 import clockImg from "../assets/clock-svgrepo-com.svg";
 import trashImg from "../assets/trash-alt-svgrepo-com.svg";
 
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange, isDashboard = false }) {
     const { user } = useContext(AuthContext);
@@ -26,7 +27,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
         if (!user?._id || !recipe?._id) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`);
+            const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`);
             const savedRecipes = await response.json();
 
             const isRecipeSaved = savedRecipes.some(savedRecipe => savedRecipe._id === recipe._id);
@@ -48,7 +49,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
         try {
             if (isSaved) {
                 // Remove from saved recipes
-                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`, {
                     method: 'DELETE',
                     headers: {
                         'Content-Type': 'application/json',
@@ -68,7 +69,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
                 }
             } else {
                 // Add to saved recipes
-                const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`, {
+                const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -100,7 +101,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
         if (!confirmDelete) return;
 
         try {
-            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipe._id}`, {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/${recipe._id}`, {
                 method: 'DELETE'
             });
 

@@ -1,5 +1,6 @@
 import {useState} from "react";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function AddItem({onAdd}) {
     const [form, setForm] = useState({
         name: "",
@@ -37,7 +38,7 @@ export default function AddItem({onAdd}) {
 
 
         try {
-            const res = await fetch("http://localhost:5000/items", {
+            const res = await fetch(`${API_BASE_URL}/items`, {
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({

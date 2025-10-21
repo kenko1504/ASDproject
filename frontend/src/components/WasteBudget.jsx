@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback} from "react";
 import "../CSS/index.css";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function WasteBudget() {
     const [budget, setBudget] = useState(500);
     const [budgetStats, setBudgetStats] = useState({totalValue: 0, count: 0});
@@ -25,7 +26,7 @@ export default function WasteBudget() {
                 setWasteStats({ expired: [], expiringSoon: [], wastedValue: 0 });
                 return;
             }
-            const res = await fetch("http://localhost:5000/ingredients", {
+            const res = await fetch(`${API_BASE_URL}/ingredients`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -94,11 +95,11 @@ export default function WasteBudget() {
 
     // //get budget and waste statistics
     // useEffect(() => {
-    //     fetch("http://localhost:5000/items/stats/budget")
+    //     fetch(`${API_BASE_URL}/items/stats/budget`)
     //         .then(res => res.json())
     //         .then(data => setBudgetStats(data));
     //
-    //     fetch("http://localhost:5000/items/stats/waste")
+    //     fetch(`${API_BASE_URL}/items/stats/waste`)
     //         .then(res => res.json())
     //         .then(data => setWasteStats(data));
     // }, [items]);
