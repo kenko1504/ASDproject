@@ -31,9 +31,14 @@
     - `frontend/src/contexts/AuthContext.jsx`
     - `frontend/src/utils/api.js`
 - **Anthony**
-    - `/frontend/src/components/GroceryList.jsx`
-    - `/frontend/src/components/ViewGroceryItems.jsx`
     - `/frontend/src/components/Recommendation.jsx`
+    - `/frontend/src/components/GroceryList/AddGroceryItem.jsx`
+    - `/frontend/src/components/GroceryList/AddGroceryLisr.jsx`
+    - `/frontend/src/components/GroceryList/EditGroceryItem.jsx`
+    - `/frontend/src/components/GroceryList/EditGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/CopyGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/IndividualGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/GroceryListsDashboard.jsx`
 - **Jianan**
     - `/frontend/src/components/FridgeManagement.jsx`
     - `/frontend/src/components/AddItem.jsx` 
