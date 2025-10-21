@@ -53,33 +53,44 @@ describe('UserController Tests', () => {
         .send(userData)
         .expect(201);
 
-      // Check response structure
-      expect(response.body).toHaveProperty('username', 'testuser');
-      expect(response.body).toHaveProperty('email', 'test@example.com');
-      expect(response.body).toHaveProperty('role', 'user');
-      expect(response.body).toHaveProperty('characteristics');
-      expect(response.body.characteristics).toEqual({
+      // Check response structure (updated for new format)
+      expect(response.body).toHaveProperty('message', 'Registration successful');
+      expect(response.body).toHaveProperty('user');
+      expect(response.body).toHaveProperty('token');
+
+      // Check user object
+      expect(response.body.user).toHaveProperty('username', 'testuser');
+      expect(response.body.user).toHaveProperty('email', 'test@example.com');
+      expect(response.body.user).toHaveProperty('role', 'user');
+      expect(response.body.user).toHaveProperty('characteristics');
+      expect(response.body.user.characteristics).toEqual({
         gender: 'Male',
         age: 25,
         height: 180,
         weight: 75
       });
 
-      // Verify password is hashed (not plaintext)
-      expect(response.body.password).not.toBe('password123');
+      // Verify password is not included in response
+      expect(response.body.user.password).toBeUndefined();
 
-      // Verify password can be validated with bcrypt
-      const isPasswordValid = await bcrypt.compare('password123', response.body.password);
-      expect(isPasswordValid).toBe(true);
+      // Verify token is a string
+      expect(typeof response.body.token).toBe('string');
+      expect(response.body.token.length).toBeGreaterThan(0);
 
-      // Verify wrong password fails validation
-      const isWrongPasswordValid = await bcrypt.compare('wrongpassword', response.body.password);
-      expect(isWrongPasswordValid).toBe(false);
-
-      // Verify user was saved to database
+      // Verify user was saved to database with hashed password
       const savedUser = await User.findOne({ username: 'testuser' });
       expect(savedUser).toBeTruthy();
       expect(savedUser.email).toBe('test@example.com');
+
+      // Verify password is hashed in database
+      expect(savedUser.password).not.toBe('password123');
+      const isPasswordValid = await bcrypt.compare('password123', savedUser.password);
+      expect(isPasswordValid).toBe(true);
+
+      // Verify TOTP fields are initialized
+      expect(savedUser.totpEnabled).toBe(false);
+      expect(savedUser.totpSecret).toBeNull();
+      expect(savedUser.backupCodes).toEqual([]);
     });
 
     it('should return 400 if username already exists', async () => {
