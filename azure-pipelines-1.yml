@@ -48,6 +48,14 @@ steps:
       workingDir: 'backend'
       customCommand: 'ci --only=production'
 
+  # Install backend production dependencies only
+  - task: Npm@1
+    displayName: 'Install backend production dependencies'
+    inputs:
+      command: 'custom'
+      workingDir: 'backend'
+      customCommand: 'ci --only=production'
+
   # Copy project files to artifact staging directory
   - task: CopyFiles@2
     inputs:

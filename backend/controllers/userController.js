@@ -1,5 +1,6 @@
 import User from "../models/user.js"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
 
 
 // Create new User
@@ -29,7 +30,22 @@ export const createUser = async (req, res) => {
     });
 
     await newUser.save();
-    res.status(201).json(newUser);
+
+    // Generate JWT token for immediate authentication (needed for TOTP setup)
+    const token = jwt.sign(
+      { userId: newUser._id, role: newUser.role },
+      process.env.JWT_SECRET || 'fallback_secret',
+      { expiresIn: '24h' }
+    );
+
+    // Remove password from response
+    const userResponse = { ...newUser.toObject(), password: undefined };
+
+    res.status(201).json({
+      message: "Registration successful",
+      user: userResponse,
+      token
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

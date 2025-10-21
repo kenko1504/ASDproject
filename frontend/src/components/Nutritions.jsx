@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import NutritionGraph from "./NutritionGraph";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function Nutritions() {
   const [foodList, setFoodList] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -9,7 +10,7 @@ export default function Nutritions() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const response = await fetch("http://localhost:5000/Food");
+      const response = await fetch(`${API_BASE_URL}/Food`);
       const data = await response.json();
       const filteredData = data.filter(item => item.foodName.toLowerCase().includes(searchTerm.toLowerCase()));
       setFoodList(filteredData);

@@ -33,7 +33,7 @@ const handleSubmit = async (e) => {
       };
 
       console.log("payload:", payload)
-      const res = await fetch("http://localhost:5000/items", {
+      const res = await fetch(`${API_BASE_URL}/items`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -68,7 +68,7 @@ const handleSubmit = async (e) => {
       formData.append('image', file);
 
       try {
-        const response = await axios.post('http://localhost:5000/receipt/upload', formData, {
+        const response = await axios.post(`${API_BASE_URL}/receipt/upload`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data'
           }

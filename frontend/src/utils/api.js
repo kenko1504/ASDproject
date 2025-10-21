@@ -1,3 +1,5 @@
+import { API_BASE_URL } from '../config/api.js';
+
 // Utility function to get authorization headers
 export const getAuthHeaders = () => {
   const token = localStorage.getItem("token");
@@ -21,3 +23,6 @@ export const authenticatedFetch = (url, options = {}) => {
     }
   });
 };
+
+// Export API_BASE_URL for use in components
+export { API_BASE_URL };

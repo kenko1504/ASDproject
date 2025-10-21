@@ -1,5 +1,6 @@
 import {useState, useEffect, useRef} from "react";
 import {useParams} from "react-router-dom";
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function UpdateItem({onUpdate, onCancel}) {
     const {id} = useParams();
@@ -24,7 +25,7 @@ export default function UpdateItem({onUpdate, onCancel}) {
 
         (async function load() {
             try {
-                const res = await fetch(`http://localhost:5000/ingredients/${id}`, {
+                const res = await fetch(`${API_BASE_URL}/ingredients/${id}`, {
                     headers: {
                         Authorization: `Bearer ${token || ""}`
                     }
@@ -48,7 +49,7 @@ export default function UpdateItem({onUpdate, onCancel}) {
 
                 setImagePreview(
                     data.imageUrl
-                    || (data.image ? `http://localhost:5000/imageUploads/${data.image}` : null)
+                    || (data.image ? `${API_BASE_URL}/imageUploads/${data.image}` : null)
                     || data.imgUrl
                     || null
                 );
@@ -105,7 +106,7 @@ export default function UpdateItem({onUpdate, onCancel}) {
         }
 
         try {
-            const res = await fetch(`http://localhost:5000/ingredients/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/ingredients/${id}`, {
                 method: "PUT",
                 headers,
                 body,

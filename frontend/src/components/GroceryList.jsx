@@ -3,6 +3,7 @@ import { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function GroceryList() {
     const { user } = useContext(AuthContext);
@@ -23,7 +24,7 @@ export default function GroceryList() {
     });
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/GroceryLists/${user._id}`)
+        axios.get(`${API_BASE_URL}/GroceryLists/${user._id}`)
             .then(lists => setLists(lists.data))
             .catch(err => console.log(err))
     }, [user._id]);
@@ -43,7 +44,7 @@ export default function GroceryList() {
         e.preventDefault();
         setError(""); // Clear any previous errors
         try {
-            const res = await axios.post(`http://localhost:5000/GroceryLists/${user._id}`, {
+            const res = await axios.post(`${API_BASE_URL}/GroceryLists/${user._id}`, {
                 name: form.name,
                 date: form.date,
                 note: form.note,
@@ -64,7 +65,7 @@ export default function GroceryList() {
     
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
+            await axios.delete(`${API_BASE_URL}/GroceryLists/${id}`);
             setLists(prevLists => prevLists.filter(list => list._id !== id));
         }
         catch (err) {
@@ -90,7 +91,7 @@ export default function GroceryList() {
     const handleEditSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/${editForm._id}`, {
+            const res = await axios.put(`${API_BASE_URL}/GroceryLists/${editForm._id}`, {
                 name: editForm.name,
                 date: editForm.date,
                 note: editForm.note,
