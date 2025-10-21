@@ -207,8 +207,9 @@ export const copyList = async (req, res) => {
     const newList = new GroceryList({
       name: name,
       user: uid,
-      date: date,
-      note: note
+      date: date || new Date(),
+      note: note || originalList.note,
+      status: 'active'
     });
     await newList.save();
     
