@@ -1,12 +1,14 @@
 // import "../CSS/index.css";
 import { useParams, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect, useContext } from "react";
+import { AuthContext } from "../../contexts/AuthContext";
 import AddGroceryItem from "./AddGroceryItem";
 import EditGroceryItem from "./EditGroceryItem";
+import services from "./groceryServices";
 
 export default function ViewGroceryItems() {
-    const { id } = useParams();
+    const { gid } = useParams();
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
     const [itemList, setItemList] = useState([]);
     const [groceryList, setGroceryList] = useState([]);
@@ -16,25 +18,25 @@ export default function ViewGroceryItems() {
     const [editError, setEditError] = useState("");
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/GroceryLists/${id}/items`)
-            .then(({ data }) => {
+        services.getItem(user._id, gid)
+            .then((data) => {
                 const { items, groceryList } = data;
                 setItemList(items);
                 setGroceryList(groceryList);
             })
             .catch(err => console.log(err))
-    }, [id]);
+    }, [user._id, gid]);
 
-    const handleAddSubmit = async (itemData) => {
+    const handleAddSubmit = async (item) => {
         setAddError(""); // Clear any previous errors
         try {
-            const res = await axios.post(`http://localhost:5000/GroceryLists/${id}/items`, {
-                name: itemData.name,
-                quantity: itemData.quantity,
-                category: itemData.category
+            const res = await services.createItem(user._id, gid, {
+                name: item.name,
+                quantity: item.quantity,
+                category: item.category
             });
-            setItemList(prevLists => [...prevLists, res.data]);
-            return true; // Success
+            setItemList(prevLists => [...prevLists, res]);
+            return true; 
         } catch (err) {
             console.error(err.response?.data || err);
             // Display the error message from the server
@@ -43,14 +45,14 @@ export default function ViewGroceryItems() {
             } else {
                 setAddError("An error occurred while adding the item.");
             }
-            return false; // Failure
+            return false; 
         }
     };
 
-    const handleDelete = async (itemId) => {
+    const handleDelete = async (itemID) => {
         try {
-            await axios.delete(`http://localhost:5000/GroceryLists/item/${itemId}`);
-            setItemList(prevLists => prevLists.filter(item => item._id !== itemId));
+            await services.deleteItem(user._id, gid, itemID);
+            setItemList(prevLists => prevLists.filter(item => item._id !== itemID));
         } catch (error) {
             console.error("Error deleting item:", error);
         }
@@ -66,7 +68,7 @@ export default function ViewGroceryItems() {
         );
         // Save to backend
         try {
-            await axios.put(`http://localhost:5000/GroceryLists/item/${item._id}`, {
+            await services.updateItem(user._id, gid, item._id, {
                 name: item.name,
                 quantity: item.quantity,
                 category: item.category,
@@ -94,17 +96,17 @@ export default function ViewGroceryItems() {
         setEditItem({ _id: "", name: "", quantity: 0, category: "Other" });
     };
 
-    const handleEditUpdate = async (editItemData) => {
+    const handleEditUpdate = async (item) => {
         setEditError(""); // Clear any previous errors
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/item/${editItemData._id}`, {
-                name: editItemData.name,
-                quantity: editItemData.quantity,
-                category: editItemData.category
+            const res = await services.updateItem(user._id, gid, item._id, {
+                name: item.name,
+                quantity: item.quantity,
+                category: item.category
             });
             // Finds the item that has the same id as the item being edited
             // Item is updated otherwise it remains the same
-            setItemList(itemList.map(item => item._id === editItemData._id ? res.data : item));
+            setItemList(itemList.map(listItem => listItem._id === item._id ? res : listItem));
             return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);
@@ -126,8 +128,8 @@ export default function ViewGroceryItems() {
                 >
                     ← Back
                 </button>
-                <h1 className="text-3xl font-bold text-gray-800">{groceryList.name}</h1>
-                <div className="w-20"></div> {/* Spacer for center alignment */}
+                <h1 className="text-3xl font-bold text-gray-800 !pt-5">{groceryList.name}</h1>
+                <div className="w-20"></div>
             </div>
 
             <AddGroceryItem onSubmit={handleAddSubmit} error={addError} />

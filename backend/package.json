@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest",
+    "test:grocery": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --selectProjects=grocery",
     "dev": "nodemon server.js"
   },
   "dependencies": {

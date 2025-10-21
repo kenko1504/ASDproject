@@ -1,10 +1,10 @@
 import { useState, useEffect, useContext } from "react";
-import axios from "axios";
 import { AuthContext } from "../../contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import AddGroceryList from "./AddGroceryList";
 import EditGroceryList from "./EditGroceryList";
 import { formatDate } from "../../utils/dateUtils";
+import services from "./groceryServices";
 
 export default function GroceryList() {
     const { user } = useContext(AuthContext);
@@ -17,21 +17,21 @@ export default function GroceryList() {
     const [selectedList, setSelectedList] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:5000/GroceryLists/${user._id}`)
-            .then(lists => setLists(lists.data))
+        services.getList(user._id)
+            .then(lists => setLists(lists))
             .catch(err => console.log(err))
     }, [user._id]);
 
     const handleAddSubmit = async (formData) => {
         setAddError(""); // Clear any previous errors
         try {
-            const res = await axios.post(`http://localhost:5000/GroceryLists/${user._id}`, {
+            const res = await services.createList(user._id, {
                 name: formData.name,
                 date: formData.date,
                 note: formData.note,
                 status: formData.status
             });
-            setLists(prevLists => [...prevLists, res.data]);
+            setLists(prevLists => [...prevLists, res]);
             return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);
@@ -47,7 +47,7 @@ export default function GroceryList() {
     
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:5000/GroceryLists/${id}`);
+            await services.deleteList(user._id, id);
             setLists(prevLists => prevLists.filter(list => list._id !== id));
         }
         catch (err) {
@@ -69,7 +69,7 @@ export default function GroceryList() {
     const handleEditUpdate = async (editFormData) => {
         setEditError(""); // Clear any previous errors
         try {
-            const res = await axios.put(`http://localhost:5000/GroceryLists/${user._id}/list/${editFormData._id}`, {
+            const res = await services.updateList(user._id, editFormData._id, {
                 name: editFormData.name,
                 date: editFormData.date,
                 note: editFormData.note,
@@ -77,7 +77,7 @@ export default function GroceryList() {
             });
             // Finds the list that has the same id as the list being edited
             // List is updated otherwise it remains the same
-            setLists(lists.map(list => list._id === editFormData._id ? res.data : list));
+            setLists(lists.map(list => list._id === editFormData._id ? res : list));
             return true; // Success
         } catch (err) {
             console.error(err.response?.data || err);

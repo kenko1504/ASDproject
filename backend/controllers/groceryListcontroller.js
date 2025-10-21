@@ -16,7 +16,6 @@ export const createList = async (req, res) => {
     }
     const list = new GroceryList({ name, user: uid, date, note, status });
     await list.save(); // Save the new grocery list to the database
-    console.log("Grocery List created:", list);
     
     res.status(201).json(list);
   } catch (err) {
@@ -34,8 +33,6 @@ export const getLists = async (req, res) => {
       return res.status(404).json({ error: "No grocery lists found for this user." });
     }
     res.status(200).json(lists);
-    console.log("Grocery Lists fetched:", lists);
-    console.log("uid:", uid);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -44,9 +41,14 @@ export const getLists = async (req, res) => {
 // Delete grocery list from user
 export const deleteList = async (req, res) => {
   try {
-    const { id } = req.params; // Grocery List ID from the URL
+    const { uid, gid } = req.params; // User ID and Grocery List ID from the URL
     
-    await GroceryList.findByIdAndDelete(id); // Delete the grocery list from the database
+    // Verify the list belongs to the user before deleting
+    const deletedList = await GroceryList.findOneAndDelete({ _id: gid, user: uid });
+    
+    if (!deletedList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
 
     res.status(200).json({ message: "Grocery list deleted successfully" });
   } catch (err) {
@@ -56,12 +58,21 @@ export const deleteList = async (req, res) => {
 
 export const updateList = async (req, res) => {
   try {
-    const { gid, uid } = req.params; // Grocery List ID from the URL
+    const { gid, uid } = req.params; // Grocery List ID and User ID from the URL
     const { name, date, note, status } = req.body;
+    
+    // Verify the list belongs to the user
+    const list = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!list) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+    
+    // Check for duplicate names (excluding current list)
     const existingList = await GroceryList.findOne({ name, user: uid, _id: { $ne: gid } });
     if (existingList) {
       return res.status(400).json({ error: "A grocery list with this name already exists." });
     }
+    
     const updatedList = await GroceryList.findByIdAndUpdate(
       gid,
       { name, date, note, status },
@@ -75,18 +86,20 @@ export const updateList = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const { gid } = req.params; // Grocery List ID from the URL
-    const list = await GroceryList.findById(gid);
+    const { uid, gid } = req.params; // User ID and Grocery List ID from the URL
+    
+    // Verify the list exists and belongs to the user
+    const list = await GroceryList.findOne({ _id: gid, user: uid });
     if (!list) {
-      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
     }
+    
     const { name, quantity, category } = req.body;
     if (quantity < 0) {
       return res.status(400).json({ error: "Quantity cannot be negative." });
     }
     const item = new GroceryItem({ name, quantity, category, groceryList: gid });
     await item.save(); // Save the new grocery item to the database
-    console.log("Grocery Item created:", item);
     res.status(201).json(item);
   } catch (err) {
     if (err.code === 11000) { // Duplicate item name error
@@ -99,18 +112,16 @@ export const createItem = async (req, res) => {
 // uses User ID to get all their grocery items
 export const getItems = async (req, res) => {
   try {
-    const { gid } = req.params;
-    const groceryList = await GroceryList.findById(gid);
+    const { uid, gid } = req.params;
+    
+    // Verify the list exists and belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
     if (!groceryList) {
-      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
     }
-    const items = await GroceryItem.find({ groceryList: gid }); // Find all grocery items for the user
-    if (!items) {
-      return res.status(404).json({ error: "No grocery items found for this user." });
-    }
+    
+    const items = await GroceryItem.find({ groceryList: gid }); // Find all grocery items for the list
     res.status(200).json({ items, groceryList });
-    console.log("Grocery Items fetched:", items);
-    console.log("id:", gid);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -119,10 +130,23 @@ export const getItems = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   try {
-    const { id } = req.params; // Grocery Item ID from the URL
+    const { uid, gid, itemID } = req.params; // User ID, Grocery List ID, and Item ID from the URL
+    
+    // Verify the list belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!groceryList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+    
+    // Verify the item belongs to the list
+    const existingItem = await GroceryItem.findOne({ _id: itemID, groceryList: gid });
+    if (!existingItem) {
+      return res.status(404).json({ error: "Item not found in this grocery list" });
+    }
+    
     const { name, quantity, category, checked } = req.body;
     const updatedItem = await GroceryItem.findByIdAndUpdate(
-      id,
+      itemID,
       { name, quantity, category, checked },
       { new: true } // Return the updated document
     );
@@ -132,12 +156,23 @@ export const updateItem = async (req, res) => {
   }
 };
 
-// Delete grocery list from user
+// Delete grocery item from user
 export const deleteItem = async (req, res) => {
   try {
-    const { id } = req.params; // Grocery Item ID from the URL
+    const { uid, gid, itemID } = req.params; // User ID, Grocery List ID, and Item ID from the URL
 
-    await GroceryItem.findByIdAndDelete(id); // Delete the grocery item from the database
+    // Verify the list belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!groceryList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+
+    // Delete the item only if it belongs to the specified list
+    const deletedItem = await GroceryItem.findOneAndDelete({ _id: itemID, groceryList: gid });
+    
+    if (!deletedItem) {
+      return res.status(404).json({ error: "Item not found in this grocery list" });
+    }
 
     res.status(200).json({ message: "Grocery item deleted successfully" });
   } catch (err) {
