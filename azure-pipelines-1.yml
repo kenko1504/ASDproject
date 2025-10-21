@@ -16,21 +16,28 @@ steps:
       versionSpec: $(nodeVersion)
 
   # Install frontend dependencies
+
+  # Install frontend dependencies
   - task: Npm@1
+    displayName: 'Install frontend dependencies'
     displayName: 'Install frontend dependencies'
     inputs:
       command: 'ci'
       workingDir: 'frontend'
 
   # Install backend dependencies
+  # Install backend dependencies
   - task: Npm@1
+    displayName: 'Install backend dependencies'
     displayName: 'Install backend dependencies'
     inputs:
       command: 'ci'
       workingDir: 'backend'
 
   # Build the frontend
+  # Build the frontend
   - task: Npm@1
+    displayName: 'Build frontend'
     displayName: 'Build frontend'
     inputs:
       command: 'custom'
@@ -42,9 +49,13 @@ steps:
       MODE: 'production'
 
   # Copy backend files to artifact root
+  # Copy backend files to artifact root
   - task: CopyFiles@2
     displayName: 'Copy backend files'
+    displayName: 'Copy backend files'
     inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/backend'
+      contents: '**'
       sourceFolder: '$(Build.SourcesDirectory)/backend'
       contents: '**'
       targetFolder: '$(Build.ArtifactStagingDirectory)'
@@ -57,8 +68,17 @@ steps:
       contents: '**'
       targetFolder: '$(Build.ArtifactStagingDirectory)/public'
 
+  # Copy frontend build into /public
+  - task: CopyFiles@2
+    displayName: 'Copy frontend build'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/frontend/dist'
+      contents: '**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/public'
+
   # Publish pipeline artifact
   - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
     displayName: 'Publish artifact'
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
