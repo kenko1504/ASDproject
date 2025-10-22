@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
 import { AuthContext } from '../contexts/AuthContext.jsx'
-import { Chart } from 'react-apexcharts'
+import Chart from 'react-apexcharts'
 import { API_BASE_URL } from '../utils/api.js';
 
 function NutritionGraph(){
@@ -80,7 +80,7 @@ function NutritionGraph(){
 
         async function getUserTodayMeal() {
             try {
-                const response = await fetch(`http://${API_BASE_URL}/meal/${userInfo.user._id}`, {
+                const response = await fetch(`${API_BASE_URL}/meal/${userInfo.user._id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

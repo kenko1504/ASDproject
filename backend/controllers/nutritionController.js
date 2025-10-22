@@ -60,48 +60,28 @@ export const getDailyNutritionRequirements = async (req, res) => {
 const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
     const { gender, age, weight, height } = characteristics || {};
     const modifier = nutritionPlan || 'maintenance';
-    let nutritionPlanForQuery = "";
+    let nutritionMultiplier = 0;
 
     switch(modifier){
         case 'weight_loss':
-            nutritionPlanForQuery = 'Low Active';
+            nutritionMultiplier = 1.2;
             break;
         case 'weight_gain':
-            nutritionPlanForQuery = 'Very Active';
+            nutritionMultiplier = 1.375;
             break;
         case 'maintenance':
-            nutritionPlanForQuery = 'Active';
+            nutritionMultiplier = 1.55;
             break;
         default:
-            nutritionPlanForQuery = 'Active';
+            nutritionMultiplier = 1.55;
             break;
     }
 
-    try{
-        const params = {
-            measurement_units: 'met',
-            sex: (gender || '').toLowerCase(),
-            age_value: age,
-            age_type: 'yrs',
-            cm: height,
-            kilos: weight,
-            activity_level: nutritionPlanForQuery
-        };
-        const response = await axios.get(
-            `https://${process.env.NUTRITION_API_HOST}/api/nutrition-info`,
-            {
-                params,
-                headers: {
-                    'x-rapidapi-host': process.env.NUTRITION_API_HOST,
-                    'x-rapidapi-key': process.env.NUTRITION_API_KEY
-                },
-                timeout: 10000
-            }
-        );
-        return response.data;
-    }catch(error){
-        console.error('Nutrition API error:', error.response?.data || error.message || error);
-        throw error; 
+    switch(gender){
+        case 'male':
+            break;
+        case 'female':
+            break;
     }
 }
 

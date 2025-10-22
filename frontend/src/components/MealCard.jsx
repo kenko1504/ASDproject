@@ -23,7 +23,7 @@ export default function MealCard({ Meal, onMealDeleted, isDashboard = false }) {
 
     const getRecipeImage = async(recipeId) => {
         try {
-            const response = await authenticatedFetch(`http://${API_BASE_URL}/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/${recipeId}`, {
                 method: 'GET'
             });
             if (response.ok) {
@@ -44,7 +44,7 @@ export default function MealCard({ Meal, onMealDeleted, isDashboard = false }) {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://${API_BASE_URL}/meal/${Meal._id}`, {
+            const response = await fetch(`${API_BASE_URL}/meal/${Meal._id}`, {
                 method: 'DELETE'
             });
 
