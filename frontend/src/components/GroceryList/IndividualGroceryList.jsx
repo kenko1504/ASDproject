@@ -194,27 +194,27 @@ export default function ViewGroceryItems() {
             <table className="min-w-full border border-gray-300 bg-white text-center">
                 <thead className="bg-gray-100">
                     <tr>
-                        <th>Checked</th>
+                        { status !== "completed"  && <th>Checked</th> }
                         <th>Name</th>
                         <th>Category</th>
                         <th>Quantity</th>
-                        <th>Actions</th>
+                        { status !== "completed"  && <th>Actions</th> }
                     </tr>
                 </thead>
                 <tbody>
                     {itemList.map((item) => (
                         <tr key={item._id} className={`border-gray-300 border-b hover:bg-gray-50 ${item.checked ? '!line-through opacity-60' : ''}`}>
-                            <td className="!px-2 !py-1">
+                            { status !== "completed" && <td className="!px-2 !py-1">
                                 <input
                                     type="checkbox"
                                     checked={!!item.checked}
                                     onChange={() => handleCheckToggle(item)}
                                 />
-                            </td>
+                            </td> }
                             <td className="!px-2 !py-1">{item.name}</td>
                             <td className="!px-2 !py-1">{item.category}</td>
                             <td className="!px-2 !py-1">{item.quantity}</td>
-                            <td className="!px-2 !py-1">
+                            { status !== "completed" && <td className="!px-2 !py-1">
                                 <button
                                     onClick={() => openEditModal(item)}
                                     className="!px-4 !mr-5 bg-blue-500 text-white rounded"
@@ -223,7 +223,7 @@ export default function ViewGroceryItems() {
                                     onClick={() => handleDelete(item._id)}
                                     className="bg-red-500 text-white !px-4 rounded"
                                 >Delete</button>
-                            </td>
+                            </td>}
                         </tr>
                     ))}
                 </tbody>

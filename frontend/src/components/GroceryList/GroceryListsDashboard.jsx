@@ -119,10 +119,10 @@ export default function GroceryList() {
                                     onClick={() => navigate(`view/${list._id}/${list.status}`)}
                                     className="bg-green-500 text-white !px-4 rounded !mr-2"
                                 >View</button>
-                                <button
+                                { list.status !== "completed"  && <button
                                     onClick={() => openEditModal(list)}
                                     className="!px-4 !mr-5 bg-blue-500 text-white rounded"
-                                >Edit</button>
+                                >Edit</button> }
                                 <button
                                     onClick={() => handleDelete(list._id)}
                                     className="bg-red-500 text-white !px-4 rounded"
