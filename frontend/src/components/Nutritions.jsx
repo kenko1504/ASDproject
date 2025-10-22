@@ -12,7 +12,7 @@ export default function Nutritions() {
     async function fetchMeals() {
       try {
         console.log("useEffectUser", user)
-        const response = await fetch(`http://${API_BASE_URL}/meal/${user._id}`, {
+        const response = await fetch(`${API_BASE_URL}/meal/${user._id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

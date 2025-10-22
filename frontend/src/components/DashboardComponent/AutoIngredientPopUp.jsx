@@ -1,14 +1,18 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import axios from "axios"
 import uploadIcon from "../../assets/Upload.svg"
 import { API_BASE_URL } from '../../utils/api.js';
+import { AuthContext } from "../../contexts/AuthContext.jsx";
 
 export default function AutoIngredientPopUp({ onClose }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState([]);
+  const {user} = useContext(AuthContext)
   
   const fileInputRef = useRef(null);
+
+  console.log(user)
 
   const handleClick = () => {
     fileInputRef.current.click(); // trigger file input
@@ -23,15 +27,17 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   
   const token = localStorage.getItem("token");
+  console.log("Token:", token)
   console.log(products)
   for (const product of products) {
     try {
       const payload = {
+        userId: user._id,
         name: product.name,
-        quantity: product.quantity,
-        price: product.price,
+        quantity: product.quantity || 0,
+        price: product.price || 0,
         category: "Other",
-        expiryDate: product.expiryDate || result.data.data.shoppingDate
+        expiryDate: product.expiryDate || result.data.shoppingDate
       };
 
       console.log("payload:", payload)

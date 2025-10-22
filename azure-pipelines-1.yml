@@ -8,6 +8,19 @@ variables:
   nodeVersion: '22.x'
 
 steps:
+# Temporarily save secure file for Google Cloud Plaform
+  - task: DownloadSecureFile@1
+    name: gcpKey
+    displayName: 'Download GCP Service Account Key'
+    inputs:
+      secureFile: 'service-account-key.json'
+
+  - script: |
+      echo "Activating GCP Service Account"
+      export GOOGLE_APPLICATION_CREDENTIALS=$(gcpKey.secureFilePath)
+      gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
+      gcloud config set project buoyant-facet-473710-k1
+    displayName: 'Authenticate to GCP'
   # Install Node.js
   - task: NodeTool@0
     displayName: 'Install Node.js'
@@ -64,3 +77,5 @@ steps:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'release'
       publishLocation: 'Container'
+
+  

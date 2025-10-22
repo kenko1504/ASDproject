@@ -1,55 +1,16 @@
-import axios from "axios";
 import FoodNutrition from "../models/foodNutrition.js";
 
 //get daily nutrition requirements based on biometric data
-export const getDailyNutritionRequirements = async (req, res) => {
+export const getDailyNutritionRequirements = (req, res) => {
     const userBiometricInfo = req.body.characteristics;
     const nutritionPlan = req.body.nutritionPlan;
     try{
-        const nutritionRequirements = await calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
+        const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
         if(!nutritionRequirements){
             return res.status(500).json({ message: "Unable to calculate nutrition requirements" });
         }
         console.log('nutritionRequirements:', nutritionRequirements);
-
-        const caloriesRaw = nutritionRequirements?.BMI_EER?.['Estimated Daily Caloric Needs'] ?? '';
-        const caloriesStr = String(caloriesRaw);
-        console.log('Calculated calories:', caloriesStr);
-
-        const macronutrientsTable = nutritionRequirements?.macronutrients_table?.["macronutrients-table"] ?? [];
-        const mineralsTable = nutritionRequirements?.minerals_table?.["essential-minerals-table"] ?? [];
-        const targetNutrients = ["carbohydrate", "protein", "fat"];
-        const targetMinerals = ["sodium"];
-
-        const filteredData = {};
-        console.log("Filtering data...", targetNutrients.map(n => n.toLowerCase()));
-
-        if (caloriesStr) {
-            // "2,482 kcal/day" -> "2482"
-            const cal = caloriesStr.split(" ")[0].replace(/,/g, '');
-            if (!Number.isNaN(Number(cal))) filteredData["calories"] = cal;
-        }
-
-        macronutrientsTable.forEach((row, index) => {
-            if (!row || index === 0) return;
-            const key = String(row[0] ?? '').toLowerCase();
-            if (targetNutrients.includes(key)) {
-                const val = String(row[1] ?? '').split(" ")[0].replace(/,/g, '');
-                filteredData[row[0]] = val;
-            }
-        });
-
-        mineralsTable.forEach((row, index) => {
-            if (!row || index === 0) return;
-            const key = String(row[0] ?? '').toLowerCase();
-            if (targetMinerals.includes(key)) {
-                const val = String(row[1] ?? '').split(" ")[0].replace(/,/g, '');
-                filteredData[row[0]] = val;
-            }
-        });
-
-        console.log(filteredData);
-        res.status(200).json(filteredData);
+        res.status(200).json(nutritionRequirements);
     }catch(error){
         console.error(error.response?.data || error.message || error);
         res.status(500).json({ message: error.response?.data || error.message || 'Server error' });
@@ -57,52 +18,62 @@ export const getDailyNutritionRequirements = async (req, res) => {
 };
 
 // calculate nutrition requirements
-const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
+const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
     const { gender, age, weight, height } = characteristics || {};
     const modifier = nutritionPlan || 'maintenance';
-    let nutritionPlanForQuery = "";
+    let activityMultiplier = 0.0;
+    let goalVar = 0;
+    let proteinMultiplier = 0.0;
+
+    let BMR = 0.0;
 
     switch(modifier){
         case 'weight_loss':
-            nutritionPlanForQuery = 'Low Active';
+            activityMultiplier = 1.2;
+            proteinMultiplier = 0.8;
+            goalVar = -500
             break;
         case 'weight_gain':
-            nutritionPlanForQuery = 'Very Active';
+            activityMultiplier = 1.55;
+            proteinMultiplier = 2.25;
+            goalVar = 400
             break;
         case 'maintenance':
-            nutritionPlanForQuery = 'Active';
+            activityMultiplier = 1.375;
+            proteinMultiplier = 1.8;
             break;
         default:
-            nutritionPlanForQuery = 'Active';
+            activityMultiplier = 1.375;
+            proteinMultiplier = 1.8;
             break;
     }
-
-    try{
-        const params = {
-            measurement_units: 'met',
-            sex: (gender || '').toLowerCase(),
-            age_value: age,
-            age_type: 'yrs',
-            cm: height,
-            kilos: weight,
-            activity_level: nutritionPlanForQuery
-        };
-        const response = await axios.get(
-            `https://${process.env.NUTRITION_API_HOST}/api/nutrition-info`,
-            {
-                params,
-                headers: {
-                    'x-rapidapi-host': process.env.NUTRITION_API_HOST,
-                    'x-rapidapi-key': process.env.NUTRITION_API_KEY
-                },
-                timeout: 10000
-            }
-        );
-        return response.data;
-    }catch(error){
-        console.error('Nutrition API error:', error.response?.data || error.message || error);
-        throw error; 
+    switch(gender){
+        case 'Male':
+            BMR = 88.362 + (13.397 * weight) + (4.799 * height) - (5.677 * age)
+            break;
+        case 'Female':
+            BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
+            break;
     }
+    console.log(BMR, '*', activityMultiplier, "+", goalVar)
+    const TDEE = BMR * activityMultiplier + goalVar;
+
+    const protein = proteinMultiplier * weight;
+    const fat = 1.0 * weight;
+    const carbCalories = TDEE - (protein*4 + fat*9)
+    const carb = carbCalories / 4
+    const sodium = 1500;
+
+    const result = {
+        calories: TDEE,
+        protein: protein,
+        fat: fat,
+        carbohydrates: carb,
+        sodium: sodium
+    }
+
+    console.log(result)
+    return result
 }
 
 // Get All Foods Nutrition Data

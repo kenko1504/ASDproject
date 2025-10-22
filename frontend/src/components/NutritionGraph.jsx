@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
 import { AuthContext } from '../contexts/AuthContext.jsx'
-import { Chart } from 'react-apexcharts'
+import Chart from 'react-apexcharts'
 import { API_BASE_URL } from '../utils/api.js';
 
 function NutritionGraph(){
@@ -56,10 +56,10 @@ function NutritionGraph(){
                     console.log('Setting nutrients:', data)
                     const nutrientData = {
                         calories: parseFloat(data.calories) || 0,
-                        protein: parseFloat(data.Protein) || 0,
-                        fat: parseFloat(data.Fat) || 0,
-                        carbohydrates: parseFloat(data.Carbohydrate) || 0,
-                        sodium: parseFloat(data.Sodium) || 0
+                        protein: parseFloat(data.protein) || 0,
+                        fat: parseFloat(data.fat) || 0,
+                        carbohydrates: parseFloat(data.carbohydrate) || 0,
+                        sodium: parseFloat(data.sodium) || 0
                     }
                     setNutrients(nutrientData)
                     console.log('Nutrients set:', nutrientData)
@@ -80,7 +80,7 @@ function NutritionGraph(){
 
         async function getUserTodayMeal() {
             try {
-                const response = await fetch(`http://${API_BASE_URL}/meal/${userInfo.user._id}`, {
+                const response = await fetch(`${API_BASE_URL}/meal/${userInfo.user._id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
