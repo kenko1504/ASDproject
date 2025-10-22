@@ -48,9 +48,8 @@ export default function UpdateItem({onUpdate, onCancel}) {
                 });
 
                 setImagePreview(
-                    data.imageUrl
+                    `${API_BASE_URL}${data.imageUrl}`
                     || (data.image ? `${API_BASE_URL}/imageUploads/${data.image}` : null)
-                    || data.imgUrl
                     || null
                 );
             } catch (err) {

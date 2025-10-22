@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import axios from "axios"
 import uploadIcon from "../../assets/Upload.svg"
+import { API_BASE_URL } from '../../utils/api.js';
+
 export default function AutoIngredientPopUp({ onClose }) {
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);

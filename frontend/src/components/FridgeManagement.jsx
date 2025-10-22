@@ -331,7 +331,7 @@ export default function FridgeManagement() {
                                 <td>{item.category || "-"}</td>
                                 <td>
                                     {item.imageUrl ? (
-                                        <img src={item.imageUrl} alt={""} style={{
+                                        <img src={`${API_BASE_URL}${item.imageUrl}`} alt={""} style={{
                                             width: 80,
                                             height: 80,
                                             objectFit: "cover",

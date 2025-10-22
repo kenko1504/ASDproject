@@ -187,7 +187,7 @@ export default function Dashboard() {
                                 <div className="w-[120px] h-[120px] bg-white rounded-lg flex items-center justify-center overflow-hidden shadow">
                                     {img.imageUrl ? (
                                         <img
-                                            src={img.imageUrl}
+                                            src={`${API_BASE_URL}${img.imageUrl}`}
                                             alt={img.name}
                                             className="w-full h-full object-cover"
                                         />
