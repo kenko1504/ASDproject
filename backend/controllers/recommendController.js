@@ -102,7 +102,7 @@ export const getListByNutritions = async(req, res) => {
                 }).sort({ protein: -1 }).limit(20).lean(),
                 
                 FoodNutrition.find({
-                    calories: { $lte: lackNutrition.calories }
+                    energy: { $lte: lackNutrition.calories }
                 }).sort({ calories: -1 }).limit(20).lean(),
                 
                 FoodNutrition.find({
@@ -117,6 +117,7 @@ export const getListByNutritions = async(req, res) => {
                     carbohydrates: { $lte: lackNutrition.carbohydrates }
                 }).sort({ carbohydrates: -1 }).limit(20).lean()
             ]);
+            console.log(proteinList, caloriesList)
 
             return res.status(200).json({
                 caloriesList: caloriesList,

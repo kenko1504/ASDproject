@@ -13,7 +13,7 @@ export default function Recommendations() {
     const [selectedFoodType, setSelectedFoodType] = useState('Any');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [recFilter, setRecFilter] = useState("");
+    const [recFilter, setRecFilter] = useState("proteinList");
 
     const [nutrients, setNutrients] = useState(null)
     const [userTodayMeal, setUserTodayMeal] = useState(null)
@@ -42,11 +42,11 @@ export default function Recommendations() {
     ];
 
     const nutritionalCategoriesForRecommendations = [
-        { id: "protein", label: "Protein" },
-        { id: "carbohydrates", label: "Carbohydrates" },
-        { id: "fat", label: "Fat" },
-        { id: "calories", label: "Calories" },
-        { id: "sodium", label: "Sodium" },
+        { id: "proteinList", label: "Protein" },
+        { id: "carbList", label: "Carbohydrates" },
+        { id: "fatList", label: "Fat" },
+        { id: "caloriesList", label: "Calories" },
+        { id: "sodiumList", label: "Sodium" },
     ];
 
     const foodTypes = ['Any', 'Meat', 'Vegetable', 'Fruit', 'Drink', 'Other'];
@@ -127,12 +127,11 @@ export default function Recommendations() {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-Request-ID': `${Date.now()}-${Math.random()}`
                     },
                     body: JSON.stringify(body),
                     // signal: abortControllerRef.current.signal
                 })
-                console.log(searchResult)
+                console.log("SearchResult:", searchResult)
                 
                 if (!searchResult.ok) {
                     throw new Error(`HTTP error! status: ${searchResult.status}`)
@@ -145,10 +144,10 @@ export default function Recommendations() {
                     console.log('Setting nutrients:', data)
                     const nutrientData = {
                         calories: parseFloat(data.calories) || 0,
-                        protein: parseFloat(data.Protein) || 0,
-                        fat: parseFloat(data.Fat) || 0,
-                        carbohydrates: parseFloat(data.Carbohydrate) || 0,
-                        sodium: parseFloat(data.Sodium) || 0
+                        protein: parseFloat(data.protein) || 0,
+                        fat: parseFloat(data.fat) || 0,
+                        carbohydrates: parseFloat(data.carbohydrate) || 0,
+                        sodium: parseFloat(data.sodium) || 0
                     }
                     setNutrients(nutrientData)
                     console.log('Nutrients set:', nutrientData)
@@ -256,13 +255,18 @@ export default function Recommendations() {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(criteria)
-                    }).then(result => {
-                        console.log(result)
-                       setRecommendSearchResults(result.json())
                     })
-
-                    console.log(result)
-                    return result
+                    console.log("Response:", result);
+    
+                    if (!result.ok) {
+                        throw new Error(`HTTP error! status: ${result.status}`);
+                    }
+                    
+                    const data = await result.json();
+                    console.log("Parsed data:", data);
+                    
+                    setRecommendSearchResults(data);
+                    return data;
                 }else{
                     console.log("Error: invalid criteria", errorMessage)
                 }
@@ -280,7 +284,7 @@ export default function Recommendations() {
                 
                 let todayNutritionData
                 if (mealsData && mealsData.length > 0) {
-                    todayNutritionData = await getUserTodayNutrition(mealsData)  
+                    todayNutritionData = await getUserTodayNutrition(mealsData)
                 } else {
                     todayNutritionData = {
                         calories: 0,
@@ -295,6 +299,7 @@ export default function Recommendations() {
                 if (nutrientsData && todayNutritionData) {
                     await getRecommendedUserFoods(nutrientsData, todayNutritionData)
                 }
+                setIsLoading(false)
             } catch (error) {
                 console.error('Error:', error)
                 setErrorMessage(error.message)
@@ -334,7 +339,7 @@ export default function Recommendations() {
             <div className="bg-white border border-gray-200 rounded-b-lg shadow-sm h-[calc(100vh-18vh)]">
                 {/* Tab Content */}
                 {activeTab === "plan" && (
-                    <div className="p-6">
+                    <div className="p-6 h-full">
                         
                         <h4 className="text-center font-medium text-gray-700 !mb-3">Sort by Nutrition Fills</h4>
                             <div className="grid grid-cols-5 gap-2 !mb-2 !pr-5 !pl-15">
@@ -375,11 +380,16 @@ export default function Recommendations() {
                             </div>
                         )}
 
-                        {!isLoading && !errorMessage && recommendSearchResults && recommendSearchResults.length > 0 && (
-                            <div className="grid grid-cols-3 gap-4">
+                        {!isLoading && !errorMessage && recommendSearchResults && (
+                            <div className="w-full h-full">
+                                <div className="text-center w-full font-bold">Top 20 Foods</div>
+                            <div className="grid grid-cols-3 gap-4 overflow-scroll h-10/12">
+                                {console.log("Filter:", recFilter)}
+                                {console.log("FilterTEst:", recommendSearchResults[recFilter])}
                                 {recommendSearchResults[recFilter].map((food, index) => (
                                     <FoodResultCard key={index} food={food}/>
                                 ))}
+                            </div>
                             </div>
                         )}
 
@@ -550,11 +560,11 @@ function FoodResultCard({ food }) {
                 <h4 className="text-center font-semibold text-l text-gray-800 !my-2 leading-[1.5rem] h-[3rem]">{food.foodName}</h4>
             </div>
             
-            <span className="text-m px-2 py-1 bg-blue-100 text-blue-600 !py-2 font-bold flex justify-center rounded !mb-2">{food.type}</span>
+            <span className="text-m px-2 bg-blue-100 text-blue-600 !py-2 font-bold flex justify-center rounded !mb-2">{food.type}</span>
             
             <div className="grid grid-cols-4 gap-2 text-sm text-gray-600">
                 <span className="font-bold !mx-auto">⚡ Calories:</span>
-                <span className="!pl-2">{food.calories}kcal</span>
+                <span className="!pl-2">{food.energy}kcal</span>
                 <span className="font-bold !mx-auto">💪 Protein:</span>
                 <span className="!pl-2">{food.protein}g</span>
                 <span className="font-bold !mx-auto">🍞 Carbs:</span>

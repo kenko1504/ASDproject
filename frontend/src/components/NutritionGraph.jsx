@@ -56,10 +56,10 @@ function NutritionGraph(){
                     console.log('Setting nutrients:', data)
                     const nutrientData = {
                         calories: parseFloat(data.calories) || 0,
-                        protein: parseFloat(data.Protein) || 0,
-                        fat: parseFloat(data.Fat) || 0,
-                        carbohydrates: parseFloat(data.Carbohydrate) || 0,
-                        sodium: parseFloat(data.Sodium) || 0
+                        protein: parseFloat(data.protein) || 0,
+                        fat: parseFloat(data.fat) || 0,
+                        carbohydrates: parseFloat(data.carbohydrate) || 0,
+                        sodium: parseFloat(data.sodium) || 0
                     }
                     setNutrients(nutrientData)
                     console.log('Nutrients set:', nutrientData)
