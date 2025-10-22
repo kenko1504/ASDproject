@@ -47,7 +47,7 @@ export default function Nutritions() {
         {meals.length > 0 ? meals.map((meal) => (
           <div key={meal._id} className="meal-card p-4 my-2 rounded-lg">
             <h3 className="meal-type font-semibold">{meal.mealType}</h3>
-            <MealCard className="w-full h-full" Meal={meal} onMealDeleted={handleMealDeleted} isDashboard={true} />
+            <MealCard className="w-full h-full" Meal={meal} onMealDeleted={handleMealDeleted} isDashboard={false} />
           </div>
         )) : (
           <div className="no-meals text-gray-500">No meals found for today.</div>

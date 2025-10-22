@@ -77,7 +77,7 @@ export default function MealCard({ Meal, onMealDeleted, isDashboard = false }) {
                     navigate(`/recipe/${Meal.recipeId}`);
                 }
             }}
-            className={`${isDashboard ? '!m-2 aspect-square h-full' : '!m-8 aspect-square w-1/5'} rounded-lg hover:shadow-lg transition-all relative cursor-pointer transform hover:scale-105 bg-cover bg-center`}
+            className={`${isDashboard ? '!m-2 aspect-square h-full' : '!m-8 aspect-square w-3/5'} rounded-lg hover:shadow-lg transition-all relative cursor-pointer transform hover:scale-105 bg-cover bg-center`}
             style={{
                 backgroundImage: recipeImg ? `url(${recipeImg})` : 'none',
                 backgroundColor: recipeImg ? 'transparent' : '#E5F3DA'

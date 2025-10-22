@@ -14,22 +14,8 @@ function NutritionGraph(){
     const [userTodayMeal, setUserTodayMeal] = useState(null)
     const [userTodayNutrition, setUserTodayNutrition] = useState(null)
 
-    useEffect(() => {
-        console.log('useEffect:', userInfo)
-        console.log('hasFetched:', hasFetched.current)
-        
-        if(!userInfo?.user?.characteristics) {
-            console.log('invalid user characteristics')
-            setLoading(false)
-            return
-        }
 
-        // if (hasFetched.current) {
-        //     console.log('already requested.')
-        //     return
-        // }
-
-        async function getNutritionRequirementsInfo(){
+    async function getNutritionRequirementsInfo(){
             if (abortControllerRef.current) {
                 abortControllerRef.current.abort()
             }
@@ -119,41 +105,41 @@ function NutritionGraph(){
 
         async function getUserTodayNutrition(meals) {
             if (!meals || meals.length === 0) {
-        setUserTodayNutrition({
-            calories: 0,
-            protein: 0,
-            fat: 0,
-            carbohydrates: 0,
-            sodium: 0
-        })
-        return
-    }
-
-    const nutritionTotals = {
-        calories: 0,
-        protein: 0,
-        fat: 0,
-        carbohydrates: 0,
-        sodium: 0
-    }
-
-    meals.forEach(meal => {
-        meal.items.forEach(item => {
-            const ingredient = item.ingredient 
-            if (ingredient) {
-                const multiplier = item.quantity / 100
-
-                nutritionTotals.calories += (parseFloat(ingredient.calories) * multiplier) || 0
-                nutritionTotals.protein += (parseFloat(ingredient.protein) * multiplier) || 0
-                nutritionTotals.fat += (parseFloat(ingredient.fat) * multiplier) || 0
-                nutritionTotals.carbohydrates += (parseFloat(ingredient.carbohydrates) * multiplier) || 0
-                nutritionTotals.sodium += (parseFloat(ingredient.sodium) * multiplier) || 0
+                setUserTodayNutrition({
+                    calories: 0,
+                    protein: 0,
+                    fat: 0,
+                    carbohydrates: 0,
+                    sodium: 0
+                })
+                return
             }
-        })
-    })
 
-    console.log('Total nutrition calculated:', nutritionTotals)
-    setUserTodayNutrition(nutritionTotals)
+            const nutritionTotals = {
+                calories: 0,
+                protein: 0,
+                fat: 0,
+                carbohydrates: 0,
+                sodium: 0
+            }
+
+            meals.forEach(meal => {
+                meal.items.forEach(item => {
+                    const ingredient = item.ingredient 
+                    if (ingredient) {
+                        const multiplier = item.quantity / 100
+
+                        nutritionTotals.calories += (parseFloat(ingredient.calories) * multiplier) || 0
+                        nutritionTotals.protein += (parseFloat(ingredient.protein) * multiplier) || 0
+                        nutritionTotals.fat += (parseFloat(ingredient.fat) * multiplier) || 0
+                        nutritionTotals.carbohydrates += (parseFloat(ingredient.carbohydrates) * multiplier) || 0
+                        nutritionTotals.sodium += (parseFloat(ingredient.sodium) * multiplier) || 0
+                    }
+                })
+            })
+
+            console.log('Total nutrition calculated:', nutritionTotals)
+            setUserTodayNutrition(nutritionTotals)
         }
 
         async function fetchAllData() {
@@ -175,7 +161,21 @@ function NutritionGraph(){
                 setLoading(false)
             }
         }
+        
+    useEffect(() => {
+        console.log('useEffect:', userInfo)
+        console.log('hasFetched:', hasFetched.current)
+        
+        if(!userInfo?.user?.characteristics) {
+            console.log('invalid user characteristics')
+            setLoading(false)
+            return
+        }
 
+        // if (hasFetched.current) {
+        //     console.log('already requested.')
+        //     return
+        // }
         fetchAllData()
         
         return () => {
