@@ -1,17 +1,27 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 
 import { API_BASE_URL } from '../utils/api.js';
 export default function Recommendations() {
+    const userInfo = useContext(AuthContext)
+
     const [activeTab, setActiveTab] = useState("plan");
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [searchError, setSearchError] = useState("");
     const [selectedFoodType, setSelectedFoodType] = useState('Any');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
-    
+    const [recFilter, setRecFilter] = useState("");
+
+    const [nutrients, setNutrients] = useState(null)
+    const [userTodayMeal, setUserTodayMeal] = useState(null)
+    const [userTodayNutrition, setUserTodayNutrition] = useState(null)
+
+    const [recommendSearchResults, setRecommendSearchResults] = useState(null)
+   
 
     const tabs = [
         { id: "plan", label: "Based on Nutritional Goals", icon: "🎯" },
@@ -32,35 +42,46 @@ export default function Recommendations() {
         { id: "vitaminC", label: "Vitamin C Rich" },
     ];
 
+    const nutritionalCategoriesForRecommendations = [
+        { id: "protein", label: "Protein" },
+        { id: "carbohydrates", label: "Carbohydrates" },
+        { id: "fat", label: "Fat" },
+        { id: "calories", label: "Calories" },
+        { id: "sodium", label: "Sodium" },
+    ];
+
     const foodTypes = ['Any', 'Meat', 'Vegetable', 'Fruit', 'Drink', 'Other'];
-    
 
     const toggleFilter = (filterId) => {
         setSelectedFilters((prevFilters) => {
             if (prevFilters.includes(filterId)) {
                 // Deselect if already selected
-                setErrorMessage("");
+                setSearchError("");
                 return prevFilters.filter((id) => id !== filterId);
             } else if (prevFilters.length < 3) {
                 // Select if not already selected and limit is not reached
-                setErrorMessage("");
+                setSearchError("");
                 return [...prevFilters, filterId];
             }
             // Show error message if limit is reached
-            setErrorMessage("You can only select up to 3 filters.");
+            setSearchError("You can only select up to 3 filters.");
             return prevFilters;
         });
     };
 
+    const toggleRecommendationFilter = (filterId) => {
+        setRecFilter(filterId)
+    }
+
     const clearAllFilters = () => {
-        setErrorMessage("");
+        setSearchError("");
         setSelectedFilters([]);
     };
 
     const handleSubmit = async () => {
         try {
             if (selectedFilters.length === 0) {
-                setErrorMessage("Please select at least one filter.");
+                setSearchError("Please select at least one filter.");
                 return;
             }
 
@@ -79,18 +100,218 @@ export default function Recommendations() {
             setSearchResults(data.results || []);
         } catch (error) {
             console.error("Error fetching search results:", error);
-            setErrorMessage("Failed to fetch search results. Please try again.");
+            setSearchError("Failed to fetch search results. Please try again.");
         } finally {
             setIsLoading(false);
         }
     };
 
+    async function getNutritionRequirementsInfo(){
+            // if (abortControllerRef.current) {
+            //     abortControllerRef.current.abort()
+            // }
+
+            // abortControllerRef.current = new AbortController()
+
+            try {
+                setIsLoading(true)
+                setErrorMessage(null)
+                
+                const body = {
+                    characteristics: userInfo.user.characteristics,
+                    nutritionPlan: userInfo.user.nutritionPlan
+                }
+
+                console.log('API request:', body)
+                
+                const searchResult = await fetch(`${API_BASE_URL}/nutrition/dailyReq`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Request-ID': `${Date.now()}-${Math.random()}`
+                    },
+                    body: JSON.stringify(body),
+                    // signal: abortControllerRef.current.signal
+                })
+                console.log(searchResult)
+                
+                if (!searchResult.ok) {
+                    throw new Error(`HTTP error! status: ${searchResult.status}`)
+                }
+                
+                const data = await searchResult.json()
+                console.log('API response:', data)
+                
+                if(data){
+                    console.log('Setting nutrients:', data)
+                    const nutrientData = {
+                        calories: parseFloat(data.calories) || 0,
+                        protein: parseFloat(data.Protein) || 0,
+                        fat: parseFloat(data.Fat) || 0,
+                        carbohydrates: parseFloat(data.Carbohydrate) || 0,
+                        sodium: parseFloat(data.Sodium) || 0
+                    }
+                    setNutrients(nutrientData)
+                    console.log('Nutrients set:', nutrientData)
+                }
+                return data
+            } catch(error){
+                if (error.name === 'AbortError') {
+                    console.log('aborted')
+                    return null
+                }
+                console.error("getNutritionInfo() error:", error)
+                setErrorMessage(error.message)
+                return null
+            }
+        }
+
+        async function getUserTodayMeal() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/meal/${userInfo.user._id}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${userInfo.token}`
+                    }
+                })
+                
+                if (response.ok) {
+                    const data = await response.json()
+                    setUserTodayMeal(data)
+                    return data
+                } else {
+                    console.error('Error fetching user today meal:', response.status)
+                    setUserTodayMeal(null)
+                    return null
+                }
+            } catch (error) {
+                console.error('Error fetching user today meal:', error)
+                setUserTodayMeal(null)
+                return null
+            }
+        }
+
+        async function getUserTodayNutrition(meals) {
+            if (!meals || meals.length === 0) {
+                setUserTodayNutrition({
+                    calories: 0,
+                    protein: 0,
+                    fat: 0,
+                    carbohydrates: 0,
+                    sodium: 0
+                })
+                return
+            }
+
+            const nutritionTotals = {
+                calories: 0,
+                protein: 0,
+                fat: 0,
+                carbohydrates: 0,
+                sodium: 0
+            }
+
+            meals.forEach(meal => {
+                meal.items.forEach(item => {
+                    const ingredient = item.ingredient 
+                    if (ingredient) {
+                        const multiplier = item.quantity / 100
+
+                        nutritionTotals.calories += (parseFloat(ingredient.calories) * multiplier) || 0
+                        nutritionTotals.protein += (parseFloat(ingredient.protein) * multiplier) || 0
+                        nutritionTotals.fat += (parseFloat(ingredient.fat) * multiplier) || 0
+                        nutritionTotals.carbohydrates += (parseFloat(ingredient.carbohydrates) * multiplier) || 0
+                        nutritionTotals.sodium += (parseFloat(ingredient.sodium) * multiplier) || 0
+                    }
+                })
+            })
+
+            console.log('Total nutrition calculated:', nutritionTotals)
+            setUserTodayNutrition(nutritionTotals)
+
+            return nutritionTotals
+        }
+
+        async function getRecommendedUserFoods(nutritionReqs, todayNutritionTotals){
+            if (!nutritionReqs || !todayNutritionTotals) {
+                console.error('Missing nutrition data:', { nutritionReqs, todayNutritionTotals })
+                return
+            }
+            
+            const criteria = {
+                calories: Math.max(0, nutritionReqs.calories - todayNutritionTotals.calories),
+                protein: Math.max(0, nutritionReqs.protein - todayNutritionTotals.protein),
+                fat: Math.max(0, nutritionReqs.fat - todayNutritionTotals.fat),
+                carbohydrates: Math.max(0, nutritionReqs.carbohydrates - todayNutritionTotals.carbohydrates),
+                sodium: Math.max(0, nutritionReqs.sodium - todayNutritionTotals.sodium)
+            }
+            
+            console.log("Search Criteria: ", criteria)
+
+            try{
+                if(criteria){
+                    const result = await fetch(`${API_BASE_URL}/recommendations/${userInfo.user._id}/nutritionBasedSearch`, {
+                    method: "POST",
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(criteria)
+                    }).then(result => {
+                        console.log(result)
+                       setRecommendSearchResults(result.json())
+                    })
+
+                    console.log(result)
+                    return result
+                }else{
+                    console.log("Error: invalid criteria", errorMessage)
+                }
+            }catch(error){
+                console.log("getRecommendedUserFoods() error", error)
+            }
+        }
+        async function fetchAllData() {
+            try {
+                setIsLoading(true)
+                setErrorMessage(null)
+
+                const nutrientsData = await getNutritionRequirementsInfo()
+                const mealsData = await getUserTodayMeal()
+                
+                let todayNutritionData
+                if (mealsData && mealsData.length > 0) {
+                    todayNutritionData = await getUserTodayNutrition(mealsData)  
+                } else {
+                    todayNutritionData = {
+                        calories: 0,
+                        protein: 0, 
+                        carbohydrates: 0,
+                        fat: 0,
+                        sodium: 0
+                    }
+                    setUserTodayNutrition(todayNutritionData)
+                }
+                
+                if (nutrientsData && todayNutritionData) {
+                    await getRecommendedUserFoods(nutrientsData, todayNutritionData)
+                }
+            } catch (error) {
+                console.error('Error:', error)
+                setErrorMessage(error.message)
+            } finally {
+                setIsLoading(false)
+            }
+        }
+
+        useEffect(() => {
+            fetchAllData()
+        }, [])
     return (
         <div className="container !mx-auto !p-4">
             {/* Header Section */}
             <div >
                 <h1 className="text-3xl font-bold text-center !mb-4">Food Recommendations</h1>
-                
                 {/* Tab Navigation */}
                 <div className="flex max-w-[calc(100vw)] !mx-auto">
                     {tabs.map((tab) => (
@@ -115,7 +336,65 @@ export default function Recommendations() {
                 {/* Tab Content */}
                 {activeTab === "plan" && (
                     <div className="p-6">
-                        <h1>No Nutritional Plan Found</h1>
+                        
+                        <h4 className="text-center font-medium text-gray-700 !mb-3">Sort by Nutrition Fills</h4>
+                            <div className="grid grid-cols-5 gap-2 !mb-2 !pr-5 !pl-15">
+                                {nutritionalCategoriesForRecommendations.map((filter) => (
+                                    <button
+                                        key={filter.id}
+                                        onClick={() => toggleRecommendationFilter(filter.id)}
+                                        className={`!h-7 rounded-lg border text-sm font-medium transition-colors ${
+                                            recFilter.includes(filter.id)
+                                                ? 'bg-blue-500 text-white border-blue-500'
+                                                : 'bg-white text-gray-700 border-gray-200 hover:bg-gray-100'
+                                        }`}
+                                    >
+                                        {filter.label}
+                                    </button>
+                                ))}
+
+                                {selectedFilters.length > 0 && (
+                                    <button 
+                                        onClick={clearAllFilters}
+                                        className="bg-red-500 text-white !h-7 rounded-lg transition-colors hover:bg-red-700 hover:text-gray-200"
+                                    >
+                                        Clear All
+                                    </button>
+                                )}
+                            </div>
+                        
+                        
+                        {isLoading && (
+                            <div className="text-center text-gray-500">
+                                <p>Loading recommendations...</p>
+                            </div>
+                        )}
+
+                        {errorMessage && !isLoading && (
+                            <div className="text-center text-red-500">
+                                <p>{errorMessage}</p>
+                            </div>
+                        )}
+
+                        {!isLoading && !errorMessage && recommendSearchResults && recommendSearchResults.length > 0 && (
+                            <div className="grid grid-cols-3 gap-4">
+                                {recommendSearchResults[recFilter].map((food, index) => (
+                                    <FoodResultCard key={index} food={food}/>
+                                ))}
+                            </div>
+                        )}
+
+                        {!isLoading && !errorMessage && recommendSearchResults && recommendSearchResults.length === 0 && (
+                            <div className="text-center text-gray-500">
+                                <p>No recommendations available. You've met your nutritional goals!</p>
+                            </div>
+                        )}
+
+                        {!isLoading && !errorMessage && !recommendSearchResults && (
+                            <div className="text-center text-gray-500">
+                                <p>Loading your personalized recommendations...</p>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -174,8 +453,8 @@ export default function Recommendations() {
                                             </div>
                                             <div className="h-5">
                                                 {/* More than three filter error message */}
-                                                {errorMessage && (
-                                                    <p className="text-center text-red-500 text-sm mt-2">{errorMessage}</p>
+                                                {searchError && (
+                                                    <p className="text-center text-red-500 text-sm mt-2">{searchError}</p>
                                                 )}
                                             </div>
                                         </div>

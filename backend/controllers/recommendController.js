@@ -87,3 +87,51 @@ export const addToLatestGroceryList = async (req, res) => {
         return res.status(500).json({ error: "An error occurred while adding recommendation" });
     }
 };
+
+export const getListByNutritions = async(req, res) => {
+    const lackNutrition = req.body
+
+    if(lackNutrition.calories == 0 && lackNutrition.protein == 0 && lackNutrition.carbohydrates == 0 && lackNutrition.sodium == 0 && lackNutrition.fat == 0){
+        return res.status(200).json({message: "You reached to the nutrition goal today!"})
+    }
+    try{
+        if(lackNutrition){
+            const [proteinList, caloriesList, fatList, sodiumList, carbList] = await Promise.all([
+                FoodNutrition.find({
+                    protein: { $lte: lackNutrition.protein }
+                }).sort({ protein: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    calories: { $lte: lackNutrition.calories }
+                }).sort({ calories: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    fat: { $lte: lackNutrition.fat }
+                }).sort({ fat: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    sodium: { $lte: lackNutrition.sodium }
+                }).sort({ sodium: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    carbohydrates: { $lte: lackNutrition.carbohydrates }
+                }).sort({ carbohydrates: -1 }).limit(20).lean()
+            ]);
+
+            return res.status(200).json({
+                caloriesList: caloriesList,
+                proteinList: proteinList,
+                sodiumList: sodiumList,
+                carbList: carbList,
+                fatList: fatList
+            })
+        }else{
+            return res.status(400).json({error: "Error retrieving Nutrition Data"})
+        }
+    }catch(error){
+        console.log(error)
+        throw error
+    }
+    
+
+}

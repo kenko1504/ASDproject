@@ -4,10 +4,15 @@ const mealSchema = new mongoose.Schema({
     userId: {type: String},
     date: { type: Date, default: Date.now },
     mealType: { type:String, enum: ['breakfast', 'lunch', 'dinner'], required: true },
+    recipeId: { type: mongoose.Schema.Types.ObjectId, ref: "Recipe" },
     items: [
         {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Item",
+            ingredient: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "Food",
+            },
+            quantity: Number,
+            measurementType: String
         },
     ]
 });

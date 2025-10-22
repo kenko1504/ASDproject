@@ -3,48 +3,65 @@ import FoodNutrition from "../models/foodNutrition.js";
 
 //get daily nutrition requirements based on biometric data
 export const getDailyNutritionRequirements = async (req, res) => {
-    const userBiometricInfo = req.body.characteristics; // Get user biometric information from request body
+    const userBiometricInfo = req.body.characteristics;
     const nutritionPlan = req.body.nutritionPlan;
     try{
         const nutritionRequirements = await calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
-        console.log(nutritionRequirements)
         if(!nutritionRequirements){
-            return res.status(400).json({ message: "Unable to calculate nutrition requirements" });
+            return res.status(500).json({ message: "Unable to calculate nutrition requirements" });
         }
-        const macronutrientsTable = nutritionRequirements.macronutrients_table["macronutrients-table"]
-        const mineralsTable = nutritionRequirements.minerals_table["essential-minerals-table"]
-        const targetNutrients = ["carbohydrate", "protein", "fat"]
-        const targetMinerals = ["sodium"]
-        
-        const filteredData = {}
-        
+        console.log('nutritionRequirements:', nutritionRequirements);
+
+        const caloriesRaw = nutritionRequirements?.BMI_EER?.['Estimated Daily Caloric Needs'] ?? '';
+        const caloriesStr = String(caloriesRaw);
+        console.log('Calculated calories:', caloriesStr);
+
+        const macronutrientsTable = nutritionRequirements?.macronutrients_table?.["macronutrients-table"] ?? [];
+        const mineralsTable = nutritionRequirements?.minerals_table?.["essential-minerals-table"] ?? [];
+        const targetNutrients = ["carbohydrate", "protein", "fat"];
+        const targetMinerals = ["sodium"];
+
+        const filteredData = {};
+        console.log("Filtering data...", targetNutrients.map(n => n.toLowerCase()));
+
+        if (caloriesStr) {
+            // "2,482 kcal/day" -> "2482"
+            const cal = caloriesStr.split(" ")[0].replace(/,/g, '');
+            if (!Number.isNaN(Number(cal))) filteredData["calories"] = cal;
+        }
+
         macronutrientsTable.forEach((row, index) => {
-            if (index != 0 && targetNutrients.includes(row[0])) {
-                filteredData[row[0]] = row[1];
+            if (!row || index === 0) return;
+            const key = String(row[0] ?? '').toLowerCase();
+            if (targetNutrients.includes(key)) {
+                const val = String(row[1] ?? '').split(" ")[0].replace(/,/g, '');
+                filteredData[row[0]] = val;
             }
         });
 
         mineralsTable.forEach((row, index) => {
-            if (index != 0 && targetMinerals.includes(row[0])) {
-                filteredData[row[0]] = row[1];
+            if (!row || index === 0) return;
+            const key = String(row[0] ?? '').toLowerCase();
+            if (targetMinerals.includes(key)) {
+                const val = String(row[1] ?? '').split(" ")[0].replace(/,/g, '');
+                filteredData[row[0]] = val;
             }
         });
 
-        console.log(filteredData)
+        console.log(filteredData);
         res.status(200).json(filteredData);
     }catch(error){
-        res.status(500).json({ message: error.message });
+        console.error(error.response?.data || error.message || error);
+        res.status(500).json({ message: error.response?.data || error.message || 'Server error' });
     }
 };
 
-
 // calculate nutrition requirements
-export const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
-    const { gender, age, weight, height } = characteristics;    
-    const modifier = nutritionPlan || 'maintenance'
-    let nutritionPlanForQuery = ""
+const calculateNutritionRequirements = async (characteristics, nutritionPlan) => {
+    const { gender, age, weight, height } = characteristics || {};
+    const modifier = nutritionPlan || 'maintenance';
+    let nutritionPlanForQuery = "";
 
-    // set multiplier by nutrition plan
     switch(modifier){
         case 'weight_loss':
             nutritionPlanForQuery = 'Low Active';
@@ -60,45 +77,42 @@ export const calculateNutritionRequirements = async (characteristics, nutritionP
             break;
     }
 
-    console.log(nutritionPlanForQuery)
-
     try{
         const params = {
-        measurement_units: 'met',
-        sex: gender.toLowerCase(),
-        age_value: age,
-        age_type: 'yrs',
-        cm: height,
-        kilos: weight,
-        activity_level: nutritionPlanForQuery
+            measurement_units: 'met',
+            sex: (gender || '').toLowerCase(),
+            age_value: age,
+            age_type: 'yrs',
+            cm: height,
+            kilos: weight,
+            activity_level: nutritionPlanForQuery
         };
-        const nutritionRequirements = await axios.get(
+        const response = await axios.get(
             `https://${process.env.NUTRITION_API_HOST}/api/nutrition-info`,
             {
-                params: params,
-                headers: {       
+                params,
+                headers: {
                     'x-rapidapi-host': process.env.NUTRITION_API_HOST,
                     'x-rapidapi-key': process.env.NUTRITION_API_KEY
-                }
+                },
+                timeout: 10000
             }
-        )
-        console.log(nutritionRequirements.data)
-        return nutritionRequirements.data
+        );
+        return response.data;
     }catch(error){
-        console.log(error)
+        console.error('Nutrition API error:', error.response?.data || error.message || error);
+        throw error; 
     }
 }
 
 // Get All Foods Nutrition Data
 export const getAllNutrition = async (req, res) => {
     try {
-        const items = await Nutrition.find();
+        const items = await FoodNutrition.find();
         res.json(items);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
-    const items = await FoodNutrition.find();
-    res.json(items);
 };
 
 // Get Specific Food Nutrition Data
