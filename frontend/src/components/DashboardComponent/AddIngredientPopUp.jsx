@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 
+import { API_BASE_URL } from '../../utils/api.js';
 export default function AddIngredientPopUp({ onClose }) {
 
   // use state for form
@@ -45,7 +46,7 @@ export default function AddIngredientPopUp({ onClose }) {
 
   try {
     const token = localStorage.getItem("token");
-    const res = await fetch("http://localhost:5000/ingredients", {
+    const res = await fetch(`${API_BASE_URL}/ingredients`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`

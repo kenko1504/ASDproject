@@ -4,19 +4,18 @@ import GroceryItem from "../models/groceryItem.js";
 
 export const createList = async (req, res) => {
   try {
-    const { UID } = req.params; // User ID from the URL
-    const user = await User.findById(UID);
+    const { uid } = req.params; // User ID from the URL
+    const user = await User.findById(uid);
     if (!user) {
       return res.status(404).json({ error: "User not found" }); // User error handling
     }
     const { name, date, note, status } = req.body;
-    const existingList = await GroceryList.findOne({ name, user: UID });
+    const existingList = await GroceryList.findOne({ name, user: uid });
     if (existingList) {
       return res.status(400).json({ error: "A grocery list with this name already exists." });
     }
-    const list = new GroceryList({ name, user: UID, date, note, status });
+    const list = new GroceryList({ name, user: uid, date, note, status });
     await list.save(); // Save the new grocery list to the database
-    console.log("Grocery List created:", list);
     
     res.status(201).json(list);
   } catch (err) {
@@ -27,15 +26,13 @@ export const createList = async (req, res) => {
 // uses User ID to get all their grocery lists
 export const getLists = async (req, res) => {
   try {
-    const { UID } = req.params;
-    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    const lists = await GroceryList.find({ user: UID }); // Find all grocery lists for the user
+    const { uid } = req.params;
+    // const user = await User.findById(uid).populate("groceryList"); // Populate the groceryLists field with actual list documents
+    const lists = await GroceryList.find({ user: uid }); // Find all grocery lists for the user
     if (!lists) {
       return res.status(404).json({ error: "No grocery lists found for this user." });
     }
     res.status(200).json(lists);
-    console.log("Grocery Lists fetched:", lists);
-    console.log("uid:", UID);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -44,9 +41,14 @@ export const getLists = async (req, res) => {
 // Delete grocery list from user
 export const deleteList = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const { uid, gid } = req.params; // User ID and Grocery List ID from the URL
     
-    await GroceryList.findByIdAndDelete(GL_ID); // Delete the grocery list from the database
+    // Verify the list belongs to the user before deleting
+    const deletedList = await GroceryList.findOneAndDelete({ _id: gid, user: uid });
+    
+    if (!deletedList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
 
     res.status(200).json({ message: "Grocery list deleted successfully" });
   } catch (err) {
@@ -56,10 +58,23 @@ export const deleteList = async (req, res) => {
 
 export const updateList = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
+    const { gid, uid } = req.params; // Grocery List ID and User ID from the URL
     const { name, date, note, status } = req.body;
+    
+    // Verify the list belongs to the user
+    const list = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!list) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+    
+    // Check for duplicate names (excluding current list)
+    const existingList = await GroceryList.findOne({ name, user: uid, _id: { $ne: gid } });
+    if (existingList) {
+      return res.status(400).json({ error: "A grocery list with this name already exists." });
+    }
+    
     const updatedList = await GroceryList.findByIdAndUpdate(
-      GL_ID,
+      gid,
       { name, date, note, status },
       { new: true } // Return the updated document
     );
@@ -71,18 +86,20 @@ export const updateList = async (req, res) => {
 
 export const createItem = async (req, res) => {
   try {
-    const { GL_ID } = req.params; // Grocery List ID from the URL
-    const list = await GroceryList.findById(GL_ID);
+    const { uid, gid } = req.params; // User ID and Grocery List ID from the URL
+    
+    // Verify the list exists and belongs to the user
+    const list = await GroceryList.findOne({ _id: gid, user: uid });
     if (!list) {
-      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
     }
+    
     const { name, quantity, category } = req.body;
     if (quantity < 0) {
       return res.status(400).json({ error: "Quantity cannot be negative." });
     }
-    const item = new GroceryItem({ name, quantity, category, groceryList: GL_ID });
+    const item = new GroceryItem({ name, quantity, category, groceryList: gid });
     await item.save(); // Save the new grocery item to the database
-    console.log("Grocery Item created:", item);
     res.status(201).json(item);
   } catch (err) {
     if (err.code === 11000) { // Duplicate item name error
@@ -95,19 +112,16 @@ export const createItem = async (req, res) => {
 // uses User ID to get all their grocery items
 export const getItems = async (req, res) => {
   try {
-    const { GL_ID } = req.params;
-    const groceryList = await GroceryList.findById(GL_ID);
+    const { uid, gid } = req.params;
+    
+    // Verify the list exists and belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
     if (!groceryList) {
-      return res.status(404).json({ error: "Grocery list not found" }); // Grocery list error handling
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
     }
-    // const user = await User.findById(UID).populate("groceryList"); // Populate the groceryLists field with actual list documents
-    const items = await GroceryItem.find({ groceryList: GL_ID }); // Find all grocery items for the user
-    if (!items) {
-      return res.status(404).json({ error: "No grocery items found for this user." });
-    }
+    
+    const items = await GroceryItem.find({ groceryList: gid }); // Find all grocery items for the list
     res.status(200).json({ items, groceryList });
-    console.log("Grocery Items fetched:", items);
-    console.log("GL_ID:", GL_ID);
   } catch (err) {
     res.status(500).json({ error: err.message});
   }
@@ -116,10 +130,23 @@ export const getItems = async (req, res) => {
 
 export const updateItem = async (req, res) => {
   try {
-    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+    const { uid, gid, itemID } = req.params; // User ID, Grocery List ID, and Item ID from the URL
+    
+    // Verify the list belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!groceryList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+    
+    // Verify the item belongs to the list
+    const existingItem = await GroceryItem.findOne({ _id: itemID, groceryList: gid });
+    if (!existingItem) {
+      return res.status(404).json({ error: "Item not found in this grocery list" });
+    }
+    
     const { name, quantity, category, checked } = req.body;
     const updatedItem = await GroceryItem.findByIdAndUpdate(
-      ITEM_ID,
+      itemID,
       { name, quantity, category, checked },
       { new: true } // Return the updated document
     );
@@ -129,14 +156,81 @@ export const updateItem = async (req, res) => {
   }
 };
 
-// Delete grocery list from user
+// Delete grocery item from user
 export const deleteItem = async (req, res) => {
   try {
-    const { ITEM_ID } = req.params; // Grocery Item ID from the URL
+    const { uid, gid, itemID } = req.params; // User ID, Grocery List ID, and Item ID from the URL
 
-    await GroceryItem.findByIdAndDelete(ITEM_ID); // Delete the grocery item from the database
+    // Verify the list belongs to the user
+    const groceryList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!groceryList) {
+      return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+    }
+
+    // Delete the item only if it belongs to the specified list
+    const deletedItem = await GroceryItem.findOneAndDelete({ _id: itemID, groceryList: gid });
+    
+    if (!deletedItem) {
+      return res.status(404).json({ error: "Item not found in this grocery list" });
+    }
 
     res.status(200).json({ message: "Grocery item deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const copyList = async (req, res) => {
+  try {
+    const { uid, gid } = req.params; // User ID and grocery list ID from the URL
+    const { name, date, note } = req.body; // New name for the copied list
+    
+    // Validate that the user exists
+    const user = await User.findById(uid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    // Validate that the grocery list exists and belongs to the user
+    const originalList = await GroceryList.findOne({ _id: gid, user: uid });
+    if (!originalList) {
+      return res.status(404).json({ error: "Grocery list not found or unauthorized access" });
+    }
+    
+    // Check if a list with the new name already exists
+    const existingList = await GroceryList.findOne({ name, user: uid });
+    if (existingList) {
+      return res.status(400).json({ error: "A grocery list with this name already exists." });
+    }
+    
+    // Create a new grocery list (copy)
+    const newList = new GroceryList({
+      name: name,
+      user: uid,
+      date: date || new Date(),
+      note: note || originalList.note,
+      status: 'active'
+    });
+    await newList.save();
+    
+    // Get all items from the original list
+    const originalItems = await GroceryItem.find({ groceryList: gid });
+    
+    // Create copies of all items for the new list
+    const newItems = originalItems.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      category: item.category,
+      checked: false, // Reset checked status for new list
+      groceryList: newList._id
+    }));
+    
+    // Insert all new items
+    if (newItems.length > 0) {
+      await GroceryItem.insertMany(newItems);
+    }
+    
+    res.status(201).json(newList);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

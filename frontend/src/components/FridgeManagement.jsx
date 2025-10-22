@@ -4,6 +4,7 @@ import {Routes, Route, useNavigate} from "react-router-dom";
 import UpdateItem from "./UpdateItem.jsx";
 import "../CSS/index.css";
 
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function FridgeManagement() {
     const [items, setItems] = useState([]);
@@ -20,7 +21,7 @@ export default function FridgeManagement() {
         try {
             const token = localStorage.getItem("token");
             if (!token) return setItems([]);
-            const res = await fetch("http://localhost:5000/ingredients", {
+            const res = await fetch(`${API_BASE_URL}/ingredients`, {
                 headers: {Authorization: `Bearer ${token || ""}`},
             });
             if (res.status === 401 || res.status === 403) {
@@ -72,7 +73,7 @@ export default function FridgeManagement() {
                 return;
             }
             const token = localStorage.getItem("token");
-            const res = await fetch(`http://localhost:5000/ingredients/${id}`, {
+            const res = await fetch(`${API_BASE_URL}/ingredients/${id}`, {
                 method: "DELETE",
                 headers: {Authorization: `Bearer ${token || ""}`}
             });

@@ -2,9 +2,11 @@
   "name": "asdproject",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "node backend/server.js",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd backend && npm start",
-    "client": "cd frontend && npm run dev"
+    "client": "cd frontend && npm run dev",
+    "build": "cd frontend && npm run build"
   },
   "dependencies": {
     "chai": "^6.0.1",
@@ -15,5 +17,5 @@
   },
   "devDependencies": {
     "concurrently": "^8.2.2"
-  }  
+  }
 }

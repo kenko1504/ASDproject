@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { authenticatedFetch } from "../utils/api.js";
+import { authenticatedFetch, API_BASE_URL } from "../utils/api.js";
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
@@ -18,7 +18,6 @@ import R7Img from "../assets/recipeImages/Recipe7.jpg";
 import R8Img from "../assets/recipeImages/Recipe8.jpg";
 import R9Img from "../assets/recipeImages/Recipe9.jpg";
 import R10Img from "../assets/recipeImages/Recipe10.jpg";
-
 
 
 export default function EditRecipe() {
@@ -63,7 +62,7 @@ export default function EditRecipe() {
     const fetchRecipe = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`);
+            const response = await fetch(`${API_BASE_URL}/recipes/${recipeId}`);
 
             if (response.ok) {
                 const recipe = await response.json();
@@ -120,7 +119,7 @@ export default function EditRecipe() {
         }
         
         try {
-            const response = await fetch("http://localhost:5000/Food");
+            const response = await fetch(`${API_BASE_URL}/Food`);
             const data = await response.json();
             
             // Filter results based on search term
@@ -240,7 +239,7 @@ export default function EditRecipe() {
                 instructions: instructions.filter(instruction => instruction.trim() !== '')
             };
 
-            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/${recipeId}`, {
                 method: 'PUT',
                 body: JSON.stringify(recipeData)
             });

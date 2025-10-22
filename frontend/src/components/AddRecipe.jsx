@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
-import { authenticatedFetch } from "../utils/api.js";
+import { authenticatedFetch, API_BASE_URL } from "../utils/api.js";
 import { getUserRoleFromToken } from "../contexts/AuthContext.jsx";
 
 import uploadImg from "../assets/Upload.svg";
@@ -66,7 +66,7 @@ export default function AddRecipe() {
         }
         
         try {
-            const response = await fetch("http://localhost:5000/Food");
+            const response = await fetch(`${API_BASE_URL}/Food`);
             const data = await response.json();
             
             // Filter results based on search term
@@ -186,7 +186,7 @@ export default function AddRecipe() {
                 instructions: instructions.filter(instruction => instruction.trim() !== '')
             };
 
-            const response = await authenticatedFetch('http://localhost:5000/recipes', {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes`, {
                 method: 'POST',
                 body: JSON.stringify(recipeData)
             });
@@ -218,7 +218,7 @@ export default function AddRecipe() {
             // Pass the correct imported image URLs to the backend
             const imageUrls = defaultImages.map(img => img.path);
 
-            const response = await authenticatedFetch('http://localhost:5000/recipes/seed', {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/seed`, {
                 method: 'POST',
                 body: JSON.stringify({ imageUrls })
             });
@@ -248,7 +248,7 @@ export default function AddRecipe() {
 
         setIsDeleting(true);
         try {
-            const response = await authenticatedFetch('http://localhost:5000/recipes/generated', {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/generated`, {
                 method: 'DELETE'
             });
 
@@ -277,7 +277,7 @@ export default function AddRecipe() {
 
         setIsCleaning(true);
         try {
-            const response = await authenticatedFetch('http://localhost:5000/recipes/cleanup-orphaned', {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/cleanup-orphaned`, {
                 method: 'POST'
             });
 

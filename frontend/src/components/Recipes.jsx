@@ -5,6 +5,7 @@ import searchImg from "../assets/search-svgrepo-com.svg";
 import filterImg from "../assets/filter-svgrepo-com.svg";
 import { useNavigate } from "react-router-dom";
 
+import { API_BASE_URL } from '../utils/api.js';
 
 export default function Recipes() {
   const { user } = useContext(AuthContext);
@@ -60,7 +61,7 @@ export default function Recipes() {
   // Fetch all recipes from backend
   const fetchRecipes = async () => {
     try {
-      const response = await fetch("http://localhost:5000/recipes");
+      const response = await fetch(`${API_BASE_URL}/recipes`);
       const data = await response.json();
       setRecipes(data);
       setFilteredRecipes(data);
@@ -79,7 +80,7 @@ export default function Recipes() {
     }
 
     try {
-      const response = await fetch(`http://localhost:5000/users/${user._id}/saved-recipes`);
+      const response = await fetch(`${API_BASE_URL}/users/${user._id}/saved-recipes`);
       if (response.ok) {
         const data = await response.json();
         setSavedRecipes(data);

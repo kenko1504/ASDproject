@@ -1,0 +1,103 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '18.x'
+
+stages:
+  - stage: Build
+    displayName: 'Build Application'
+    jobs:
+      - job: BuildApp
+        displayName: 'Build Frontend and Backend'
+        steps:
+          # Install Node.js
+          - task: NodeTool@0
+            inputs:
+              versionSpec: $(nodeVersion)
+            displayName: 'Install Node.js'
+
+          # Install Backend dependencies
+          - script: |
+              npm install
+            workingDirectory: backend
+            displayName: 'Install Backend Dependencies'
+
+          # Install Frontend dependencies
+          - script: |
+              npm install
+            workingDirectory: frontend
+            displayName: 'Install Frontend Dependencies'
+
+          # Build the Frontend project
+          - script: |
+              npm run build
+            workingDirectory: frontend
+            displayName: 'Build Frontend Project'
+
+          # Run Backend tests
+          - script: |
+              npm test
+            workingDirectory: backend
+            displayName: 'Run Backend Tests'
+
+          # Copy Backend files to artifact staging directory
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: 'backend'
+              contents: |
+                **
+                !node_modules/**
+                !test/**
+              targetFolder: '$(Build.ArtifactStagingDirectory)/backend'
+            displayName: 'Copy Backend Files'
+
+          # Copy Frontend build files to artifact staging directory
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: 'frontend/dist'
+              contents: '**'
+              targetFolder: '$(Build.ArtifactStagingDirectory)/frontend'
+            displayName: 'Copy Frontend Build Files'
+
+          # Copy package.json files
+          - task: CopyFiles@2
+            inputs:
+              sourceFolder: '$(Build.SourcesDirectory)'
+              contents: |
+                package.json
+                backend/package.json
+                frontend/package.json
+              targetFolder: '$(Build.ArtifactStagingDirectory)'
+            displayName: 'Copy Package Files'
+
+          # Publish pipeline artifact
+          - task: PublishPipelineArtifact@1
+            inputs:
+              artifactName: 'nodejs-app'
+              targetPath: '$(Build.ArtifactStagingDirectory)'
+            displayName: 'Publish Pipeline Artifact'
+
+  - stage: Deploy
+    displayName: 'Deploy Application'
+    dependsOn: Build
+    condition: succeeded()
+    jobs:
+      - deployment: DeployApp
+        displayName: 'Deploy to Production'
+        environment: 'production'
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - task: DownloadPipelineArtifact@2
+                  inputs:
+                    artifactName: 'nodejs-app'
+                    targetPath: '$(Pipeline.Workspace)/nodejs-app'
+                  displayName: 'Download Build Artifacts'
+
+                # Add your deployment steps here
+                # For example, deploy to Azure App Service, AWS, or other hosting platforms

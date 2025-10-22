@@ -15,6 +15,10 @@ const userSchema = new mongoose.Schema({
         weight: { type: Number },
         height: { type: Number },
     },
+    // TOTP/2FA fields
+    totpSecret: { type: String, default: null },
+    totpEnabled: { type: Boolean, default: false },
+    backupCodes: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 });

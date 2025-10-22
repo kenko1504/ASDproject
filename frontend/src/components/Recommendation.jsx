@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function Recommendations() {
     const [activeTab, setActiveTab] = useState("plan");
     const [searchTerm, setSearchTerm] = useState("");
@@ -70,7 +71,7 @@ export default function Recommendations() {
                 foodType: selectedFoodType
             };
 
-            const url = `http://localhost:5000/recommendations/search?query=${encodeURIComponent(JSON.stringify(queryParams))}`;
+            const url = `${API_BASE_URL}/recommendations/search?query=${encodeURIComponent(JSON.stringify(queryParams))}`;
 
             const response = await axios.get(url);
             const data = response.data;
@@ -254,7 +255,7 @@ function FoodResultCard({ food }) {
 
     const handleAddToGroceryList = async () => {
         try {
-            const response = await axios.post(`http://localhost:5000/recommendations/${user._id}/grocery`,{
+            const response = await axios.post(`${API_BASE_URL}/recommendations/${user._id}/grocery`,{
                 food: food
             });
             if (response.status === 200) {

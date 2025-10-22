@@ -6,8 +6,8 @@ import Nutrition from "./components/Nutritions.jsx";
 import WasteBudget from "./components/WasteBudget.jsx";
 import Settings from "./components/Settings.jsx";
 import Sidebar from "./components/DashboardComponent/Sidebar.jsx";
-import GroceryList from "./components/GroceryList.jsx";
-import ViewGroceryList from "./components/ViewGroceryItems.jsx";
+import GroceryList from "./components/GroceryList/GroceryListsDashboard.jsx";
+import ViewGroceryList from "./components/GroceryList/IndividualGroceryList.jsx";
 import AddRecipe from "./components/AddRecipe.jsx";
 import ViewRecipe from "./components/ViewRecipe.jsx";
 import EditRecipe from "./components/EditRecipe.jsx";
@@ -27,7 +27,7 @@ export default function App() {
                     <Route path="/fridge/*" element={<FridgeManagement/>} />
                     <Route path="/nutrition" element={<Nutrition />} />
                     <Route path="/grocery-list" element={<GroceryList />} />
-                    <Route path="/grocery-list/view/:id" element={<ViewGroceryList />} />
+                    <Route path="/grocery-list/view/:gid/:status" element={<ViewGroceryList />} />
                     <Route path="/recommendations" element={<Recommendations />} />
                     <Route path="/waste-budget" element={<WasteBudget />} />
                     <Route path="/wasteBudget" element={<WasteBudget />} />
