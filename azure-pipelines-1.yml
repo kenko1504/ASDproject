@@ -60,7 +60,6 @@ steps:
   # Publish pipeline artifact
   - task: PublishBuildArtifacts@1
     displayName: 'Publish artifact'
-    displayName: 'Publish artifact'
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'release'
