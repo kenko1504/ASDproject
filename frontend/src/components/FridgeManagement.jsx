@@ -1,5 +1,6 @@
 import {useState, useEffect, useCallback, useMemo} from "react";
 import {Routes, Route, useNavigate} from "react-router-dom";
+import SearchIcon from "../assets/grocerySearchIcon.svg";
 // import AddItem from "./AddItem.jsx";
 import UpdateItem from "./UpdateItem.jsx";
 import "../CSS/index.css";
@@ -154,28 +155,24 @@ export default function FridgeManagement() {
                         padding: "0 16px"
                     }}
                 >
-                    <h2 className={"justify-self-center text-3xl font-bold text-gray-800"} style={{
-                        textAlign: "center",
-                        margin: "20px"
+                <div className="flex flex-row items-center justify-between"> {/* Header and Search Box */}
+                    <h2 className={"justify-self-center text-3xl font-bold text-gray-800 "} style={{
+                        textAlign: "center",     
                     }}>Fridge Management</h2>
 
                     {/* searching box, search by name */}
-                    <div style={{textAlign: "center", marginBottom: "20px"}}>
+                    <div className="bg-gray-200 h-[35px] rounded-[10px] flex flex-row items-center">
+                        <img src={SearchIcon} alt="search" className="h-full w-[16px] !ml-2 !mr-3" />
                         <input
+                            className="w-full h-full bg-transparent placeholder-gray-500 text-gray-500 focus:outline-none focus:ring-0 pl-2"
                             type="text"
                             placeholder="Search by name..."
                             value={searchItem}
                             onChange={(e) => setSearchItem(e.target.value)}
-                            style={{
-                                marginBottom: "10px",
-                                padding: "2px 8px",
-                                border: "1px solid black",
-                                borderRadius: "4px",
-                                width: "50%"
-                            }}
+
                         />
                     </div>
-
+                </div>
                     <table style={{
                         width: "100%",
                         margin: "20px auto",
