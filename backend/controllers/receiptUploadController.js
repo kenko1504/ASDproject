@@ -25,8 +25,8 @@ export const requestReceiptOCR = async(req, res) => {
             process.env.GOOGLE_BASE_URI,
             {
                 rawDocument: {
-                content: base64Image,
-                mimeType: req.file.mimetype
+                    content: base64Image,
+                    mimeType: req.file.mimetype
                 }
             },
             {

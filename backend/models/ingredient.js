@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const ingredient = mongoose.model("Ingredient", new mongoose.Schema({
+const Ingredient = mongoose.model("Ingredient", new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Ingredient name is required']
@@ -41,4 +41,4 @@ const ingredient = mongoose.model("Ingredient", new mongoose.Schema({
   timestamps: true
 }));
 
-export default ingredient;
+export default Ingredient;

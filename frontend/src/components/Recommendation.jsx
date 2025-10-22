@@ -384,13 +384,20 @@ export default function Recommendations() {
                         {!isLoading && !errorMessage && recommendSearchResults && (
                             <div className="w-full h-full">
                                 <div className="text-center w-full font-bold">Top 20 Foods</div>
-                            <div className="grid grid-cols-3 gap-4 overflow-scroll h-10/12">
-                                {console.log("Filter:", recFilter)}
-                                {console.log("FilterTEst:", recommendSearchResults[recFilter])}
-                                {recommendSearchResults[recFilter].map((food, index) => (
-                                    <FoodResultCard key={index} food={food}/>
-                                ))}
-                            </div>
+                                <div className="grid grid-cols-3 gap-4 overflow-scroll h-10/12">
+                                    {console.log("Filter:", recFilter)}
+                                    {console.log("FilterTest:", recommendSearchResults[recFilter])}
+
+                                    {recommendSearchResults.message ? (
+                                        <div className="col-span-3 text-center text-gray-500">
+                                            <p>{recommendSearchResults.message}</p>
+                                        </div>
+                                    ) : (
+                                        recommendSearchResults[recFilter]?.map((food, index) => (
+                                            <FoodResultCard key={index} food={food}/>
+                                        ))
+                                    )}
+                                </div>
                             </div>
                         )}
 
