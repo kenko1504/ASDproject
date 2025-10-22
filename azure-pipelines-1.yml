@@ -17,71 +17,50 @@ steps:
 
   # Install frontend dependencies
   - task: Npm@1
-    displayName: 'Install Modules in /frontend'
+    displayName: 'Install frontend dependencies'
     inputs:
       command: 'ci'
       workingDir: 'frontend'
 
   # Install backend dependencies
   - task: Npm@1
-    displayName: 'Install Modules in /backend'
+    displayName: 'Install backend dependencies'
     inputs:
       command: 'ci'
       workingDir: 'backend'
 
   # Build the frontend
   - task: Npm@1
-    displayName: 'Build frontend for production'
+    displayName: 'Build frontend'
     inputs:
       command: 'custom'
       workingDir: 'frontend'
       customCommand: 'run build'
     env:
-      VITE_API_BASE_URL: 'https://fridgeconnection.azurewebsites.net'
+      # Inject API URL at build time - baked into the frontend build
+      VITE_API_BASE_URL: 'https://fridgeinventorymanager.azurewebsites.net'
       MODE: 'production'
 
-  # Install backend production dependencies only
-  - task: Npm@1
-    displayName: 'Install backend production dependencies'
-    inputs:
-      command: 'custom'
-      workingDir: 'backend'
-      customCommand: 'ci --only=production'
-
-  # Install backend production dependencies only
-  - task: Npm@1
-    displayName: 'Install backend production dependencies'
-    inputs:
-      command: 'custom'
-      workingDir: 'backend'
-      customCommand: 'ci --only=production'
-
-  # Copy project files to artifact staging directory
+  # Copy backend files to artifact root
   - task: CopyFiles@2
-    inputs:
-      sourceFolder: '$(Build.SourcesDirectory)'
-      contents: |
-        frontend/dist/**
-        backend/**
-        !backend/node_modules/**
-        !backend/test/**
-        !backend/imageUploads/**
-        !backend/*.csv
-        web.config
-        .deployment
-      targetFolder: '$(Build.ArtifactStagingDirectory)'
-    displayName: 'Copy project files'
-
-  # Copy production node_modules separately
-  - task: CopyFiles@2
+    displayName: 'Copy backend files'
     inputs:
       sourceFolder: '$(Build.SourcesDirectory)/backend'
-      contents: 'node_modules/**'
-      targetFolder: '$(Build.ArtifactStagingDirectory)/backend'
-    displayName: 'Copy backend production dependencies'
+      contents: '**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  # Copy frontend build into /public
+  - task: CopyFiles@2
+    displayName: 'Copy frontend build'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/frontend/dist'
+      contents: '**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/public'
 
   # Publish pipeline artifact
   - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    displayName: 'Publish artifact'
     inputs:
       PathtoPublish: '$(Build.ArtifactStagingDirectory)'
       ArtifactName: 'release'

@@ -60,21 +60,18 @@ if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'public')));
 
   // Anything not matching an API route should serve index.html
-  app.get('*', (req, res) => {
-    if (!req.path.startsWith('/items') &&
-        !req.path.startsWith('/auth') &&
-        !req.path.startsWith('/ingredients') &&
-        !req.path.startsWith('/users') &&
-        !req.path.startsWith('/GroceryLists') &&
-        !req.path.startsWith('/recipes') &&
-        !req.path.startsWith('/receipt') &&
-        !req.path.startsWith('/nutrition') &&
-        !req.path.startsWith('/meal') &&
-        !req.path.startsWith('/recommendations') &&
-        !req.path.startsWith('/Food') &&
-        !req.path.startsWith('/imageUploads')) {
-      res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  app.get('*', (req, res, next) => {
+    // If the path starts with an API prefix, let it go to the API handler
+    const apiPrefixes = ['/items', '/auth', '/ingredients', '/users', '/GroceryLists', 
+                         '/recipes', '/receipt', '/nutrition', '/meal', '/recommendations', 
+                         '/Food', '/imageUploads'];
+    
+    if (apiPrefixes.some(prefix => req.path.startsWith(prefix))) {
+      return next();
     }
+    
+    // Otherwise serve index.html (SPA fallback for frontend routes)
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
   });
 }
 
