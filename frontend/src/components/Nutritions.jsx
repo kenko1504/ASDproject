@@ -4,6 +4,7 @@ import MealCard from "./MealCard";
 import { AuthContext } from "../contexts/AuthContext";
 import Meal from "../../../backend/models/meal";
 
+import { API_BASE_URL } from '../utils/api.js';
 export default function Nutritions() {
   const { user } = useContext(AuthContext);
   const [meals, setMeals] = useState([]);

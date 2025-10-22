@@ -7,26 +7,24 @@ import {
     getItems,
     createItem,
     updateItem,
-    deleteItem
+    deleteItem,
+    copyList
  } from "../controllers/groceryListcontroller.js";
+ import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
 // Grocery Lists CDRUD
-router.post("/:UID", createList);    
-router.get("/:UID", getLists);
-router.put("/:GL_ID", updateList);
-router.delete("/:GL_ID", deleteList);
-// A Grocery List Items CDRUD
-router.post("/:GL_ID/items", createItem);
-router.get("/:GL_ID/items", getItems);
-router.put("/item/:ITEM_ID", updateItem);
-router.delete("/item/:ITEM_ID", deleteItem);
+router.post("/:uid", authenticateToken, createList);    
+router.get("/:uid", authenticateToken, getLists);
+router.put("/:uid/list/:gid", authenticateToken, updateList);
+router.delete("/:uid/list/:gid", authenticateToken, deleteList);
+router.post("/:uid/list/:gid/copy", authenticateToken, copyList);
 
-
-// router.get("/:id", getList);       
-// router.put("/:id", updateList);   
-// router.delete("/:id", deleteList);
-
+// A Grocery Items CDRUD
+router.post("/:uid/list/:gid/item", authenticateToken, createItem);
+router.get("/:uid/list/:gid/items", authenticateToken, getItems);
+router.put("/:uid/list/:gid/item/:itemID", authenticateToken, updateItem);
+router.delete("/:uid/list/:gid/item/:itemID", authenticateToken, deleteItem);
 
 export default router;

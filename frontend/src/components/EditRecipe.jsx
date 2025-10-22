@@ -1,24 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from "react-router-dom";
-import { authenticatedFetch } from "../utils/api.js";
+import { authenticatedFetch, API_BASE_URL } from "../utils/api.js";
 
 import uploadImg from "../assets/Upload.svg";
 import searchImg from "../assets/search-svgrepo-com.svg";
-import sampleProfilePic from "../assets/SampleProfilePic.jpg";
 import NutritionPopupModal from './NutritionPopupModal.jsx';
-
-// Recipe Images
-import R1Img from "../assets/recipeImages/Recipe1.jpg";
-import R2Img from "../assets/recipeImages/Recipe2.jpg";
-import R3Img from "../assets/recipeImages/Recipe3.jpg";
-import R4Img from "../assets/recipeImages/Recipe4.jpg";
-import R5Img from "../assets/recipeImages/Recipe5.jpg";
-import R6Img from "../assets/recipeImages/Recipe6.jpg";
-import R7Img from "../assets/recipeImages/Recipe7.jpg";
-import R8Img from "../assets/recipeImages/Recipe8.jpg";
-import R9Img from "../assets/recipeImages/Recipe9.jpg";
-import R10Img from "../assets/recipeImages/Recipe10.jpg";
-
 
 
 export default function EditRecipe() {
@@ -44,26 +30,26 @@ export default function EditRecipe() {
     const [error, setError] = useState(null);
     const [showNutritionModal, setShowNutritionModal] = useState(false);
 
-    
-    // Default recipe images
+
+    // Default recipe images - using backend paths
     const defaultImages = [
-        { path: R1Img, name: 'Recipe1' },
-        { path: R2Img, name: 'Recipe2' },
-        { path: R3Img, name: 'Recipe3' },
-        { path: R4Img, name: 'Recipe4' },
-        { path: R5Img, name: 'Recipe5' },
-        { path: R6Img, name: 'Recipe6' },
-        { path: R7Img, name: 'Recipe7' },
-        { path: R8Img, name: 'Recipe8' },
-        { path: R9Img, name: 'Recipe9' },
-        { path: R10Img, name: 'Recipe10' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe1.jpg`, name: 'Recipe1' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe2.jpg`, name: 'Recipe2' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe3.jpg`, name: 'Recipe3' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe4.jpg`, name: 'Recipe4' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe5.jpg`, name: 'Recipe5' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe6.jpg`, name: 'Recipe6' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe7.jpg`, name: 'Recipe7' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe8.jpg`, name: 'Recipe8' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe9.jpg`, name: 'Recipe9' },
+        { path: `${API_BASE_URL}/recipeImages/Recipe10.jpg`, name: 'Recipe10' },
     ];
 
     // Fetch recipe data for editing
     const fetchRecipe = async () => {
         try {
             setLoading(true);
-            const response = await fetch(`http://localhost:5000/recipes/${recipeId}`);
+            const response = await fetch(`${API_BASE_URL}/recipes/${recipeId}`);
 
             if (response.ok) {
                 const recipe = await response.json();
@@ -120,7 +106,7 @@ export default function EditRecipe() {
         }
         
         try {
-            const response = await fetch("http://localhost:5000/Food");
+            const response = await fetch(`${API_BASE_URL}/Food`);
             const data = await response.json();
             
             // Filter results based on search term
@@ -240,7 +226,7 @@ export default function EditRecipe() {
                 instructions: instructions.filter(instruction => instruction.trim() !== '')
             };
 
-            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`${API_BASE_URL}/recipes/${recipeId}`, {
                 method: 'PUT',
                 body: JSON.stringify(recipeData)
             });

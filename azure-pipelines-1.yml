@@ -1,0 +1,66 @@
+trigger:
+  - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  nodeVersion: '22.x'
+
+steps:
+  # Install Node.js
+  - task: NodeTool@0
+    displayName: 'Install Node.js'
+    inputs:
+      versionSource: 'spec'
+      versionSpec: $(nodeVersion)
+
+  # Install frontend dependencies
+  - task: Npm@1
+    displayName: 'Install frontend dependencies'
+    inputs:
+      command: 'ci'
+      workingDir: 'frontend'
+
+  # Install backend dependencies
+  - task: Npm@1
+    displayName: 'Install backend dependencies'
+    inputs:
+      command: 'ci'
+      workingDir: 'backend'
+
+  # Build the frontend
+  - task: Npm@1
+    displayName: 'Build frontend'
+    inputs:
+      command: 'custom'
+      workingDir: 'frontend'
+      customCommand: 'run build'
+    env:
+      # Inject API URL at build time - baked into the frontend build
+      VITE_API_BASE_URL: 'https://fridgeinventorymanager.azurewebsites.net'
+      MODE: 'production'
+
+  # Copy backend files to artifact root
+  - task: CopyFiles@2
+    displayName: 'Copy backend files'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/backend'
+      contents: '**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+
+  # Copy frontend build into /public
+  - task: CopyFiles@2
+    displayName: 'Copy frontend build'
+    inputs:
+      sourceFolder: '$(Build.SourcesDirectory)/frontend/dist'
+      contents: '**'
+      targetFolder: '$(Build.ArtifactStagingDirectory)/public'
+
+  # Publish pipeline artifact
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish artifact'
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'release'
+      publishLocation: 'Container'

@@ -31,10 +31,22 @@
     - `frontend/src/contexts/AuthContext.jsx`
     - `frontend/src/utils/api.js`
 - **Anthony**
-    - `/frontend/src/components/GroceryList.jsx`
-    - `/frontend/src/components/ViewGroceryItems.jsx`
     - `/frontend/src/components/Recommendation.jsx`
+    - `/frontend/src/components/GroceryList/AddGroceryItem.jsx`
+    - `/frontend/src/components/GroceryList/AddGroceryLisr.jsx`
+    - `/frontend/src/components/GroceryList/EditGroceryItem.jsx`
+    - `/frontend/src/components/GroceryList/EditGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/CopyGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/IndividualGroceryList.jsx`
+    - `/frontend/src/components/GroceryList/GroceryListsDashboard.jsx`
 - **Jianan**
+    - `/frontend/src/components/FridgeManagement.jsx`
+    - `/frontend/src/components/AddItem.jsx` 
+    - `/frontend/src/components/UpdateItem.jsx` 
+    - `/frontend/src/components/WasteBudget.jsx`
+    - `/frontend/src/components/Dashboard.jsx`
+    - `/frontend/src/DashboardComponent/Sidebar.jsx`
+    - `/frontend/src/components/NavBar.jsx`
 - **Martin**
     - `/frontend/src/components/Nutritions.jsx`
     - `/frontend/src/components/NutritionGraph.jsx`
@@ -62,6 +74,10 @@
     -  `/backend/controller/recommendController.js`
     -  `/backend/routes/recommendRoutes.js`
 - **Jianan**
+    -  `/backend/controller/itemController.js`
+    -  `/backend/routes/itemRoutes.js`
+    -  `/backend/controller/ingredientController.js`
+    -  `/backend/routes/ingredientRoutes.js`
 - **Martin**
     -  `/backend/routes/nutritionRoutes.js`
     -  `/backend/controller/nutritionController.js`
@@ -80,5 +96,8 @@
     - `./backend/models/groceryItem.js`
     - `./backend/models/foodNutrition.js`
 - **Jianan**
+    - `/backend/models/item.js`
+    - `/backend/models/ingredient.js`
 - **Martin**
+    - `/backend/models/nutrition.js`
     - `/backend/models/meal.js`

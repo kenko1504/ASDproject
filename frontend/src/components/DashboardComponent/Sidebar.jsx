@@ -9,7 +9,6 @@
     import settingImg from "../../assets/Settings.svg";
     import notificationImg from "../../assets/Notification.svg";
 
-    ;
 
     export default function Sidebar(){
         const { user, logout } = useContext(AuthContext);

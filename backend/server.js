@@ -20,7 +20,15 @@ const __dirname = path.dirname(__filename);
 
 dotenv.config(); // read .env
 const app = express();
-app.use(cors());
+
+// CORS configuration - restrict origins in production
+const corsOptions = {
+  origin: process.env.NODE_ENV === 'production'
+    ? process.env.ALLOWED_ORIGINS?.split(',') || []
+    : '*',
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 //routes
 app.use("/items", itemRoutes)
@@ -43,18 +51,34 @@ mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find
 
 // Serve images from the folder
 app.use("/imageUploads", express.static(path.join(__dirname, "imageUploads")));
+app.use("/recipeImages", express.static(path.join(__dirname, "recipeImages")));
 
-// Example data
-let items = [
-  { id: 1, name: "Banana", price: 10 },
-  { id: 2, name: "Apple", price: 20 },
-];
+// Serve frontend static files in production
+if (process.env.NODE_ENV === 'production') {
+  // Serve static files from /public
+  app.use(express.static(path.join(__dirname, 'public')));
+
+  // Anything not matching an API route should serve index.html
+  app.get('*', (req, res, next) => {
+    // If the path starts with an API prefix, let it go to the API handler
+    const apiPrefixes = ['/items', '/auth', '/ingredients', '/users', '/GroceryLists',
+                         '/recipes', '/receipt', '/nutrition', '/meal', '/recommendations',
+                         '/Food', '/imageUploads', '/recipeImages'];
+    
+    if (apiPrefixes.some(prefix => req.path.startsWith(prefix))) {
+      return next();
+    }
+    
+    // Otherwise serve index.html (SPA fallback for frontend routes)
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+}
 
 
 
-
-// Start server
-const PORT = 5000;
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
-
-//mongodb+srv://admin:1q2w3e4r!@cluster0.exeo5q3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+// Start server - use Azure's PORT environment variable or default to 5000
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+});
