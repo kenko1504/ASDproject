@@ -2,15 +2,18 @@ import { GoogleAuth } from "google-auth-library";
 import axios from "axios"
 
 //get token from google cloud server
-async function getAccessToken() {
-  const auth = new GoogleAuth({
-    scopes: ['https://www.googleapis.com/auth/cloud-platform']
-  });
-  
-  const client = await auth.getClient();
-  const tokenResponse = await client.getAccessToken();
-  return tokenResponse;
+export async function getAccessToken() {
+  const client = new google.auth.JWT(
+    process.env.CLIENT_EMAIL,
+    null,
+    process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    ['https://www.googleapis.com/auth/cloud-platform']
+  );
+
+  const tokenResponse = await client.authorize();
+  return tokenResponse.access_token;
 }
+
 
 //recieve img file and send request to google
 export const requestReceiptOCR = async(req, res) => {
@@ -19,6 +22,16 @@ export const requestReceiptOCR = async(req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'no file' });
         }
+
+        const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        
+        if (!allowedMimeTypes.includes(req.file.mimetype)) {
+            return res.status(400).json({ 
+                error: 'Invalid file type. Only image files are allowed.',
+                receivedType: req.file.mimetype
+            });
+        }
+        
         const token = (await getAccessToken()).token
         const base64Image = req.file.buffer.toString('base64');
         const response = await axios.post(
