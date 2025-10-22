@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext, getUserRoleFromToken } from "../contexts/AuthContext.jsx";;
-import { authenticatedFetch } from "../utils/api.js";
+import { API_BASE_URL, authenticatedFetch } from "../utils/api.js";
 import crossImg from "../assets/circle-xmark-svgrepo-com.svg";
 import checkImg from "../assets/circle-check-svgrepo-com.svg";
 import clockImg from "../assets/clock-svgrepo-com.svg";
@@ -23,7 +23,7 @@ export default function MealCard({ Meal, onMealDeleted, isDashboard = false }) {
 
     const getRecipeImage = async(recipeId) => {
         try {
-            const response = await authenticatedFetch(`http://localhost:5000/recipes/${recipeId}`, {
+            const response = await authenticatedFetch(`http://${API_BASE_URL}/recipes/${recipeId}`, {
                 method: 'GET'
             });
             if (response.ok) {
@@ -44,7 +44,7 @@ export default function MealCard({ Meal, onMealDeleted, isDashboard = false }) {
         if (!confirmDelete) return;
 
         try {
-            const response = await fetch(`http://localhost:5000/meal/${Meal._id}`, {
+            const response = await fetch(`http://${API_BASE_URL}/meal/${Meal._id}`, {
                 method: 'DELETE'
             });
 

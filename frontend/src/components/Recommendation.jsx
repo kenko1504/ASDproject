@@ -123,7 +123,7 @@ export default function Recommendations() {
 
                 console.log('API request:', body)
                 
-                const searchResult = await fetch("http://localhost:5000/nutrition/dailyReq", {
+                const searchResult = await fetch(`http://${API_BASE_URL}/nutrition/dailyReq`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -167,7 +167,7 @@ export default function Recommendations() {
 
         async function getUserTodayMeal() {
             try {
-                const response = await fetch(`http://localhost:5000/meal/${userInfo.user._id}`, {
+                const response = await fetch(`http://${API_BASE_URL}/meal/${userInfo.user._id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -250,7 +250,7 @@ export default function Recommendations() {
 
             try{
                 if(criteria){
-                    const result = await fetch(`http://localhost:5000/recommendations/${userInfo.user._id}/nutritionBasedSearch`, {
+                    const result = await fetch(`http://${API_BASE_URL}/recommendations/${userInfo.user._id}/nutritionBasedSearch`, {
                     method: "POST",
                     headers: {
                         'Content-Type': 'application/json'

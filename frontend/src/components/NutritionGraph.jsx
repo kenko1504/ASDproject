@@ -80,7 +80,7 @@ function NutritionGraph(){
 
         async function getUserTodayMeal() {
             try {
-                const response = await fetch(`http://localhost:5000/meal/${userInfo.user._id}`, {
+                const response = await fetch(`http://${API_BASE_URL}/meal/${userInfo.user._id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

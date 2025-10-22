@@ -2,7 +2,6 @@ import { useState, useEffect, useContext } from "react";
 import NutritionGraph from "./NutritionGraph";
 import MealCard from "./MealCard";
 import { AuthContext } from "../contexts/AuthContext";
-import Meal from "../../../backend/models/meal";
 
 import { API_BASE_URL } from '../utils/api.js';
 export default function Nutritions() {
@@ -13,7 +12,7 @@ export default function Nutritions() {
     async function fetchMeals() {
       try {
         console.log("useEffectUser", user)
-        const response = await fetch(`http://localhost:5000/meal/${user._id}`, {
+        const response = await fetch(`http://${API_BASE_URL}/meal/${user._id}`, {
           method: "GET",
           headers: {
             "Content-Type": "application/json",

@@ -132,7 +132,7 @@ export default function RecipeCard({ recipe, onRecipeDeleted, onRecipeSaveChange
             }
             const date = new Date(Date.now()).toISOString().split('T')[0];
             console.log(date);
-            const response = await fetch(`http://localhost:5000/meal`, {
+            const response = await fetch(`http://${API_BASE_URL}/meal`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
