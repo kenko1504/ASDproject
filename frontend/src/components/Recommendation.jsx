@@ -10,6 +10,7 @@ export default function Recommendations() {
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedFilters, setSelectedFilters] = useState([]);
     const [errorMessage, setErrorMessage] = useState("");
+    const [searchError, setSearchError] = useState("");
     const [selectedFoodType, setSelectedFoodType] = useState('Any');
     const [searchResults, setSearchResults] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
@@ -55,15 +56,15 @@ export default function Recommendations() {
         setSelectedFilters((prevFilters) => {
             if (prevFilters.includes(filterId)) {
                 // Deselect if already selected
-                setErrorMessage("");
+                setSearchError("");
                 return prevFilters.filter((id) => id !== filterId);
             } else if (prevFilters.length < 3) {
                 // Select if not already selected and limit is not reached
-                setErrorMessage("");
+                setSearchError("");
                 return [...prevFilters, filterId];
             }
             // Show error message if limit is reached
-            setErrorMessage("You can only select up to 3 filters.");
+            setSearchError("You can only select up to 3 filters.");
             return prevFilters;
         });
     };
@@ -73,14 +74,14 @@ export default function Recommendations() {
     }
 
     const clearAllFilters = () => {
-        setErrorMessage("");
+        setSearchError("");
         setSelectedFilters([]);
     };
 
     const handleSubmit = async () => {
         try {
             if (selectedFilters.length === 0) {
-                setErrorMessage("Please select at least one filter.");
+                setSearchError("Please select at least one filter.");
                 return;
             }
 
@@ -99,7 +100,7 @@ export default function Recommendations() {
             setSearchResults(data.results || []);
         } catch (error) {
             console.error("Error fetching search results:", error);
-            setErrorMessage("Failed to fetch search results. Please try again.");
+            setSearchError("Failed to fetch search results. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -462,8 +463,8 @@ export default function Recommendations() {
                                             </div>
                                             <div className="h-5">
                                                 {/* More than three filter error message */}
-                                                {errorMessage && (
-                                                    <p className="text-center text-red-500 text-sm mt-2">{errorMessage}</p>
+                                                {searchError && (
+                                                    <p className="text-center text-red-500 text-sm mt-2">{searchError}</p>
                                                 )}
                                             </div>
                                         </div>
