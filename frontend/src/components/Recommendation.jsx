@@ -3,6 +3,7 @@ import axios from "axios";
 import { AuthContext } from "../contexts/AuthContext";
 
 import { API_BASE_URL } from '../utils/api.js';
+import AddRecommendToGrocery from './AddRecommendToGrocery';
 export default function Recommendations() {
     const userInfo = useContext(AuthContext)
 
@@ -548,65 +549,75 @@ export default function Recommendations() {
 // Card component for search results
 function FoodResultCard({ food }) {
     const { user } = useContext(AuthContext);
+    const [showAddPopup, setShowAddPopup] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
 
-    const handleAddToGroceryList = async () => {
-        try {
-            const response = await axios.post(`${API_BASE_URL}/recommendations/${user._id}/grocery`,{
-                food: food
-            });
-            if (response.status === 200) {
-                alert("Item added to grocery list!");
-            }
-        } catch (error) {
-            console.error("Error adding item to grocery list:", error);
-        }
+    const handleAddToGroceryList = () => {
+        setShowAddPopup(true);
+    };
+
+    const handleClosePopup = () => {
+        setShowAddPopup(false);
+    };
+
+    const handleSuccess = (message) => {
+        alert(message);
     };
 
     return (
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
-            <div className="mb-3">
-                <h4 className="text-center font-semibold text-l text-gray-800 !my-2 leading-[1.5rem] h-[3rem]">{food.foodName}</h4>
-            </div>
-            
-            <span className="text-m px-2 bg-blue-100 text-blue-600 !py-2 font-bold flex justify-center rounded !mb-2">{food.type}</span>
-            
-            <div className="grid grid-cols-4 gap-2 text-sm text-gray-600">
-                <span className="font-bold !mx-auto">⚡ Calories:</span>
-                <span className="!pl-2">{food.energy}kcal</span>
-                <span className="font-bold !mx-auto">💪 Protein:</span>
-                <span className="!pl-2">{food.protein}g</span>
-                <span className="font-bold !mx-auto">🍞 Carbs:</span>
-                <span className="!pl-2">{food.carbohydrates}g</span>
-                <span className="font-bold !mx-auto">🥑 Fat:</span>
-                <span className="!pl-2">{food.fat}g</span>
-                <span className="font-bold !mx-auto">🌾 Fiber:</span>
-                <span className="!pl-2">{food.dietaryFiber}g</span>
-                <span className="font-bold !mx-auto">🍯 Sugar:</span>
-                <span className="!pl-2">{food.sugar}g</span>
-            </div>
+        <>
+            <div className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                
+                <div className="mb-3">
+                    <h4 className="text-center font-semibold text-l text-gray-800 !my-2 leading-[1.5rem] h-[3rem]">{food.foodName}</h4>
+                </div>
+                
+                <span className="text-m px-2 bg-blue-100 text-blue-600 !py-2 font-bold flex justify-center rounded !mb-2">{food.type}</span>
+                
+                <div className="grid grid-cols-4 gap-2 text-sm text-gray-600">
+                    <span className="font-bold !mx-auto">⚡ Calories:</span>
+                    <span className="!pl-2">{food.energy}kcal</span>
+                    <span className="font-bold !mx-auto">💪 Protein:</span>
+                    <span className="!pl-2">{food.protein}g</span>
+                    <span className="font-bold !mx-auto">🍞 Carbs:</span>
+                    <span className="!pl-2">{food.carbohydrates}g</span>
+                    <span className="font-bold !mx-auto">🥑 Fat:</span>
+                    <span className="!pl-2">{food.fat}g</span>
+                    <span className="font-bold !mx-auto">🌾 Fiber:</span>
+                    <span className="!pl-2">{food.dietaryFiber}g</span>
+                    <span className="font-bold !mx-auto">🍯 Sugar:</span>
+                    <span className="!pl-2">{food.sugar}g</span>
+                </div>
 
+                <div className="!mt-3 !pt-3 border-t border-gray-100 ">
+                    <div className="grid grid-cols-4 gap-2 text-xs text-gray-500">
+                        <span className="font-bold !mx-auto">⚡ Calcium:</span>
+                        <span className="!pl-2">{food.calcium}mg</span>
+                        <span className="font-bold !mx-auto">🩸 Iron:</span>
+                        <span className="!pl-2">{food.iron}mg</span>
+                        <span className="font-bold !mx-auto">🍊 Vitamin C:</span>
+                        <span className="!pl-2">{food.vitaminC}mg</span>
+                        <span className="font-bold !mx-auto">🧂 Sodium:</span>
+                        <span className="!pl-2">{food.sodium}mg</span>
+                        <span className="font-bold !mx-auto">❤️ Cholesterol:</span>
+                        <span className="!pl-2">{food.cholesterol}mg</span>
+                    </div>
+                </div>
 
-            <div className="!mt-3 !pt-3 border-t border-gray-100 ">
-                <div className="grid grid-cols-4 gap-2 text-xs text-gray-500">
-                    <span className="font-bold !mx-auto">⚡ Calcium:</span>
-                    <span className="!pl-2">{food.calcium}mg</span>
-                    <span className="font-bold !mx-auto">🩸 Iron:</span>
-                    <span className="!pl-2">{food.iron}mg</span>
-                    <span className="font-bold !mx-auto">🍊 Vitamin C:</span>
-                    <span className="!pl-2">{food.vitaminC}mg</span>
-                    <span className="font-bold !mx-auto">🧂 Sodium:</span>
-                    <span className="!pl-2">{food.sodium}mg</span>
-                    <span className="font-bold !mx-auto">❤️ Cholesterol:</span>
-                    <span className="!pl-2">{food.cholesterol}mg</span>
+                <div className="mt-3 flex space-x-2">
+                    <button className="flex-1 bg-green-500 hover:bg-green-600 text-white !p-1 rounded text-sm transition-colors" onClick={handleAddToGroceryList}>
+                        Add to Grocery List
+                    </button>
                 </div>
             </div>
 
-
-            <div className="mt-3 flex space-x-2">
-                <button className="flex-1 bg-green-500 hover:bg-green-600 text-white !p-1 rounded text-sm transition-colors" onClick={handleAddToGroceryList}>
-                    Add to Grocery List
-                </button>
-            </div>
-        </div>
+            {showAddPopup && (
+                <AddRecommendToGrocery
+                    food={food}
+                    onClose={handleClosePopup}
+                    onSuccess={handleSuccess}
+                />
+            )}
+        </>
     );
 }
