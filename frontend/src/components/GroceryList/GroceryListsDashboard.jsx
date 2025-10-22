@@ -17,7 +17,7 @@ export default function GroceryList() {
     const [selectedList, setSelectedList] = useState(null);
 
     useEffect(() => {
-        services.getList(user._id)
+        services.getList(user._id, localStorage.getItem("token"))
             .then(lists => setLists(lists))
             .catch(err => console.log(err))
     }, [user._id]);
@@ -30,7 +30,7 @@ export default function GroceryList() {
                 date: formData.date,
                 note: formData.note,
                 status: formData.status
-            });
+            }, localStorage.getItem("token"));
             setLists(prevLists => [...prevLists, res]);
             return true; // Success
         } catch (err) {
@@ -47,7 +47,7 @@ export default function GroceryList() {
     
     const handleDelete = async (id) => {
         try {
-            await services.deleteList(user._id, id);
+            await services.deleteList(user._id, id, localStorage.getItem("token"));
             setLists(prevLists => prevLists.filter(list => list._id !== id));
         }
         catch (err) {
@@ -74,7 +74,7 @@ export default function GroceryList() {
                 date: editFormData.date,
                 note: editFormData.note,
                 status: editFormData.status
-            });
+            }, localStorage.getItem("token"));
             // Finds the list that has the same id as the list being edited
             // List is updated otherwise it remains the same
             setLists(lists.map(list => list._id === editFormData._id ? res : list));
