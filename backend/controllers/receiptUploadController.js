@@ -3,17 +3,24 @@ import axios from "axios"
 
 //get token from google cloud server
 export async function getAccessToken() {
-  const client = new google.auth.JWT(
-    process.env.CLIENT_EMAIL,
-    null,
-    process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
-    ['https://www.googleapis.com/auth/cloud-platform']
-  );
+  try {
+    const auth = new GoogleAuth({
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
+      },
+      scopes: ['https://www.googleapis.com/auth/cloud-platform']
+    });
 
-  const tokenResponse = await client.authorize();
-  return tokenResponse.access_token;
+    const client = await auth.getClient();
+    const accessToken = await client.getAccessToken();
+
+    return accessToken.token;
+  } catch (error) {
+    console.error('Failed to get Google Access Token:', error.message);
+    throw error;
+  }
 }
-
 
 //recieve img file and send request to google
 export const requestReceiptOCR = async(req, res) => {
@@ -32,7 +39,7 @@ export const requestReceiptOCR = async(req, res) => {
             });
         }
         
-        const token = (await getAccessToken()).token
+        const token = await getAccessToken()
         const base64Image = req.file.buffer.toString('base64');
         const response = await axios.post(
             process.env.GOOGLE_BASE_URI,
