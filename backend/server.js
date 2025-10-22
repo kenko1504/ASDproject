@@ -53,6 +53,7 @@ mongoose.connect(process.env.MONGO_URI, { //it will go to .env directory to find
 
 // Serve images from the folder
 app.use("/imageUploads", express.static(path.join(__dirname, "imageUploads")));
+app.use("/recipeImages", express.static(path.join(__dirname, "recipeImages")));
 
 // Serve frontend static files in production
 if (process.env.NODE_ENV === 'production') {
@@ -62,9 +63,9 @@ if (process.env.NODE_ENV === 'production') {
   // Anything not matching an API route should serve index.html
   app.get('*', (req, res, next) => {
     // If the path starts with an API prefix, let it go to the API handler
-    const apiPrefixes = ['/items', '/auth', '/ingredients', '/users', '/GroceryLists', 
-                         '/recipes', '/receipt', '/nutrition', '/meal', '/recommendations', 
-                         '/Food', '/imageUploads'];
+    const apiPrefixes = ['/items', '/auth', '/ingredients', '/users', '/GroceryLists',
+                         '/recipes', '/receipt', '/nutrition', '/meal', '/recommendations',
+                         '/Food', '/imageUploads', '/recipeImages'];
     
     if (apiPrefixes.some(prefix => req.path.startsWith(prefix))) {
       return next();
