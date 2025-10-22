@@ -21,7 +21,7 @@ export default function ViewGroceryItems() {
     const [copyError, setCopyError] = useState("");
 
     useEffect(() => {
-        services.getItem(user._id, gid)
+        services.getItem(user._id, gid, localStorage.getItem("token"))
             .then((data) => {
                 const { items, groceryList } = data;
                 setItemList(items);
@@ -37,7 +37,7 @@ export default function ViewGroceryItems() {
                 name: item.name,
                 quantity: item.quantity,
                 category: item.category
-            });
+            }, localStorage.getItem("token"));
             setItemList(prevLists => [...prevLists, res]);
             return true; 
         } catch (err) {
@@ -54,7 +54,7 @@ export default function ViewGroceryItems() {
 
     const handleDelete = async (itemID) => {
         try {
-            await services.deleteItem(user._id, gid, itemID);
+            await services.deleteItem(user._id, gid, itemID, localStorage.getItem("token"));
             setItemList(prevLists => prevLists.filter(item => item._id !== itemID));
         } catch (error) {
             console.error("Error deleting item:", error);
@@ -76,7 +76,7 @@ export default function ViewGroceryItems() {
                 quantity: item.quantity,
                 category: item.category,
                 checked: newCheckedState
-            });
+            }, localStorage.getItem("token"));
         } catch (error) {
             console.error("Error updating item:", error);
             // Revert UI change on error
@@ -106,7 +106,7 @@ export default function ViewGroceryItems() {
                 name: item.name,
                 quantity: item.quantity,
                 category: item.category
-            });
+            }, localStorage.getItem("token"));
             // Finds the item that has the same id as the item being edited
             // Item is updated otherwise it remains the same
             setItemList(itemList.map(listItem => listItem._id === item._id ? res : listItem));
@@ -126,7 +126,7 @@ export default function ViewGroceryItems() {
     const handleCopyList = async (newList) => {
         setCopyError(""); // Clear any previous errors
         try {
-            const res = await services.copyList(user._id, gid, newList);
+            const res = await services.copyList(user._id, gid, newList, localStorage.getItem("token"));
             // Navigate to the main grocery list page to see the new copied list
             navigate('/grocery-list');
             return true; // Success
@@ -147,7 +147,7 @@ export default function ViewGroceryItems() {
             return;
         }
         try {
-            await services.updateList(user._id, gid, { status: "completed" });
+            await services.updateList(user._id, gid, { status: "completed" }, localStorage.getItem("token"));
             navigate('/grocery-list');
         } catch (error) {
             console.error("Error updating list status:", error);
