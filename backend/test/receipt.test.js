@@ -31,7 +31,7 @@ describe('ReceiptOCR Test', () => {
   };
 
   function createMockRequestFromFile(filePath) {
-  console.log('File path:', filePath);
+  // console.log('File path:', filePath);
   
   if (!fs.existsSync(filePath)) {
     throw new Error(`File does not exist: ${filePath}`);
@@ -71,12 +71,12 @@ describe('ReceiptOCR Test', () => {
   beforeAll(async () => {
     dotenv.config();
     process.env.GOOGLE_BASE_URI = 'https://documentai.googleapis.com/v1/projects/test/locations/us/processors/test:process';
-    console.log('Checking test files...');
+    // console.log('Checking test files...');
     Object.entries(testFiles).forEach(([key, filePath]) => {
       if (fs.existsSync(filePath)) {
-        console.log(`${key}: ${filePath}`);
+        // console.log(`${key}: ${filePath}`);
       } else {
-        console.warn(`${key}: ${filePath} NOT FOUND`);
+        // console.warn(`${key}: ${filePath} NOT FOUND`);
       }
     });
 

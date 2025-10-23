@@ -7,6 +7,11 @@ trigger:
 pool:
   vmImage: 'windows-latest' 
 
+variables:
+  nodeVersion: '22.x'
+  email: 'fridgeReceiptService@buoyant-facet-473710-k1.iam.gserviceaccount.com' 
+  key: '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDKnTmIL5ceuyVa\nggnxM2TQD8rmqvyEWq3zRBy8oBoRhQwP9hAXf2FjgvtmmcdkIobPgD+nxL0wG9IN\n0mIXB9Cwibw7KDJOtzu6CNbYdqhj4f80oXnH/9GxU1mqE/xlRLhnS3817XtHfsMC\nnCw1GWcxNpzrQwRedGrWdhwqL2nBEp69IYsitj1stoAQJrvmxNOS2iWgUpzuvC19\nQ2E4sHUzvk4cMGZNqnDmAvQ8Et1dzDKfY1oOGc8pzWd2JzyHPjThEyD0gpHOJZ1z\nOFbhp1/Oxow7igfUsIzytmCmysEKb7ipWUamRXyvxuSF3d93IeMQu8SEipQlHLmc\n18n6QxvJAgMBAAECggEAJuESIeGd8kHvmkVDQqM9yFYLdYVghMZAxGIw0Ho5XlzF\nMofhURz6k2WWN7sxAXRFoaomrNsKAaIJBel1tJ0ljMa1VbWyJ5wuDBX3ohxs1hPP\nDKqiq3/ZnVkU5tfEcitEZl/clnzOT+sRYR4WNo88F7u200cuHrDgsmwCHg8wkCFa\n5Vhn8WZnKWgSILT1156yeug4P586by1ny1RIanTHqnFpR4LTzCZkjPKRb66kBDQu\nwijMeII1gFDwdU3gxkZb9Ob0dT5kYFlglg9sERkbrDXWBsSaMI3J+xrBpFB4Gveb\nOBs6/hNDRe20mN9KFv5eB3OymD+KHuBD4lrAznfIvQKBgQDnbdCbydwWpnRNjWnc\nXKIssiR2tzxqfBx/wLfxVLuZKOGEh59bF/MZHVNMJuAiJ3+m7D8tgT8ed/STevpC\n56//95gulFou4wp+LZIZf1EIz0h1g8jWiqshI/YoKLuvxZBz9SqIceibLEM13VWd\n1JfrABVSN2QDmXJDW1ghTKIx/QKBgQDgIDrtu5CLskTKxc+lZ4xyyHNg5ZsvkwT+\nhaqsp74eOPAplChDCyBQG449CZP7KRqWEIQbbIy5Xbq+2y73652H0HA011GCa6M/\nkbOci8EewuvSTAjuISFVnv1GgF34r0G4LsbBEZAjDZlXWN0fvY2WQUxFTdr1KPQp\ntmOHIEFEvQKBgQC7KTNhGlH0u28pXOk0/nFlZjhZDf09PNwrcScRc+43gjlH3grB\nN9AxCmdYGcR/uqPg0gSR/4mVUXupXfZQ72CFyK35VZ7Ndm4A90fFeRKG5mP6LbbZ\n0tFs/tFPTwnisAsPzEE2kbCE9bnxMOvRtaGaurmDgSpQQuOGl7PhUkGF3QKBgFuw\nc8ssD49G5+O4lyFIwml23dTHOfx1ffaOQmuN2DZO/tlTtkDvPVHoZAFOeM6oWysH\nKLR7bPqsgKhxzL46EuEsAatsZvkfBdMMzVj+x4vJHGaVGpYo0ZVQjLcZ7te9AvrR\nkBgOElR0zMWyIgxJJLJSllxH5IqlLXYfGop+RJVVAoGAP4vEZkBFFQz9/h3ZR090\nV/CyALUMfUmqPWxJixQ07DbYgsBDk67KncQnmXTWFFzSkArgJA5liQZMfIGnafT+\n1FwJUcifctjLGlZ9LeaEgnWuLihqeWP9bzWPjyFSZOcKLT8qmTanepZyWVB3G/15\nW9YB1geEU/I3qmbR3ePorGI=\n-----END PRIVATE KEY-----\n,'
+
 stages:
   - stage: test
     displayName: 'Testing Backend & Frontend'
@@ -36,7 +41,7 @@ stages:
           
           - task: NodeTool@0
             inputs:
-              versionSpec: '20.x'
+              versionSpec: ${nodeVersion}
             displayName: 'Use Node.js (Backend)'
 
           - script: npm ci
@@ -45,14 +50,17 @@ stages:
 
           - script: npm test
             workingDirectory: backend
-            displayName: 'Run Backend Unit Tests'  # ← 따옴표 닫기
+            displayName: 'Run Backend Unit Tests'
+            env:
+              CLIENT_EMAIL: ${email}
+              PRIVATE_KEY: ${key}
 
       - job: Vitest
         displayName: 'Run Vitest Tests'
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: '20.x'
+              versionSpec: ${nodeVersion}
             displayName: 'Use Node.js'
 
           - script: npm ci
