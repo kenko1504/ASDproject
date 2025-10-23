@@ -5,7 +5,7 @@ trigger:
       - feature/*
 
 pool:
-  vmImage: 'windows-latest' 
+  vmImage: 'windows-latest' ~
 
 variables:
   nodeVersion: '22.x'
@@ -19,26 +19,6 @@ stages:
       - job: Backend
         displayName: 'Backend Testing'
         steps:
-          # Temporarily save secure file for testing .env
-          - task: DownloadSecureFile@1
-            name: envFile
-            displayName: 'Download .env file'
-            inputs:
-              secureFile: '.env'
-          
-          # Check File Downloaded
-          - script: |
-              echo "Secure file path: $(envFile.secureFilePath)"
-              dir $(envFile.secureFilePath)
-              type $(envFile.secureFilePath)
-            displayName: 'Verify .env file'
-          
-          # Copy to backend
-          - script: |
-              copy $(envFile.secureFilePath) $(Build.SourcesDirectory)\backend\.env
-              dir $(Build.SourcesDirectory)\backend
-            displayName: 'Copy .env to backend directory'
-          
           - task: NodeTool@0
             inputs:
               versionSpec: $(nodeVersion)
