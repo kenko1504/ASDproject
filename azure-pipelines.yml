@@ -21,7 +21,7 @@ stages:
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: ${nodeVersion}
+              versionSpec: $(nodeVersion)
             displayName: 'Use Node.js (Backend)'
 
           - script: npm ci
@@ -32,15 +32,15 @@ stages:
             workingDirectory: backend
             displayName: 'Run Backend Unit Tests'
             env:
-              CLIENT_EMAIL: ${email}
-              PRIVATE_KEY: ${key}
+              CLIENT_EMAIL: $(email)
+              PRIVATE_KEY: $(key)
 
       - job: Vitest
         displayName: 'Run Vitest Tests'
         steps:
           - task: NodeTool@0
             inputs:
-              versionSpec: ${nodeVersion}
+              versionSpec: $(nodeVersion)
             displayName: 'Use Node.js'
 
           - script: npm ci
