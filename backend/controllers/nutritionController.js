@@ -3,17 +3,35 @@ import FoodNutrition from "../models/foodNutrition.js";
 //get daily nutrition requirements based on biometric data
 export const getDailyNutritionRequirements = (req, res) => {
     const userBiometricInfo = req.body.characteristics;
+    console.log(userBiometricInfo)
     const nutritionPlan = req.body.nutritionPlan;
+    console.log(nutritionPlan)
     try{
+
+        console.log('userBiometricInfo:', userBiometricInfo);
+    console.log('gender:', userBiometricInfo?.gender, 'type:', typeof userBiometricInfo?.gender);
+    console.log('age:', userBiometricInfo?.age, 'type:', typeof userBiometricInfo?.age);
+    console.log('weight:', userBiometricInfo?.weight, 'type:', typeof userBiometricInfo?.weight);
+    console.log('height:', userBiometricInfo?.height, 'type:', typeof userBiometricInfo?.height);
+    
+    
+        if(!userBiometricInfo.gender || !userBiometricInfo.age || !userBiometricInfo.weight || !userBiometricInfo.height ){
+            return res.status(500).json({error: "invalid biometric value"})
+        }
+        if(userBiometricInfo.age <= 0 || userBiometricInfo.weight <= 0 || userBiometricInfo.height <= 0){
+            return res.status(500).json({error: "invalid biometric value"})
+        }
         const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
+        console.log(nutritionRequirements)
         if(!nutritionRequirements){
-            return res.status(500).json({ message: "Unable to calculate nutrition requirements" });
+            console.log("failed to calculate nutrition requirements: ", nutritionRequirements)
+            return res.status(500).json({ error: "Unable to calculate nutrition requirements" });
         }
         console.log('nutritionRequirements:', nutritionRequirements);
-        res.status(200).json(nutritionRequirements);
+        return res.status(200).json(nutritionRequirements);
     }catch(error){
         console.error(error.response?.data || error.message || error);
-        res.status(500).json({ message: error.response?.data || error.message || 'Server error' });
+        res.status(500).json({ error: error.response?.data || error.message || 'Server error'});
     }
 };
 
@@ -24,6 +42,8 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
     let activityMultiplier = 0.0;
     let goalVar = 0;
     let proteinMultiplier = 0.0;
+
+    
 
     let BMR = 0.0;
 
@@ -82,13 +102,13 @@ export const getAllNutrition = async (req, res) => {
         const items = await FoodNutrition.find();
         res.json(items);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ error: error.message });
     }
 };
 
 // Get Specific Food Nutrition Data
 export const getNutrition = async (req, res) => {
     const item = await FoodNutrition.findById(req.params.id);
-    if (!item) return res.status(404).json({message: "Item not found"});
+    if (!item) return res.status(404).json({error: "Item not found"});
     res.json(item);
 };
