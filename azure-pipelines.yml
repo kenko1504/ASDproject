@@ -15,7 +15,7 @@ stages:
         displayName: 'Backend Testing'
         steps:
           # Temporarily save secure file for testing .env
-          - task: DownloadSecureFile@2
+          - task: DownloadSecureFile@1
             inputs:
               secureFile: '.env'
           
