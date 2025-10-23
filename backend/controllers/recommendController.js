@@ -87,3 +87,92 @@ export const addToLatestGroceryList = async (req, res) => {
         return res.status(500).json({ error: "An error occurred while adding recommendation" });
     }
 };
+
+export const addToSpecificGroceryList = async (req, res) => {
+    try {
+        const { uid, listId } = req.params;
+        const food = req.body.food;
+        console.log(food, uid, listId);
+        
+        if (!food) {
+            return res.status(400).json({ error: "Food does not exist" });
+        }
+        if (!uid) {
+            return res.status(400).json({ error: "User ID does not exist" });
+        }
+        if (!listId) {
+            return res.status(400).json({ error: "Grocery list ID does not exist" });
+        }
+
+        // Verify the list exists and belongs to the user
+        const list = await GroceryList.findOne({ _id: listId, user: uid });
+        console.log("Found grocery list:", list);
+        
+        if (!list) {
+            return res.status(404).json({ error: "Grocery list not found or doesn't belong to this user" });
+        }
+
+        console.log("Adding to specific grocery list:", list);
+        const item = new GroceryItem({ 
+            name: `⭐ ${food.foodName}`, 
+            quantity: 1, 
+            category: food.type, 
+            groceryList: list._id 
+        });
+        await item.save();
+        console.log("Item saved:", item);
+        return res.status(200).json({ message: "Recommendation added to grocery list", item });
+    } catch (error) {
+        console.error("Error occurred while adding recommendation:", error);
+        return res.status(500).json({ error: "An error occurred while adding recommendation" });
+    }
+};
+
+export const getListByNutritions = async(req, res) => {
+    const lackNutrition = req.body
+
+    if(lackNutrition.calories == 0 && lackNutrition.protein == 0 && lackNutrition.carbohydrates == 0 && lackNutrition.sodium == 0 && lackNutrition.fat == 0){
+        return res.status(200).json({message: "You reached to the nutrition goal today!"})
+    }
+    try{
+        if(lackNutrition){
+            const [proteinList, caloriesList, fatList, sodiumList, carbList] = await Promise.all([
+                FoodNutrition.find({
+                    protein: { $lte: lackNutrition.protein }
+                }).sort({ protein: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    energy: { $lte: lackNutrition.calories }
+                }).sort({ calories: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    fat: { $lte: lackNutrition.fat }
+                }).sort({ fat: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    sodium: { $lte: lackNutrition.sodium }
+                }).sort({ sodium: -1 }).limit(20).lean(),
+                
+                FoodNutrition.find({
+                    carbohydrates: { $lte: lackNutrition.carbohydrates }
+                }).sort({ carbohydrates: -1 }).limit(20).lean()
+            ]);
+            console.log(proteinList, caloriesList)
+
+            return res.status(200).json({
+                caloriesList: caloriesList,
+                proteinList: proteinList,
+                sodiumList: sodiumList,
+                carbList: carbList,
+                fatList: fatList
+            })
+        }else{
+            return res.status(400).json({error: "Error retrieving Nutrition Data"})
+        }
+    }catch(error){
+        console.log(error)
+        throw error
+    }
+    
+
+}

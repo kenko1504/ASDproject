@@ -5,13 +5,16 @@ import {
     createMeal,
     deleteMeal,
     updateMeal,
-    getUserSpecificDayMeal
+    getUserSpecificDayMeal,
+    getFoodById
 } from "../controllers/mealController.js";
 const router = express.Router();
 
 
-router.get("/today", getUserTodayMeal)
-router.get("/day", getUserSpecificDayMeal)
+router.get("/:id/:date", getUserSpecificDayMeal)
+router.get("/:id", getUserTodayMeal)
+router.get("/food/:id", getFoodById)
+
 router.post("/", createMeal)
 router.delete("/:id", deleteMeal)
 router.patch("/:id", updateMeal)

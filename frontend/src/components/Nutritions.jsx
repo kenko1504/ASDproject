@@ -1,93 +1,58 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import NutritionGraph from "./NutritionGraph";
+import MealCard from "./MealCard";
+import { AuthContext } from "../contexts/AuthContext";
 
 import { API_BASE_URL } from '../utils/api.js';
 export default function Nutritions() {
-  const [foodList, setFoodList] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedFood, setSelectedFood] = useState(null);
-
+  const { user } = useContext(AuthContext);
+  const [meals, setMeals] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(`${API_BASE_URL}/Food`);
-      const data = await response.json();
-      const filteredData = data.filter(item => item.foodName.toLowerCase().includes(searchTerm.toLowerCase()));
-      setFoodList(filteredData);
-    };
-    fetchData();
-  }, [searchTerm]);
+    async function fetchMeals() {
+      try {
+        console.log("useEffectUser", user)
+        const response = await fetch(`${API_BASE_URL}/meal/${user._id}`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+        setMeals(data);
+      } catch (error) {
+        console.error("Error fetching meals:", error);
+      }
+    }
+    fetchMeals();
+  }, []);
+
+  const handleMealDeleted = (deletedMealId) => {
+    setMeals(prevMeals => prevMeals.filter(m => m._id !== deletedMealId))
+  }
 
   return (
     <div>
       <div className="header flex">
         <span className="title font-bold text-2xl">Nutritions</span>
-        <input
-          type="text"
-          placeholder="Search Food..."
-          className="!ml-5 bg-gray-100 w-150 rounded"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
       </div>
 
       <div className="nutritionGraph">
         <h2 className="title text-xl font-bold">Daily Nutritients Status</h2>
         <NutritionGraph />
       </div>
-      
-      <div className="nutrition-info !mt-5 h-200 overflow-auto">
-        <table>
-          <thead>
-            <tr>
-              <th>Food Name</th>
-            </tr>
-          </thead>
-          <tbody>
-            {foodList.map((food) => (
-              <tr key={food._id}>
-                <td>
-                  <a
-                    href="#"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      setSelectedFood(food);
-                    }}
-                    className="text-blue-600 !underline"
-                  >
-                    {food.foodName}
-                  </a>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
 
-      {selectedFood && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/[var(--bg-opacity)] [--bg-opacity:50%]">
-          <div className="bg-white p-5 rounded-lg shadow-lg w-1/3">
-            <h2 className="font-bold text-xl mb-2">{selectedFood.foodName}</h2>
-            <p>Calories: {selectedFood.calories}</p>
-            <p>Protein: {selectedFood.protein}</p>
-            <p>Fat: {selectedFood.fat}</p>
-            <p>Carbohydrates: {selectedFood.carbohydrates}</p>
-            <p>Sugar: {selectedFood.sugar}</p>
-            <p>Fiber: {selectedFood.fiber}</p>
-            <p>Cholesterol: {selectedFood.cholesterol}</p>
-            <p>Sodium: {selectedFood.sodium}</p>
-            <p>Calcium: {selectedFood.calcium}</p>
-            <p>Iron: {selectedFood.iron}</p>
-            <p>Vitamin C: {selectedFood.vitaminC}</p>
-            <button
-              onClick={() => setSelectedFood(null)}
-              className="mt-4 px-3 py-1 bg-red-500 text-white rounded"
-            >
-              Close
-            </button>
+      <div className="meals">
+        <h2 className="title text-xl font-bold">Your Meals Today</h2>
+        {meals.length > 0 ? meals.map((meal) => (
+          <div key={meal._id} className="meal-card p-4 my-2 rounded-lg">
+            <h3 className="meal-type font-semibold">{meal.mealType}</h3>
+            <MealCard className="w-full h-full" Meal={meal} onMealDeleted={handleMealDeleted} isDashboard={false} />
           </div>
-        </div>
-      )}
+        )) : (
+          <div className="no-meals text-gray-500">No meals found for today.</div>
+        )}
+      </div>
     </div>
   );
 }

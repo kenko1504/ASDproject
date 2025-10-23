@@ -111,7 +111,7 @@ export default function FridgeList() {
                 >
                   {item.imageUrl ? (
                     <img
-                      src={item.imageUrl}
+                      src={`${API_BASE_URL}${item.imageUrl}`}
                       alt={item.name}
                       className="w-auto opacity-60 shadow-lg h-30 object-cover mb-2 rounded-[20px] transition duration-300 ease-in-out transform hover:scale-115 hover:opacity-100"
                     />

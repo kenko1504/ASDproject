@@ -15,8 +15,6 @@ import mealRoutes from "./routes/mealRoutes.js"
 
 import recommendRoutes from "./routes/recommendRoutes.js";
 import receiptUploadRoutes from "./routes/receiptUploadRoutes.js";
-import Food from "./models/food.js";
-
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -76,12 +74,7 @@ if (process.env.NODE_ENV === 'production') {
   });
 }
 
-app.get("/Food", (req, res) => {
-  Food.find()
-    .then(items => res.json(items))
-    .catch(err => res.json(err));
-  console.log("Food Get");
-});
+
 
 // Start server - use Azure's PORT environment variable or default to 5000
 const PORT = process.env.PORT || 5000;

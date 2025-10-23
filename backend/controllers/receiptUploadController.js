@@ -2,14 +2,28 @@ import { GoogleAuth } from "google-auth-library";
 import axios from "axios"
 
 //get token from google cloud server
-async function getAccessToken() {
-  const auth = new GoogleAuth({
-    scopes: ['https://www.googleapis.com/auth/cloud-platform']
-  });
-  
-  const client = await auth.getClient();
-  const tokenResponse = await client.getAccessToken();
-  return tokenResponse;
+export async function getAccessToken() {
+  try {
+    console.log(process.env.CLIENT_EMAIL)
+    console.log(process.env.PRIVATE_KEY)
+    const auth = new GoogleAuth({
+      credentials: {
+        client_email: process.env.CLIENT_EMAIL,
+        private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n')
+      },
+      scopes: ['https://www.googleapis.com/auth/cloud-platform']
+    });
+
+    const client = await auth.getClient();
+    const accessToken = await client.getAccessToken();
+
+    
+
+    return accessToken.token;
+  } catch (error) {
+    console.error('Failed to get Google Access Token:', error.message);
+    throw error;
+  }
 }
 
 //recieve img file and send request to google
@@ -19,14 +33,26 @@ export const requestReceiptOCR = async(req, res) => {
         if (!req.file) {
             return res.status(400).json({ error: 'no file' });
         }
-        const token = (await getAccessToken()).token
+
+        const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        
+        if (!allowedMimeTypes.includes(req.file.mimetype)) {
+            return res.status(400).json({ 
+                error: 'Invalid file type. Only image files are allowed.',
+                receivedType: req.file.mimetype
+            });
+        }
+        
+        const token = await getAccessToken()
         const base64Image = req.file.buffer.toString('base64');
+
+        console.log(req.file.mimeType)
         const response = await axios.post(
             process.env.GOOGLE_BASE_URI,
             {
                 rawDocument: {
-                content: base64Image,
-                mimeType: req.file.mimetype
+                    content: base64Image,
+                    mimeType: req.file.mimetype
                 }
             },
             {

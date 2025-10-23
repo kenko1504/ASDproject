@@ -27,7 +27,7 @@ export const createIngredient = async (req, res) => {
     await ingredient.save();
     return res.json({
       ...ingredient.toObject(),
-      imageUrl: image ? `http://localhost:5000/imageUploads/${image}` : null,
+      imageUrl: image ? `/imageUploads/${image}` : null,
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -42,7 +42,7 @@ export const getIngredients = async (req, res) => {
     const ingredientsWithUrl = ingredients.map(ing => ({
        // ...ing._doc,
       ...ing.toObject(),
-      imageUrl: ing.image ? `http://localhost:5000/imageUploads/${ing.image}` : null
+      imageUrl: ing.image ? `/imageUploads/${ing.image}` : null
     }));
     console.log(ingredientsWithUrl);
     return res.json(ingredientsWithUrl);
@@ -62,7 +62,7 @@ export const getIngredientById = async (req, res) => {
 
     res.json({
       ...ing.toObject(),
-      imageUrl: ing.image ? `http://localhost:5000/imageUploads/${ing.image}` : null
+      imageUrl: ing.image ? `/imageUploads/${ing.image}` : null
     });
   } catch (error) {
     return res.status(500).json({ error: error.message });
