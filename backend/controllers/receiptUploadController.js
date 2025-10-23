@@ -4,6 +4,8 @@ import axios from "axios"
 //get token from google cloud server
 export async function getAccessToken() {
   try {
+    console.log(process.env.CLIENT_EMAIL)
+    console.log(process.env.PRIVATE_KEY)
     const auth = new GoogleAuth({
       credentials: {
         client_email: process.env.CLIENT_EMAIL,
@@ -14,6 +16,8 @@ export async function getAccessToken() {
 
     const client = await auth.getClient();
     const accessToken = await client.getAccessToken();
+
+    
 
     return accessToken.token;
   } catch (error) {
@@ -41,6 +45,8 @@ export const requestReceiptOCR = async(req, res) => {
         
         const token = await getAccessToken()
         const base64Image = req.file.buffer.toString('base64');
+
+        console.log(req.file.mimeType)
         const response = await axios.post(
             process.env.GOOGLE_BASE_URI,
             {
