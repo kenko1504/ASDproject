@@ -54,20 +54,20 @@ describe('Nutrition API Test', () => {
     const nutritionPlan = "maintenance"
 
     const mockReq = createMockRequest(validBiometricData, nutritionPlan);
-    console.log(mockReq)
-      console.log('1. mockReq:', JSON.stringify(mockReq, null, 2));
-  console.log('2. mockReq.body:', mockReq.body);
-  console.log('3. mockReq.body.characteristics:', mockReq.body.characteristics);
-  console.log('4. Is characteristics undefined?', mockReq.body.characteristics === undefined);
+    // console.log(mockReq)
+    // console.log('1. mockReq:', JSON.stringify(mockReq, null, 2));
+    // console.log('2. mockReq.body:', mockReq.body);
+    // console.log('3. mockReq.body.characteristics:', mockReq.body.characteristics);
+    // console.log('4. Is characteristics undefined?', mockReq.body.characteristics === undefined);
   
     const mockRes = createMockResponse();
 
 
 
     const result = await getDailyNutritionRequirements(mockReq, mockRes);
-      console.log('Was status called?', mockRes.status.mock.calls.length > 0);
-    console.log('Status called with:', mockRes.status.mock.calls[0]); // [200] 또는 [500]
-    console.log('Json called with:', mockRes.json.mock.calls[0]); // [{ calories: ... }]
+    // console.log('Was status called?', mockRes.status.mock.calls.length > 0);
+    // console.log('Status called with:', mockRes.status.mock.calls[0]); // [200] 또는 [500]
+    // console.log('Json called with:', mockRes.json.mock.calls[0]); // [{ calories: ... }]
 
     expect(mockRes.status).toHaveBeenCalledWith(200);
   });

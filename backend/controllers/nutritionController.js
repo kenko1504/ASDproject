@@ -3,16 +3,16 @@ import FoodNutrition from "../models/foodNutrition.js";
 //get daily nutrition requirements based on biometric data
 export const getDailyNutritionRequirements = (req, res) => {
     const userBiometricInfo = req.body.characteristics;
-    console.log(userBiometricInfo)
+    // console.log(userBiometricInfo)
     const nutritionPlan = req.body.nutritionPlan;
-    console.log(nutritionPlan)
+    // console.log(nutritionPlan)
     try{
 
-        console.log('userBiometricInfo:', userBiometricInfo);
-    console.log('gender:', userBiometricInfo?.gender, 'type:', typeof userBiometricInfo?.gender);
-    console.log('age:', userBiometricInfo?.age, 'type:', typeof userBiometricInfo?.age);
-    console.log('weight:', userBiometricInfo?.weight, 'type:', typeof userBiometricInfo?.weight);
-    console.log('height:', userBiometricInfo?.height, 'type:', typeof userBiometricInfo?.height);
+    // console.log('userBiometricInfo:', userBiometricInfo);
+    // console.log('gender:', userBiometricInfo?.gender, 'type:', typeof userBiometricInfo?.gender);
+    // console.log('age:', userBiometricInfo?.age, 'type:', typeof userBiometricInfo?.age);
+    // console.log('weight:', userBiometricInfo?.weight, 'type:', typeof userBiometricInfo?.weight);
+    // console.log('height:', userBiometricInfo?.height, 'type:', typeof userBiometricInfo?.height);
     
     
         if(!userBiometricInfo.gender || !userBiometricInfo.age || !userBiometricInfo.weight || !userBiometricInfo.height ){
@@ -22,12 +22,12 @@ export const getDailyNutritionRequirements = (req, res) => {
             return res.status(500).json({error: "invalid biometric value"})
         }
         const nutritionRequirements = calculateNutritionRequirements(userBiometricInfo, nutritionPlan);
-        console.log(nutritionRequirements)
+        // console.log(nutritionRequirements)
         if(!nutritionRequirements){
             console.log("failed to calculate nutrition requirements: ", nutritionRequirements)
             return res.status(500).json({ error: "Unable to calculate nutrition requirements" });
         }
-        console.log('nutritionRequirements:', nutritionRequirements);
+        // console.log('nutritionRequirements:', nutritionRequirements);
         return res.status(200).json(nutritionRequirements);
     }catch(error){
         console.error(error.response?.data || error.message || error);
@@ -75,7 +75,7 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
             BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
             break;
     }
-    console.log(BMR, '*', activityMultiplier, "+", goalVar)
+    // console.log(BMR, '*', activityMultiplier, "+", goalVar)
     const TDEE = BMR * activityMultiplier + goalVar;
 
     const protein = proteinMultiplier * weight;
@@ -92,7 +92,7 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
         sodium: sodium
     }
 
-    console.log(result)
+    // console.log(result)
     return result
 }
 

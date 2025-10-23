@@ -4,8 +4,8 @@ import axios from "axios"
 //get token from google cloud server
 export async function getAccessToken() {
   try {
-    console.log(process.env.CLIENT_EMAIL)
-    console.log(process.env.PRIVATE_KEY)
+    // console.log(process.env.CLIENT_EMAIL)
+    // console.log(process.env.PRIVATE_KEY)
     const auth = new GoogleAuth({
       credentials: {
         client_email: process.env.CLIENT_EMAIL,
