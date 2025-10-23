@@ -14,6 +14,10 @@ stages:
       - job: Backend
         displayName: 'Backend Testing'
         steps:
+            # Temporarily save secure file for testing .env
+          - task: DownloadSecureFile@2
+            inputs:
+              secureFile: '.env'
           - task: NodeTool@0
             inputs:
               versionSpec: '20.x'
@@ -25,7 +29,7 @@ stages:
 
           - script: npm test
             workingDirectory: backend
-            displayName: 'Run Backend Unit Tests'
+            displayName: 'Run Backend Unit Tests;
 
       - job: Vitest
         displayName: 'Run Vitest Tests'
