@@ -21,6 +21,10 @@ steps:
       gcloud auth activate-service-account --key-file=$GOOGLE_APPLICATION_CREDENTIALS
       gcloud config set project buoyant-facet-473710-k1
     displayName: 'Authenticate to GCP'
+# Temporarily save secure file for testing .env
+  - task: DownloadSecureFile@2
+    inputs:
+      secureFile: '.env'
   # Install Node.js
   - task: NodeTool@0
     displayName: 'Install Node.js'
