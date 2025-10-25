@@ -71,7 +71,7 @@ export default function LoginModal({ isOpen, onClose, onSwitchToRegister, onRese
       }
 
       login(data.user, data.token);
-      onClose(); // Close the modal
+      onClose();
       navigate("/");
     } catch (err) {
       setError(err.message);

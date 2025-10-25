@@ -125,7 +125,6 @@ export default function Recipes() {
       // Time Increasing (lowest cook time first)
       filtered.sort((a, b) => a.cookTime - b.cookTime);
     }
-    // For "Recent" (empty value) or "M" (Missing Ingredients), keep original order
 
     setFilteredRecipes(filtered);
   };

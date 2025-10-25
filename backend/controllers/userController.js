@@ -31,7 +31,7 @@ export const createUser = async (req, res) => {
 
     await newUser.save();
 
-    // Generate JWT token for immediate authentication (needed for TOTP setup)
+    // Generate JWT token for immediate authentication (for TOTP)
     const token = jwt.sign(
       { userId: newUser._id, role: newUser.role },
       process.env.JWT_SECRET || 'fallback_secret',
@@ -93,7 +93,7 @@ export const updateUser = async (req, res) => {
   }
 };
 
-// Admin-only: Update user details (including role)
+// Admin only: Update user details (including role)
 export const adminUpdateUser = async (req, res) => {
   try {
     const { id } = req.params;
