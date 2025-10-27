@@ -128,6 +128,8 @@ export const addToSpecificGroceryList = async (req, res) => {
     }
 };
 
+//search based on lacking nutrition (daily nutrition requirement - today's meal nutrition sum)
+//return 20 items per each nutrition
 export const getListByNutritions = async(req, res) => {
     const lackNutrition = req.body
 
