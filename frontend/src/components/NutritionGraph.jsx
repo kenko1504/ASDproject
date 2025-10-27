@@ -16,12 +16,13 @@ function NutritionGraph(){
     const [userTodayNutrition, setUserTodayNutrition] = useState(null)
 
 
+    //Get Nutrition Requirements Value by user biometric data
     async function getNutritionRequirementsInfo(){
+            // prevent multiple request, not complete
             if (abortControllerRef.current) {
+                // prevent multiple request, not complete
                 abortControllerRef.current.abort()
             }
-
-            // abortControllerRef.current = new AbortController()
 
             try {
                 setLoading(true)
@@ -41,7 +42,6 @@ function NutritionGraph(){
                         'X-Request-ID': `${Date.now()}-${Math.random()}`
                     },
                     body: JSON.stringify(body),
-                    // signal: abortControllerRef.current.signal
                 })
                 console.log(searchResult)
                 
@@ -78,6 +78,7 @@ function NutritionGraph(){
             }
         }
 
+        //Get user today's meal list
         async function getUserTodayMeal() {
             try {
                 const response = await fetch(`${API_BASE_URL}/meal/${userInfo.user._id}`, {
@@ -104,6 +105,7 @@ function NutritionGraph(){
             }
         }
 
+        //Get sum of nutrition in user's meal
         async function getUserTodayNutrition(meals) {
             if (!meals || meals.length === 0) {
                 setUserTodayNutrition({
@@ -143,6 +145,7 @@ function NutritionGraph(){
             setUserTodayNutrition(nutritionTotals)
         }
 
+        //execute all above
         async function fetchAllData() {
             try {
                 setLoading(true)
@@ -197,6 +200,7 @@ function NutritionGraph(){
 
     console.log('Rendering with nutrients:', nutrients)
 
+    // Apexchart Date
     const series = [
         {
             name: 'Daily Requirement',

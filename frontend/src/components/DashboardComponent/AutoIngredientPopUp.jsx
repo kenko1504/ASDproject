@@ -23,6 +23,7 @@ export default function AutoIngredientPopUp({ onClose }) {
     setProducts(products.filter((_, index) => index !== indexToDelete));
   };
 
+//request add items with all items added to the form
 const handleSubmit = async (e) => {
   e.preventDefault();
   
@@ -67,6 +68,7 @@ const handleSubmit = async (e) => {
   onClose();
 };
 
+//Request receipt OCR when the image has uploaded
   const handleChange = async (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -110,8 +112,7 @@ const handleSubmit = async (e) => {
                 ×
               </button>
             </div>
-            {/* insert image block}
-            */}
+            {/* Form Block */}
             {result ? (
                     <div className="p-2 rounded mt-2 w-11/12 h-10/12 overflow-scroll-auto">
                       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -130,6 +131,7 @@ const handleSubmit = async (e) => {
                           </label>
                           <label className="flex-1">DELETE</label>
                         </div>
+                        {/* Create input row equal to OCR response (autofilled) */}
                         {products.map((product, index) => (
                             <div key={index} className="flex py-2 gap-3">
                               <input 
@@ -193,6 +195,7 @@ const handleSubmit = async (e) => {
                     </div>
                   ) : (
               <div className="flex flex-col items-center w-full h-full">
+                  {/* Loading Bar */}
                   {loading ? (
                       <div>
                         <div role="status">
@@ -211,6 +214,7 @@ const handleSubmit = async (e) => {
                   )}
               </div>
             )}
+            {/* Image Input */}
             <input
             type="file"
             ref={fileInputRef}

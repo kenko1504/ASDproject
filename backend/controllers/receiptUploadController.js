@@ -4,8 +4,8 @@ import axios from "axios"
 //get token from google cloud server
 export async function getAccessToken() {
   try {
-    // console.log(process.env.CLIENT_EMAIL)
-    // console.log(process.env.PRIVATE_KEY)
+
+    //Private Key Auth
     const auth = new GoogleAuth({
       credentials: {
         client_email: process.env.CLIENT_EMAIL,
@@ -16,8 +16,6 @@ export async function getAccessToken() {
 
     const client = await auth.getClient();
     const accessToken = await client.getAccessToken();
-
-    
 
     return accessToken.token;
   } catch (error) {
@@ -34,6 +32,8 @@ export const requestReceiptOCR = async(req, res) => {
             return res.status(400).json({ error: 'no file' });
         }
 
+        //types other than these are not supported
+        //google cloud blocks by itself, but added just in case
         const allowedMimeTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
         
         if (!allowedMimeTypes.includes(req.file.mimetype)) {
@@ -78,6 +78,8 @@ export const requestReceiptOCR = async(req, res) => {
                             if(labels.type === "ProductName"){
                                 name = labels.mentionText;
                             }else if(labels.type === "Quantity"){
+
+                                //integrate units to g(gram)
                                 quantity = labels.mentionText;
                                 if(quantity.includes(".") || quantity.includes("kg")){
                                     quantity = parseFloat(quantity.replace("kg","")) * 1000;
@@ -105,6 +107,7 @@ export const requestReceiptOCR = async(req, res) => {
                     shoppingDate = element.mentionText;
                 }
             });
+            //default expiry date = 7 days after shopping date
             if(!Date.parse(shoppingDate)){
                 const sevenDaysLater = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
                 shoppingDate = sevenDaysLater.toISOString().split('T')[0];

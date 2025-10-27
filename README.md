@@ -57,6 +57,8 @@
     - `/frontend/src/components/NutritionGraph.jsx`
     - `/frontend/src/components/DashBoardComponent/AutoIngredientPopUp.jsx`
     - `/frontend/src/components/DashBoardComponent/ManualIngredientPopUp.jsx`
+    - `/frontend/src/components/Recommendation.jsx`
+    - `/frontend/src/components/MealCard.jsx`
 
 ### Backend
 - **Kenji**
@@ -89,6 +91,7 @@
     -  `/backend/routes/receiptUploadRoutes.js`
     -  `/backend/middleware/upload.js`
     -  `/backend/controller/receiptUploadController.js`
+    -  `/backend/controller/mealController.js`
 
 ### Database
 - **Kenji**

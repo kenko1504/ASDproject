@@ -76,9 +76,4 @@ describe('RecommendController Tests', () => {
       expect(response.body.results).toHaveLength(0);
     });
   });
-  // describe('searchByNutrition', () => {
-  //   it('should return an empty array if the user already reached nutrition goal', async() => {
-
-  //   })
-  // })
 });
