@@ -67,6 +67,7 @@
     - `/backend/controllers/userController.js`
     - `/backend/controllers/authController.js`
     - `/backend/controllers/recipeController.js`
+    - `/backend/controllers/totpController.js`
     - `/backend/middleware/auth.js`
     - `/backend/routes/userRoutes.js`
     - `/backend/routes/authRoutes.js`

@@ -58,7 +58,7 @@ export const enableTOTP = async (req, res) => {
       secret: secret,
       encoding: "base32",
       token: token,
-      window: 2, // Allow 2 steps (60 seconds) of time drift
+      window: 2, // allows 60 seconds of time drift
     });
 
     if (!verified) {
@@ -176,7 +176,7 @@ export const verifyTOTP = async (req, res) => {
       secret: user.totpSecret,
       encoding: "base32",
       token: token,
-      window: 2, // Allow 2 steps of time drift
+      window: 2,
     });
 
     if (!verified) {

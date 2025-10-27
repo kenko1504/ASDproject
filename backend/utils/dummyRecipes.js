@@ -1,4 +1,4 @@
-// Utility functions for generating randomized dummy recipe data
+// Utility functions for generating randomised dummy recipe data
 
 // Helper function to get random element from array
 const getRandomElement = (arr) => arr[Math.floor(Math.random() * arr.length)];
@@ -223,8 +223,8 @@ const recipeTemplates = [
   }
 ];
 
-// Function to generate randomized dummy recipes
-export const generateRandomizedRecipes = (foods, count = 10, imageUrls = null) => {
+// Function to generate randomised dummy recipes
+export const generateRandomisedRecipes = (foods, count = 10, imageUrls = null) => {
   if (foods.length < 10) {
     throw new Error("Not enough food items in database to create recipes");
   }
@@ -245,7 +245,7 @@ export const generateRandomizedRecipes = (foods, count = 10, imageUrls = null) =
   }
 
   return selectedTemplates.map(template => {
-    // Randomize cook time based on difficulty
+    // Randomise cook time based on difficulty
     let minTime, maxTime;
     const difficulty = getRandomElement(difficulties);
 

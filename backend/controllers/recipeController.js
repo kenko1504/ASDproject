@@ -1,7 +1,7 @@
 import Recipe from "../models/recipe.js";
 import Food from "../models/food.js";
 import User from "../models/user.js";
-import { generateRandomizedRecipes } from "../utils/dummyRecipes.js";
+import { generateRandomisedRecipes } from "../utils/dummyRecipes.js";
 
 // Create new Recipe
 export const createRecipe = async (req, res) => {
@@ -115,8 +115,8 @@ export const seedDummyRecipes = async (req, res) => {
     // Get image URLs from request body (sent from frontend with correct imported paths)
     const { imageUrls } = req.body;
 
-    // Generate randomized dummy recipes with correct image URLs
-    const dummyRecipes = generateRandomizedRecipes(foods, 10, imageUrls);
+    // Generate randomised dummy recipes with correct image URLs
+    const dummyRecipes = generateRandomisedRecipes(foods, 10, imageUrls);
 
     // Create recipes with proper ingredient count
     const createdRecipes = [];
@@ -133,7 +133,7 @@ export const seedDummyRecipes = async (req, res) => {
     }
 
     res.status(201).json({
-      message: `${createdRecipes.length} randomized dummy recipes created successfully`,
+      message: `${createdRecipes.length} randomised dummy recipes created successfully`,
       recipes: createdRecipes
     });
 
