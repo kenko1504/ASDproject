@@ -70,6 +70,7 @@ export default function Recommendations() {
         });
     };
 
+    //set filter for nutrition recommendation
     const toggleRecommendationFilter = (filterId) => {
         setRecFilter(filterId)
     }
@@ -107,13 +108,8 @@ export default function Recommendations() {
         }
     };
 
+    //get user's nutrition requirement based on biometric data
     async function getNutritionRequirementsInfo(){
-            // if (abortControllerRef.current) {
-            //     abortControllerRef.current.abort()
-            // }
-
-            // abortControllerRef.current = new AbortController()
-
             try {
                 setIsLoading(true)
                 setErrorMessage(null)
@@ -131,7 +127,6 @@ export default function Recommendations() {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(body),
-                    // signal: abortControllerRef.current.signal
                 })
                 console.log("SearchResult:", searchResult)
                 
@@ -166,6 +161,7 @@ export default function Recommendations() {
             }
         }
 
+        //get user's meal list today
         async function getUserTodayMeal() {
             try {
                 const response = await fetch(`${API_BASE_URL}/meal/${userInfo.user._id}`, {
@@ -192,6 +188,7 @@ export default function Recommendations() {
             }
         }
 
+        //get today's nutrition consumption from meal list, nutrition of each ingredient * (quantity / 100g)
         async function getUserTodayNutrition(meals) {
             if (!meals || meals.length === 0) {
                 setUserTodayNutrition({
@@ -233,6 +230,7 @@ export default function Recommendations() {
             return nutritionTotals
         }
 
+        //get recommendation list to fill nutrition, less than (nutrition requirements - today's nutrition consumption)
         async function getRecommendedUserFoods(nutritionReqs, todayNutritionTotals){
             if (!nutritionReqs || !todayNutritionTotals) {
                 console.error('Missing nutrition data:', { nutritionReqs, todayNutritionTotals })
@@ -248,7 +246,7 @@ export default function Recommendations() {
             }
             
             console.log("Search Criteria: ", criteria)
-
+            
             try{
                 if(criteria){
                     const result = await fetch(`${API_BASE_URL}/recommendations/${userInfo.user._id}/nutritionBasedSearch`, {
@@ -276,6 +274,8 @@ export default function Recommendations() {
                 console.log("getRecommendedUserFoods() error", error)
             }
         }
+
+        //execute all get-data functions
         async function fetchAllData() {
             try {
                 setIsLoading(true)

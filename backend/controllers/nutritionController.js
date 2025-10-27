@@ -36,6 +36,7 @@ export const getDailyNutritionRequirements = (req, res) => {
 };
 
 // calculate nutrition requirements
+// Using Harris-Benedict equation
 const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
     const { gender, age, weight, height } = characteristics || {};
     const modifier = nutritionPlan || 'maintenance';
@@ -44,7 +45,6 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
     let proteinMultiplier = 0.0;
 
     
-
     let BMR = 0.0;
 
     switch(modifier){
@@ -75,7 +75,7 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
             BMR = 447.593 + (9.247 * weight) + (3.098 * height) - (4.330 * age)
             break;
     }
-    // console.log(BMR, '*', activityMultiplier, "+", goalVar)
+
     const TDEE = BMR * activityMultiplier + goalVar;
 
     const protein = proteinMultiplier * weight;
@@ -92,7 +92,6 @@ const calculateNutritionRequirements = (characteristics, nutritionPlan) => {
         sodium: sodium
     }
 
-    // console.log(result)
     return result
 }
 
